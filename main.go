@@ -14,9 +14,16 @@ func main() {
 	// Define command line flags
 	dirPath := flag.String("dir", ".", "Directory to scan")
 	outputFileName := flag.String("output", "codebase.md", "Output file name")
-	ignorePatterns := flag.String("ignore", "", "Comma-separated list of path patterns to ignore")
+	ignorePatterns := flag.String("ignore", "", "Comma-separated list of regular expression patterns to match paths to ignore")
+	showHelp := flag.Bool("help", false, "Show help message")
 
 	flag.Parse()
+
+	// Check if help flag is set or no arguments are provided
+	if *showHelp || len(os.Args) == 1 {
+		printHelp()
+		return
+	}
 
 	// Split ignore patterns string into a slice
 	ignoreList := strings.Split(*ignorePatterns, ",")
@@ -107,7 +114,7 @@ func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) 
 			extension = strings.ToLower(extension)
 			extension = strings.TrimPrefix(extension, ".")
 			fmt.Fprintf(outputFile, "## %s\n", path)
-			fmt.Fprintf(outputFile, "```%s\n%s\n```\n\n",extension, content)
+			fmt.Fprintf(outputFile, "```%s\n%s\n```\n\n", extension, content)
 		}
 
 		return nil
@@ -132,4 +139,11 @@ func shouldIgnore(path string, ignoreList []string) bool {
 		}
 	}
 	return false
+}
+
+// printHelp prints the help message
+func printHelp() {
+	fmt.Println("Usage: go run codemerge.go [options]")
+	fmt.Println("\nOptions:")
+	flag.PrintDefaults()
 }
