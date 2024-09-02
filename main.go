@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// Write the code content to the output file
-	fmt.Fprintln(outputFile, "# Code Content\n")
+	fmt.Fprintln(outputFile, "\n# Code Content\n")
 	err = writeCodeContent(*dirPath, ignoreList, outputFile)
 	if err != nil {
 		fmt.Println("Error writing code content:", err)
@@ -103,9 +103,11 @@ func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) 
 			if err != nil {
 				return err
 			}
-
+			extension := filepath.Ext(path)
+			extension = strings.ToLower(extension)
+			extension = strings.TrimPrefix(extension, ".")
 			fmt.Fprintf(outputFile, "## %s\n", path)
-			fmt.Fprintf(outputFile, "```\n%s\n```\n\n", content)
+			fmt.Fprintf(outputFile, "```%s\n%s\n```\n\n",extension, content)
 		}
 
 		return nil
