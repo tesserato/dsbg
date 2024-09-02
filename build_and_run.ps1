@@ -1,3 +1,3 @@
 go build .
 
-./codemerge -ignore=".git/*"
+./codemerge -ignore="\.git.+,.+\.exe"

@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -81,6 +82,9 @@ func printTree(dirPath string, indent string, ignoreList []string, outputFile *o
 
 // writeCodeContent reads the content of each file and writes it to the output file within a code block
 func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) error {
+	var Red = "\033[31m"
+	var Green = "\033[32m"
+	var Reset = "\033[0m"
 	err := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -89,8 +93,10 @@ func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) 
 		// Check if the file should be ignored
 		relPath, _ := filepath.Rel(".", path)
 		if shouldIgnore(relPath, ignoreList) {
+			fmt.Println(Red + "- " + path + Reset)
 			return nil
 		}
+		fmt.Println(Green + "+ " + path + Reset)
 
 		if !d.IsDir() {
 			content, err := os.ReadFile(path)
@@ -114,7 +120,7 @@ func shouldIgnore(path string, ignoreList []string) bool {
 		if pattern == "" {
 			continue
 		}
-		matched, err := filepath.Match(pattern, path)
+		matched, err := regexp.MatchString(pattern, path)
 		if err != nil {
 			fmt.Printf("Error matching pattern '%s': %v\n", pattern, err)
 			continue
