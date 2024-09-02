@@ -1,3 +1,3 @@
-module codemerge
+module dsbg
 
 go 1.23.0
