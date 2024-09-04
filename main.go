@@ -1,136 +1,192 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	// "io/fs"
+	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
+
+	// "github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/russross/blackfriday/v2"
+	"gopkg.in/yaml.v2"
 )
 
-// Constants for JS and CSS (can be moved to separate files)
-const JS = `
-// ... (JavaScript code remains the same) 
-`
-
-const CSS = `
-// ... (CSS code remains the same)
-`
-
-// Article struct represents a single article
 type Article struct {
-	Title        string    `yaml:"title"`
-	Description  string    `yaml:"description"`
-	Created      time.Time `yaml:"created"`
-	LastUpdated  time.Time `yaml:"last_updated"`
-	Tags         []string  `yaml:"tags"`
-	Content      string
-	OriginalPath string
-}
-
-// shouldIgnore checks if a given path should be ignored based on the ignore patterns
-func shouldIgnore(path string, ignoreList []string) bool {
-	if path == "." {
-		return true
-	}
-	for _, pattern := range ignoreList {
-		if pattern == "" {
-			continue
-		}
-		matched, err := regexp.MatchString(pattern, path)
-		if err != nil {
-			fmt.Printf("Error matching pattern '%s': %v\n", pattern, err)
-			continue
-		}
-		if matched {
-			return true
-		}
-	}
-	return false
-}
-
-// printHelp prints the help message
-func printHelp() {
-	fmt.Println("Usage: go run codemerge.go [options]")
-	fmt.Println("\nOptions:")
-	flag.PrintDefaults()
-}
-
-// savePathsToFile saves a list of paths to a file, one per line
-func savePathsToFile(filename string, paths []string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	for _, path := range paths {
-		_, err := fmt.Fprintln(file, path)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func processFile(path string, ignoreList []string) (*Article, error) {
-	// Check if the file should be ignored
-	relPath, _ := filepath.Rel(".", path)
-	if shouldIgnore(relPath, ignoreList) {
-		return nil, nil // Skip ignored files
-	}
-
-	// Read file content
-	content, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("error reading file %s: %w", path, err)
-	}
-
-	// Extract frontmatter and content
-	frontmatter, contentStr, err := extractFrontmatter(string(content))
-	if err != nil {
-		return nil, fmt.Errorf("error extracting frontmatter from %s: %w", path, err)
-	}
-
-	// Parse frontmatter
-	var article Article
-	err = yaml.Unmarshal([]byte(frontmatter), &article)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing frontmatter from %s: %w", path, err)
-	}
-	article.Content = contentStr
-	article.OriginalPath = path
-	return &article, nil
+	Title       string    `yaml:"title"`
+	Description string    `yaml:"description"`
+	Created     time.Time `yaml:"created"`
+	Updated     time.Time `yaml:"updated"`
+	Tags        []string  `yaml:"tags"`
+	Content     string    `yaml:"-"`
 }
 
 func main() {
-	// Define command line flags
-	dirPath := flag.String("dir", ".", "Directory to scan")
-	// outputFileName := flag.String("output", "codebase.md", "Output file name")
-	ignorePatterns := flag.String("ignore", `\.git.*`, "Comma-separated list of regular expression patterns that match the paths to be ignored")
-	includedPathsFile := flag.String("included-paths-file", "", "File to save included paths (optional). If provided, the included paths will be saved to the file and not printed to the console.")
-	excludedPathsFile := flag.String("excluded-paths-file", "", "File to save excluded paths (optional). If provided, the excluded paths will be saved to the file and not printed to the console.")
-	showHelp := flag.Bool("help", false, "Show help message")
-
-	flag.Parse()
-
-	// Check if help flag is set or no arguments are provided
-	if *showHelp || len(os.Args) == 1 {
-		printHelp()
-		return
+	// 1. Read all markdown files from the content folder
+	files, err := filepath.Glob("content/*.md")
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	// Split ignore patterns string into a slice
-	ignoreList := strings.Split(*ignorePatterns, ",")
-	fmt.Println("Patterns to ignore:")
-	for i, pattern := range ignoreList {
-		ignoreList[i] = strings.TrimSpace(pattern)
-		fmt.Println(ignoreList[i])
+	// 2. Parse each markdown file into an Article struct
+	var articles []Article
+	for _, file := range files {
+		article, err := parseArticle(file)
+		if err != nil {
+			log.Println("Error parsing article:", err)
+			continue
+		}
+		articles = append(articles, article)
 	}
 
+	// 3. Generate HTML for each article
+	for _, article := range articles {
+		err := generateArticleHTML(article)
+		if err != nil {
+			log.Println("Error generating article HTML:", err)
+			continue
+		}
+	}
+
+	// 4. Generate the index.html file
+	err = generateIndexHTML(articles)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Blog generated successfully!")
 }
 
+func parseArticle(file string) (Article, error) {
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return Article{}, err
+	}
+
+	// Split the file content into frontmatter and markdown
+	frontmatter, content := splitFrontmatterAndContent(string(data))
+
+	// Parse the frontmatter
+	var article Article
+	err = yaml.Unmarshal([]byte(frontmatter), &article)
+	if err != nil {
+		return Article{}, err
+	}
+
+	// Convert markdown to HTML
+	article.Content = string(blackfriday.Run([]byte(content)))
+
+	// Set default values for created and updated if not provided
+	if article.Created.IsZero() {
+		article.Created = time.Now()
+	}
+	if article.Updated.IsZero() {
+		article.Updated = article.Created
+	}
+
+	return article, nil
+}
+
+func splitFrontmatterAndContent(data string) (string, string) {
+	parts := strings.SplitN(data, "---", 3)
+	if len(parts) != 3 {
+		return "", data
+	}
+	return parts[1], parts[2]
+}
+
+func generateArticleHTML(article Article) error {
+	// Create the article folder if it doesn't exist
+	articleDir := fmt.Sprintf("public/%s", strings.ReplaceAll(article.Title, " ", "-"))
+	err := os.MkdirAll(articleDir, 0755)
+	if err != nil {
+		return err
+	}
+
+	// Generate the HTML content
+	html := fmt.Sprintf(`
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>%s</title>
+	</head>
+	<body>
+		<h1>%s</h1>
+		<p>Created: %s</p>
+		<p>Updated: %s</p>
+		<ul>
+			%s
+		</ul>
+		%s
+	</body>
+	</html>
+	`,
+		article.Title,
+		article.Title,
+		article.Created.Format("2006-01-02"),
+		article.Updated.Format("2006-01-02"),
+		generateTagsHTML(article.Tags),
+		article.Content,
+	)
+
+	// Sanitize the HTML content
+	p := bluemonday.UGCPolicy()
+	html = p.Sanitize(html)
+
+	// Write the HTML content to the file
+	filename := fmt.Sprintf("%s/index.html", articleDir)
+	return os.WriteFile(filename, []byte(html), 0644)
+}
+
+func generateTagsHTML(tags []string) string {
+	var html string
+	for _, tag := range tags {
+		html += fmt.Sprintf("<li>%s</li>\n", tag)
+	}
+	return html
+}
+
+func generateIndexHTML(articles []Article) error {
+	// Generate the article list HTML
+	var articleList string
+	for _, article := range articles {
+		articleList += fmt.Sprintf(`
+		<li>
+			<a href="%s">%s</a>
+			<p>%s</p>
+		</li>
+		`,
+			fmt.Sprintf("/%s/", strings.ReplaceAll(article.Title, " ", "-")),
+			article.Title,
+			article.Description,
+		)
+	}
+
+	// Generate the index.html content
+	html := fmt.Sprintf(`
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>My Blog</title>
+	</head>
+	<body>
+		<h1>My Blog</h1>
+		<ul>
+			%s
+		</ul>
+	</body>
+	</html>
+	`,
+		articleList,
+	)
+
+	// Write the HTML content to the file
+	return os.WriteFile("public/index.html", []byte(html), 0644)
+}
