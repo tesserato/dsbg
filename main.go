@@ -14,7 +14,9 @@ func main() {
 	// Define command line flags
 	dirPath := flag.String("dir", ".", "Directory to scan")
 	outputFileName := flag.String("output", "codebase.md", "Output file name")
-	ignorePatterns := flag.String("ignore", "", "Comma-separated list of regular expression patterns to match paths to ignore")
+	ignorePatterns := flag.String("ignore", `\.git.*`, "Comma-separated list of regular expression patterns that match the paths to be ignored")
+	includedPathsFile := flag.String("included-paths-file", "", "File to save included paths (optional). If provided, the included paths will be saved to the file and not printed to the console.")
+	excludedPathsFile := flag.String("excluded-paths-file", "", "File to save excluded paths (optional). If provided, the excluded paths will be saved to the file and not printed to the console.")
 	showHelp := flag.Bool("help", false, "Show help message")
 
 	flag.Parse()
@@ -51,7 +53,7 @@ func main() {
 
 	// Write the code content to the output file
 	fmt.Fprintln(outputFile, "\n# Code Content\n")
-	err = writeCodeContent(*dirPath, ignoreList, outputFile)
+	err = writeCodeContent(*dirPath, ignoreList, outputFile, *includedPathsFile, *excludedPathsFile)
 	if err != nil {
 		fmt.Println("Error writing code content:", err)
 		return
@@ -88,10 +90,13 @@ func printTree(dirPath string, indent string, ignoreList []string, outputFile *o
 }
 
 // writeCodeContent reads the content of each file and writes it to the output file within a code block
-func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) error {
+func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File, includedPathsFile, excludedPathsFile string) error {
 	var Red = "\033[31m"
 	var Green = "\033[32m"
 	var Reset = "\033[0m"
+	var includedPaths []string
+	var excludedPaths []string
+
 	err := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -100,10 +105,20 @@ func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) 
 		// Check if the file should be ignored
 		relPath, _ := filepath.Rel(".", path)
 		if shouldIgnore(relPath, ignoreList) {
-			fmt.Println(Red + "- " + path + Reset)
+			if excludedPathsFile == "" {
+				fmt.Println(Red + "- " + path + Reset)
+			} else {
+				excludedPaths = append(excludedPaths, path)
+			}
+
 			return nil
 		}
-		fmt.Println(Green + "+ " + path + Reset)
+
+		if includedPathsFile == "" {
+			fmt.Println(Green + "+ " + path + Reset)
+		} else {
+			includedPaths = append(includedPaths, path)
+		}
 
 		if !d.IsDir() {
 			content, err := os.ReadFile(path)
@@ -120,11 +135,30 @@ func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File) 
 		return nil
 	})
 
+	// Save included paths to file (if filename provided)
+	if includedPathsFile != "" {
+		err = savePathsToFile(includedPathsFile, includedPaths)
+		if err != nil {
+			return fmt.Errorf("error saving included paths to file: %w", err)
+		}
+	}
+
+	// Save excluded paths to file (if filename provided)
+	if excludedPathsFile != "" {
+		err = savePathsToFile(excludedPathsFile, excludedPaths)
+		if err != nil {
+			return fmt.Errorf("error saving excluded paths to file: %w", err)
+		}
+	}
+
 	return err
 }
 
 // shouldIgnore checks if a given path should be ignored based on the ignore patterns
 func shouldIgnore(path string, ignoreList []string) bool {
+	if path == "."  {
+		return true
+	}
 	for _, pattern := range ignoreList {
 		if pattern == "" {
 			continue
@@ -146,4 +180,22 @@ func printHelp() {
 	fmt.Println("Usage: go run codemerge.go [options]")
 	fmt.Println("\nOptions:")
 	flag.PrintDefaults()
+}
+
+// savePathsToFile saves a list of paths to a file, one per line
+func savePathsToFile(filename string, paths []string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	for _, path := range paths {
+		_, err := fmt.Fprintln(file, path)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
