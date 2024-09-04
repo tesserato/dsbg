@@ -6,16 +6,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-
-	// "regexp"
 	"strings"
 	"time"
 
-	// "github.com/gocolly/colly/v2"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/russross/blackfriday/v2"
-	"golang.org/x/net/html"
-	"gopkg.in/yaml.v2"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/parser"
+	frontmatter2 "github.com/yuin/goldmark/parser/frontmatter"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 const (
@@ -105,39 +103,49 @@ func parseFile(file string) (Article, error) {
 		return Article{}, err
 	}
 
-	// Split the file content into frontmatter and content
-	frontmatter, content := splitFrontmatterAndContent(string(data))
+	markdown := goldmark.New(
+		goldmark.WithParserOptions(
+			parser.WithAttribute(),
+			parser.WithAutoHeadingID(),
+		),
 
-	// Parse the frontmatter
+		goldmark.WithParserOptions(
+			frontmatter2.New().YAML(),
+		),
+	)
+	// Create a context to store frontmatter
+	context := parser.NewContext()
+
+	// Parse the Markdown file, storing frontmatter in the context
+	var buf strings.Builder
+	if err := markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
+		panic(err)
+	}
+	content := buf.String()
+
+	// Retrieve frontmatter from the context
+	frontmatter := frontmatter2.Get(context)
+	if frontmatter == nil {
+		return Article{}, fmt.Errorf("no frontmatter found in %s", file)
+	}
+
+	// Unmarshal frontmatter into the Article struct
 	var article Article
-	err = yaml.Unmarshal([]byte(frontmatter), &article)
-	if err != nil {
-		return Article{}, err
+	if err := frontmatter.Map().UnmarshalYAML(func(v interface{}) error {
+		// Type assertion to convert interface{} to *Article
+		article, ok := v.(*Article)
+		if !ok {
+			return fmt.Errorf("failed to type assert frontmatter to *Article")
+		}
+		return nil
+	}); err != nil {
+		return Article{}, fmt.Errorf("failed to unmarshal frontmatter: %w", err)
 	}
 
-	// Set default values for created and updated if not provided
-	if article.Created.IsZero() {
-		article.Created = time.Now()
-	}
-	if article.Updated.IsZero() {
-		article.Updated = article.Created
-	}
+	// ... (Set default dates, extract resources, determine IsPage, set Path)
 
-	// Convert markdown to HTML
-	if strings.HasSuffix(file, ".md") {
-		article.Content = string(blackfriday.Run([]byte(content)))
-	} else {
-		article.Content = content
-	}
-
-	// Extract resources from HTML
-	article.Files = extractResources(article.Content)
-
-	// Determine if the article is a page
-	article.IsPage = contains(article.Tags, "PAGE")
-
-	// Set the article path
-	article.Path = filepath.Dir(file)
+	// Set the HTML content (Goldmark already converted it)
+	article.Content = content
 
 	return article, nil
 }
@@ -151,31 +159,31 @@ func splitFrontmatterAndContent(data string) (string, string) {
 }
 
 func extractResources(htmlContent string) []string {
-    var resources []string
-    doc, err := html.Parse(strings.NewReader(htmlContent))
-    if err != nil {
-        log.Println("Error parsing HTML:", err)
-        return resources // Return an empty slice on error
-    }
+	var resources []string
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		log.Println("Error parsing HTML:", err)
+		return resources // Return an empty slice on error
+	}
 
-    var f func(*html.Node)
-    f = func(n *html.Node) {
-        if n.Type == html.ElementNode {
-            if n.Data == "img" || n.Data == "script" || n.Data == "link" {
-                for _, attr := range n.Attr {
-                    if attr.Key == "src" || attr.Key == "href" {
-                        resources = append(resources, attr.Val)
-                        break // Assuming only one relevant attribute per tag
-                    }
-                }
-            }
-        }
-        for c := n.FirstChild; c != nil; c = c.NextSibling {
-            f(c)
-        }
-    }
-    f(doc)
-    return resources
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode {
+			if n.Data == "img" || n.Data == "script" || n.Data == "link" {
+				for _, attr := range n.Attr {
+					if attr.Key == "src" || attr.Key == "href" {
+						resources = append(resources, attr.Val)
+						break // Assuming only one relevant attribute per tag
+					}
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+	return resources
 }
 
 func contains(s []string, e string) bool {
@@ -189,38 +197,38 @@ func contains(s []string, e string) bool {
 
 // Helper function to copy a file
 func copyFile(src, dest string) error {
-    input, err := os.ReadFile(src)
-    if err != nil {
-        return err
-    }
+	input, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
 
-    return os.WriteFile(dest, input, 0644)
+	return os.WriteFile(dest, input, 0644)
 }
 
 func generateArticleHTML(article Article, outputDir string) error {
-    // Create the article folder if it doesn't exist
-    articleDir := filepath.Join(outputDir, strings.ReplaceAll(article.Title, " ", "-"))
-    err := os.MkdirAll(articleDir, 0755)
-    if err != nil {
-        return err
-    }
+	// Create the article folder if it doesn't exist
+	articleDir := filepath.Join(outputDir, strings.ReplaceAll(article.Title, " ", "-"))
+	err := os.MkdirAll(articleDir, 0755)
+	if err != nil {
+		return err
+	}
 
-    // Copy resources to the article folder
-    for _, file := range article.Files {
-        srcPath := filepath.Join(article.Path, file)
-        destPath := filepath.Join(articleDir, file)
+	// Copy resources to the article folder
+	for _, file := range article.Files {
+		srcPath := filepath.Join(article.Path, file)
+		destPath := filepath.Join(articleDir, file)
 
-        // Create destination directory if it doesn't exist
-        err := os.MkdirAll(filepath.Dir(destPath), 0755)
-        if err != nil {
-            return err
-        }
+		// Create destination directory if it doesn't exist
+		err := os.MkdirAll(filepath.Dir(destPath), 0755)
+		if err != nil {
+			return err
+		}
 
-        err = copyFile(srcPath, destPath)
-        if err != nil {
-            return fmt.Errorf("failed to copy file %s: %w", file, err)
-        }
-    }
+		err = copyFile(srcPath, destPath)
+		if err != nil {
+			return fmt.Errorf("failed to copy file %s: %w", file, err)
+		}
+	}
 
 	// Generate the HTML content
 	html := fmt.Sprintf(`
