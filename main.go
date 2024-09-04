@@ -170,13 +170,40 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+// Helper function to copy a file
+func copyFile(src, dest string) error {
+    input, err := os.ReadFile(src)
+    if err != nil {
+        return err
+    }
+
+    return os.WriteFile(dest, input, 0644)
+}
+
 func generateArticleHTML(article Article, outputDir string) error {
-	// Create the article folder if it doesn't exist
-	articleDir := filepath.Join(outputDir, strings.ReplaceAll(article.Title, " ", "-"))
-	err := os.MkdirAll(articleDir, 0755)
-	if err != nil {
-		return err
-	}
+    // Create the article folder if it doesn't exist
+    articleDir := filepath.Join(outputDir, strings.ReplaceAll(article.Title, " ", "-"))
+    err := os.MkdirAll(articleDir, 0755)
+    if err != nil {
+        return err
+    }
+
+    // Copy resources to the article folder
+    for _, file := range article.Files {
+        srcPath := filepath.Join(article.Path, file)
+        destPath := filepath.Join(articleDir, file)
+
+        // Create destination directory if it doesn't exist
+        err := os.MkdirAll(filepath.Dir(destPath), 0755)
+        if err != nil {
+            return err
+        }
+
+        err = copyFile(srcPath, destPath)
+        if err != nil {
+            return fmt.Errorf("failed to copy file %s: %w", file, err)
+        }
+    }
 
 	// Generate the HTML content
 	html := fmt.Sprintf(`
