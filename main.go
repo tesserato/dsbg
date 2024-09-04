@@ -6,13 +6,15 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
 	// "regexp"
 	"strings"
 	"time"
 
-	"github.com/gocolly/colly/v2"
+	// "github.com/gocolly/colly/v2"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
+	"golang.org/x/net/html"
 	"gopkg.in/yaml.v2"
 )
 
@@ -148,17 +150,32 @@ func splitFrontmatterAndContent(data string) (string, string) {
 	return parts[1], parts[2]
 }
 
-func extractResources(html string) []string {
-	var resources []string
-	c := colly.NewCollector()
-	c.OnHTML("img[src], script[src], link[href]", func(e *colly.HTMLElement) {
-		resources = append(resources, e.Attr("src"))
-	})
-	c.OnError(func(r *colly.Response, err error) {
-		log.Println("Error extracting resources:", err)
-	})
-	c.Visit("http://example.com/" + html)
-	return resources
+func extractResources(htmlContent string) []string {
+    var resources []string
+    doc, err := html.Parse(strings.NewReader(htmlContent))
+    if err != nil {
+        log.Println("Error parsing HTML:", err)
+        return resources // Return an empty slice on error
+    }
+
+    var f func(*html.Node)
+    f = func(n *html.Node) {
+        if n.Type == html.ElementNode {
+            if n.Data == "img" || n.Data == "script" || n.Data == "link" {
+                for _, attr := range n.Attr {
+                    if attr.Key == "src" || attr.Key == "href" {
+                        resources = append(resources, attr.Val)
+                        break // Assuming only one relevant attribute per tag
+                    }
+                }
+            }
+        }
+        for c := n.FirstChild; c != nil; c = c.NextSibling {
+            f(c)
+        }
+    }
+    f(doc)
+    return resources
 }
 
 func contains(s []string, e string) bool {
