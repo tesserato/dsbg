@@ -1,0 +1,82 @@
+
+html {
+  --background-color: rgb(39, 38, 38);
+  --font-color:white;
+  --hover-color:rgb(212, 212, 212);
+  --box-color:rgba(0, 0, 0, 0.411);
+}
+
+header{
+  display: flex;
+  align-items: center;
+}
+
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--font-color);
+  background-color: var(--background-color);
+  width: 80%;
+  margin: auto;
+}
+
+button{
+  background-color: transparent;
+  border: none;
+  outline:none;
+}
+
+.icon{
+  font-size: 4em;
+  color: var(--font-color);
+}
+
+.icon:hover{
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
+a{
+  color: var(--font-color);
+  font-style: normal;
+  text-decoration: none;
+}
+
+a:hover{
+  color: var(--hover-color);
+}
+
+h1, summary{
+  font-weight: bold;
+  font-size: 1em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+details, div{
+  border-style: solid;
+  border-width: 0.1em;
+  background-color: var(--box-color);
+}
+
+h2, h3, h4, h5, h6, li, details, div {
+  width: 90%;
+  font-size: 1em;
+  padding-left: 2%;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+summary::-webkit-details-marker{
+  display: none;
+}
+
+summary:hover{
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
+ul, ol{
+  list-style-type: none;
+}
+
+

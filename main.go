@@ -1,252 +1,295 @@
 package main
 
 import (
+	"dsbg/parse"
+	"embed"
 	"flag"
 	"fmt"
-	// "io/fs"
+	"github.com/fsnotify/fsnotify"
+	"html/template"
+	"log"
 	"os"
+	"path"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 )
 
-// Constants for JS and CSS (can be moved to separate files)
-const JS = `
-// ... (JavaScript code remains the same) 
-`
+//go:embed assets/*
+var assets embed.FS
 
-const CSS = `
-// ... (CSS code remains the same)
-`
-
-// Article struct represents a single article
-type Article struct {
-	Title        string    `yaml:"title"`
-	Description  string    `yaml:"description"`
-	Created      time.Time `yaml:"created"`
-	LastUpdated  time.Time `yaml:"last_updated"`
-	Tags         []string  `yaml:"tags"`
-	Content      string
-	OriginalPath string
-}
-
-// shouldIgnore checks if a given path should be ignored based on the ignore patterns
-func shouldIgnore(path string, ignoreList []string) bool {
-	if path == "." {
-		return true
-	}
-	for _, pattern := range ignoreList {
-		if pattern == "" {
-			continue
+func isFlagPassed(name string) bool {
+	found := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
 		}
-		matched, err := regexp.MatchString(pattern, path)
-		if err != nil {
-			fmt.Printf("Error matching pattern '%s': %v\n", pattern, err)
-			continue
-		}
-		if matched {
-			return true
-		}
-	}
-	return false
-}
-
-// printHelp prints the help message
-func printHelp() {
-	fmt.Println("Usage: go run codemerge.go [options]")
-	fmt.Println("\nOptions:")
-	flag.PrintDefaults()
-}
-
-// savePathsToFile saves a list of paths to a file, one per line
-func savePathsToFile(filename string, paths []string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	for _, path := range paths {
-		_, err := fmt.Fprintln(file, path)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func processFile(path string, ignoreList []string) (*Article, error) {
-	// Check if the file should be ignored
-	relPath, _ := filepath.Rel(".", path)
-	if shouldIgnore(relPath, ignoreList) {
-		return nil, nil // Skip ignored files
-	}
-
-	// Read file content
-	content, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("error reading file %s: %w", path, err)
-	}
-
-	// Extract frontmatter and content
-	frontmatter, contentStr, err := extractFrontmatter(string(content))
-	if err != nil {
-		return nil, fmt.Errorf("error extracting frontmatter from %s: %w", path, err)
-	}
-
-	// Parse frontmatter
-	var article Article
-	err = yaml.Unmarshal([]byte(frontmatter), &article)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing frontmatter from %s: %w", path, err)
-	}
-	article.Content = contentStr
-	article.OriginalPath = path
-	return &article, nil
+	})
+	return found
 }
 
 func main() {
-	// Define command line flags
-	dirPath := flag.String("dir", ".", "Directory to scan")
-	// outputFileName := flag.String("output", "codebase.md", "Output file name")
-	ignorePatterns := flag.String("ignore", `\.git.*`, "Comma-separated list of regular expression patterns that match the paths to be ignored")
-	includedPathsFile := flag.String("included-paths-file", "", "File to save included paths (optional). If provided, the included paths will be saved to the file and not printed to the console.")
-	excludedPathsFile := flag.String("excluded-paths-file", "", "File to save excluded paths (optional). If provided, the excluded paths will be saved to the file and not printed to the console.")
+	var settings parse.Settings
+
+	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
+	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
+	flag.StringVar(&settings.InputDirectory, "input-dir", "content", "Path to the directory that holds the source files")
+	flag.StringVar(&settings.OutputDirectory, "output-dir", "public", "Path to the directory where the output files will be saved")
+	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
+	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
+	flag.StringVar(&settings.PathToCustomCss, "path-to-custom-css", "", "Path to a file with custom css")
+	flag.StringVar(&settings.PathToCustomJs, "path-to-custom-js", "", "Path to a file with custom js")
+	styleString := flag.String("style", "default", "Style to be used")
+	pathToAdditionalElementsTop := flag.String("path-to-additional-elements-top", "", "Path to a file with additional elements (basically scripts) to be placed at the top of the HTML outputs")
+	pathToAdditionalElemensBottom := flag.String("path-to-additional-elements-bottom", "", "Path to a file with additional elements (basically scripts) to be placed at the bottom of the HTML outputs")
 	showHelp := flag.Bool("help", false, "Show help message")
+	watch := flag.Bool("watch", false, "Watch for changes and rebuild")
+	// generate md template
+	createTemplate := flag.Bool("template", false, "Create a markdown template with frontmatter fields. title, output-dir (defaults to current dir in this case) and date-format")
 
 	flag.Parse()
 
-	// Check if help flag is set or no arguments are provided
-	if *showHelp || len(os.Args) == 1 {
-		printHelp()
+	if *showHelp {
+		fmt.Println("Usage: dsbg [options]")
+		fmt.Println("\nOptions:")
+		flag.PrintDefaults()
 		return
 	}
 
-	// Split ignore patterns string into a slice
-	ignoreList := strings.Split(*ignorePatterns, ",")
-	fmt.Println("Patterns to ignore:")
-	for i, pattern := range ignoreList {
-		ignoreList[i] = strings.TrimSpace(pattern)
-		fmt.Println(ignoreList[i])
+	if *createTemplate {
+		tmpl, err := template.New("frontmatter").Parse(parse.FrontMatterTemplate)
+		if err != nil {
+			log.Fatalf("Error parsing template: %v", err)
+		}
+
+		formattedDate := time.Now().Format(settings.DateFormat)
+		// Data for the template
+
+		// Get filename from title or default to "template.md"
+		var filename string
+		var title string
+		if isFlagPassed("title") { // check if title flag is passed
+			filename = formattedDate + " " + settings.Title + ".md"
+			title = settings.Title
+		} else {
+			filename = formattedDate + ".md"
+			title = ""
+		}
+
+		var description string
+		if isFlagPassed("description") { // check if description flag is passed
+			description = settings.Description
+		} else {
+			description = ""
+		}
+
+		data := struct {
+			Title       string
+			Description string
+			CurrentDate string
+		}{
+			Title:       title,
+			Description: description,
+			CurrentDate: formattedDate,
+		}
+
+		var templatePath string
+		if isFlagPassed("output-dir") { // check if output-dir flag is passed
+			templatePath = path.Join(settings.OutputDirectory, filename)
+		} else {
+			templatePath = filename
+		}
+
+		// Create the template file in the output directory
+		file, err := os.Create(templatePath)
+		if err != nil {
+			log.Fatalf("Error creating template file: %v", err)
+		}
+		defer file.Close()
+
+		if err := tmpl.Execute(file, data); err != nil {
+			log.Fatalf("Error executing template: %v", err)
+		}
+
+		fmt.Printf("Markdown template created at: %s\n", templatePath)
+		return // Exit after creating the template
 	}
 
-	// // Create the output file
-	// outputFile, err := os.Create(*outputFileName)
-	// if err != nil {
-	// 	fmt.Println("Error creating output file:", err)
-	// 	return
-	// }
-	// defer outputFile.Close()
+	if *pathToAdditionalElementsTop != "" {
+		additionalElementsTop, err := os.ReadFile(*pathToAdditionalElementsTop)
+		if err != nil {
+			log.Fatal(err)
+		}
+		settings.AdditionalElementsTop = template.HTML(additionalElementsTop)
+	}
 
-	// // Write the codebase tree to the output file
-	// fmt.Fprintln(outputFile, "# Codebase Structure\n")
-	// err = printTree(*dirPath, "", ignoreList, outputFile)
-	// if err != nil {
-	// 	fmt.Println("Error printing codebase tree:", err)
-	// 	return
-	// }
+	if *pathToAdditionalElemensBottom != "" {
+		additionalElemensBottom, err := os.ReadFile(*pathToAdditionalElemensBottom)
+		if err != nil {
+			log.Fatal(err)
+		}
+		settings.AdditionalElemensBottom = template.HTML(additionalElemensBottom)
+	}
 
-	// // Write the code content to the output file
-	// fmt.Fprintln(outputFile, "\n# Code Content\n")
-	// err = writeCodeContent(*dirPath, ignoreList, outputFile, *includedPathsFile, *excludedPathsFile)
-	// if err != nil {
-	// 	fmt.Println("Error writing code content:", err)
-	// 	return
-	// }
+	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
+		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
+	}
+	if err := os.MkdirAll(settings.OutputDirectory, 0755); err != nil {
+		log.Fatalf("Error creating output directory '%s': %v", settings.OutputDirectory, err)
+	}
 
-	// fmt.Println("Codebase documentation generated successfully!")
+	switch *styleString {
+	case "default":
+		settings.Style = parse.Default
+	case "dark":
+		settings.Style = parse.Dark
+	default:
+		settings.Style = parse.Default
+	}
+
+	// Initial build
+	buildWebsite(settings)
+
+	// Start watching for changes
+	if *watch {
+		watcher, err := fsnotify.NewWatcher()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer watcher.Close()
+
+		// Add the input directory to the watcher
+		err = watcher.Add(settings.InputDirectory)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Add custom css path, if any
+		if settings.PathToCustomCss != "" {
+			err = watcher.Add(settings.PathToCustomCss)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		log.Println("\nWatching for changes...\n")
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					log.Println("Changes detected. Rebuilding...")
+					buildWebsite(settings)
+					log.Println("\nWatching for changes...\n")
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("Error:", err)
+			}
+		}
+	}
 }
 
-// // printTree recursively walks the directory tree and prints the structure to the output file
-// func printTree(dirPath string, indent string, ignoreList []string, outputFile *os.File) error {
-// 	files, err := os.ReadDir(dirPath)
-// 	if err != nil {
-// 		return err
-// 	}
+func buildWebsite(settings parse.Settings) {
+	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	for _, file := range files {
-// 		filePath := filepath.Join(dirPath, file.Name())
-// 		relPath, _ := filepath.Rel(".", filePath)
+	var articles []parse.Article
+	for _, path := range files {
+		article, err := processFile(path, settings)
+		if err != nil {
+			log.Printf("Error processing file %s: %s\n", path, err)
+			continue
+		}
+		articles = append(articles, article)
+	}
 
-// 		// Check if the file/directory should be ignored
-// 		if shouldIgnore(relPath, ignoreList) {
-// 			continue
-// 		}
+	err = parse.GenerateHtmlIndex(articles, settings)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 		if file.IsDir() {
-// 			fmt.Fprintf(outputFile, "%s- **%s/**\n", indent, file.Name())
-// 			printTree(filePath, indent+"  ", ignoreList, outputFile)
-// 		} else {
-// 			fmt.Fprintf(outputFile, "%s- %s\n", indent, file.Name())
-// 		}
-// 	}
+	if settings.PathToCustomCss == "" {
+		styleAsset := "style.css"
+		switch settings.Style {
+		case parse.Dark:
+			styleAsset = "style-dark.css"
+		}
+		saveAsset(styleAsset, "style.css", settings.OutputDirectory)
 
-// 	return nil
-// }
+	} else {
+		input, err := os.ReadFile(settings.PathToCustomCss)
+		if err != nil {
+			panic(err)
+		}
 
-// // writeCodeContent reads the content of each file and writes it to the output file within a code block
-// func writeCodeContent(dirPath string, ignoreList []string, outputFile *os.File, includedPathsFile, excludedPathsFile string) error {
-// 	var Red = "\033[31m"
-// 	var Green = "\033[32m"
-// 	var Reset = "\033[0m"
-// 	var includedPaths []string
-// 	var excludedPaths []string
+		cssDestPath := filepath.Join(settings.OutputDirectory, "style.css")
+		err = os.WriteFile(cssDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
 
-// 	err := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
-// 		if err != nil {
-// 			return err
-// 		}
+	if settings.PathToCustomJs == "" {
+		saveAsset("script.js", "script.js", settings.OutputDirectory)
+	} else{
+		input, err := os.ReadFile(settings.PathToCustomJs)
+		if err != nil {
+			panic(err)
+		}
+		jsDestPath := filepath.Join(settings.OutputDirectory, "script.js")
+		err = os.WriteFile(jsDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
 
-// 		// Check if the file should be ignored
-// 		relPath, _ := filepath.Rel(".", path)
-// 		if shouldIgnore(relPath, ignoreList) {
-// 			if excludedPathsFile == "" {
-// 				fmt.Println(Red + "- " + path + Reset)
-// 			} else {
-// 				excludedPaths = append(excludedPaths, path)
-// 			}
+	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
 
-// 			return nil
-// 		}
+	log.Println("Blog generated successfully!")
+}
+func processFile(filePath string, settings parse.Settings) (parse.Article, error) {
+	var article parse.Article
+	var err error
+	var links parse.Links
 
-// 		if includedPathsFile == "" {
-// 			fmt.Println(Green + "+ " + path + Reset)
-// 		} else {
-// 			includedPaths = append(includedPaths, path)
-// 		}
+	pathLower := strings.ToLower(filePath)
 
-// 		if !d.IsDir() {
-// 			content, err := os.ReadFile(path)
-// 			if err != nil {
-// 				return err
-// 			}
-// 			extension := filepath.Ext(path)
-// 			extension = strings.ToLower(extension)
-// 			extension = strings.TrimPrefix(extension, ".")
-// 			fmt.Fprintf(outputFile, "## %s\n", path)
-// 			fmt.Fprintf(outputFile, "```%s\n%s\n```\n\n", extension, content)
-// 		}
+	if strings.HasSuffix(pathLower, ".md") {
+		article, err = parse.MarkdownFile(filePath)
+		links = parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+		article = parse.FormatMarkdown(article, links, settings)
+	} else if strings.HasSuffix(filePath, ".html") {
+		article, err = parse.HTMLFile(filePath)
+		links = parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+	} else {
+		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
+	}
 
-// 		return nil
-// 	})
+	if err != nil {
+		return parse.Article{}, err
+	}
 
-// 	// Save included paths to file (if filename provided)
-// 	if includedPathsFile != "" {
-// 		err = savePathsToFile(includedPathsFile, includedPaths)
-// 		if err != nil {
-// 			return fmt.Errorf("error saving included paths to file: %w", err)
-// 		}
-// 	}
+	os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
+	article = parse.FormatMarkdown(article, links, settings)
 
-// 	// Save excluded paths to file (if filename provided)
-// 	if excludedPathsFile != "" {
-// 		err = savePathsToFile(excludedPathsFile, excludedPaths)
-// 		if err != nil {
-// 			return fmt.Errorf("error saving excluded paths to file: %w", err)
-// 		}
-// 	}
+	return article, nil
+}
 
-// 	return err
-// }
+func saveAsset(assetName string, saveName string, outputDirectory string) {
+	file, err := assets.ReadFile("assets/" + assetName)
+	if err != nil {
+		log.Fatalf("Error reading asset '%s': %v", assetName, err)
+	}
+
+	pathToSave := path.Join(outputDirectory, saveName)
+	if err := os.WriteFile(pathToSave, file, 0644); err != nil {
+		log.Fatalf("Error saving asset '%s': %v", assetName, err)
+	}
+}

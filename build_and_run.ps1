@@ -1,6 +1,13 @@
-# mit the symbol table, debug information and the DWARF symbol table by passing -s and -w go build -ldflags="-s -w" .
-go build -ldflags="-s -w" .
+$exec_name = "dsbg.exe"
 
-./codemerge -h
+if (Test-Path $exec_name) {
+    Remove-Item $exec_name
+}
 
-./codemerge -ignore="\.git.*,.+\.exe" -excluded-paths-file="excluded_paths.txt"
+# go build -ldflags="-s -w" .
+go build .
+
+Remove-Item "public/*" -Recurse -Force
+
+# ./dsbg.exe -template -title "MY Awesome Post" -description "My awesome description"
+./dsbg.exe -title "MY Awesome Blog" -description "My awesome description" -path-to-custom-css "./assets/style.css" -watch
