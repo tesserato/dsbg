@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"golang.org/x/net/html"
 	"io/fs"
 	"log"
 	"os"
@@ -9,11 +10,13 @@ import (
 	"strings"
 	"time"
 
+	// "github.com/gocolly/colly/v2"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
-	frontmatter2 "github.com/yuin/goldmark/parser/frontmatter"
-	"github.com/yuin/goldmark/renderer/html"
+	// "github.com/yuin/goldmark/renderer/html"
+	"go.abhg.dev/goldmark/frontmatter"
+	// "gopkg.in/yaml.v2"
 )
 
 const (
@@ -108,11 +111,11 @@ func parseFile(file string) (Article, error) {
 			parser.WithAttribute(),
 			parser.WithAutoHeadingID(),
 		),
-
-		goldmark.WithParserOptions(
-			frontmatter2.New().YAML(),
+		goldmark.WithExtensions(
+			&frontmatter.Extender{},
 		),
 	)
+
 	// Create a context to store frontmatter
 	context := parser.NewContext()
 
@@ -124,32 +127,33 @@ func parseFile(file string) (Article, error) {
 	content := buf.String()
 
 	// Retrieve frontmatter from the context
-	frontmatter := frontmatter2.Get(context)
-	if frontmatter == nil {
-		return Article{}, fmt.Errorf("no frontmatter found in %s", file)
-	}
-
-	// Unmarshal frontmatter into the Article struct
+	d := frontmatter.Get(context)
 	var article Article
-	if err := frontmatter.Map().UnmarshalYAML(func(v interface{}) error {
-		// Type assertion to convert interface{} to *Article
-		article, ok := v.(*Article)
-		if !ok {
-			return fmt.Errorf("failed to type assert frontmatter to *Article")
-		}
-		return nil
-	}); err != nil {
+	if err := d.Decode(&article); err != nil {
 		return Article{}, fmt.Errorf("failed to unmarshal frontmatter: %w", err)
 	}
 
-	// ... (Set default dates, extract resources, determine IsPage, set Path)
+	// Set default values for created and updated if not provided
+	if article.Created.IsZero() {
+		article.Created = time.Now()
+	}
+	if article.Updated.IsZero() {
+		article.Updated = article.Created
+	}
 
+	// Extract resources from HTML
+	article.Files = extractResources(content) // Pass content here, not article.Content
+
+	// Determine if the article is a page
+	article.IsPage = contains(article.Tags, "PAGE")
+
+	// Set the article path
+	article.Path = filepath.Dir(file)
 	// Set the HTML content (Goldmark already converted it)
 	article.Content = content
 
 	return article, nil
 }
-
 func splitFrontmatterAndContent(data string) (string, string) {
 	parts := strings.SplitN(data, "---", 3)
 	if len(parts) != 3 {
