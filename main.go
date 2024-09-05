@@ -127,15 +127,26 @@ func parseFile(file string) (Article, error) {
 	content := buf.String()
 
 	// Retrieve frontmatter from the context
-	d := frontmatter.Get(context)
 	var article Article
-	if err := d.Decode(&article); err != nil {
-		return Article{}, fmt.Errorf("failed to unmarshal frontmatter: %w", err)
+	d := frontmatter.Get(context)
+	if d != nil {
+		if err := d.Decode(&article); err != nil {
+			return Article{}, fmt.Errorf("failed to unmarshal frontmatter: %w", err)
+		}
 	}
 
 	// Set default values for created and updated if not provided
 	if article.Created.IsZero() {
-		article.Created = time.Now()
+		// for _, layout := range []string{"2006-01-02", "02/01/2006", "01/02/2006"} { // Add more formats if needed
+		//     t, err := time.Parse(layout, d.)
+		//     if err == nil {
+		//         article.Created = t
+		//         break
+		//     }
+		// }
+		if article.Created.IsZero() {
+			article.Created = time.Now()
+		}
 	}
 	if article.Updated.IsZero() {
 		article.Updated = article.Created
