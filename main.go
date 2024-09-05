@@ -127,16 +127,18 @@ func parseFile(file string) (Article, error) {
 	content := buf.String()
 
 	// Retrieve frontmatter from the context
-	var article Article
+	// var article Article
+	var rawArticle map[string]any
 	d := frontmatter.Get(context)
 	if d != nil {
-		if err := d.Decode(&article); err != nil {
+		if err := d.Decode(&rawArticle); err != nil {
 			return Article{}, fmt.Errorf("failed to unmarshal frontmatter: %w", err)
 		}
 	}
 
 	// Set default values for created and updated if not provided
-	if article.Created.IsZero() {
+	if rawArticle["created"] == "" {
+		rawArticle["created"] = time.Now().Format(defaultDateFormat)
 		// for _, layout := range []string{"2006-01-02", "02/01/2006", "01/02/2006"} { // Add more formats if needed
 		//     t, err := time.Parse(layout, d.)
 		//     if err == nil {
@@ -144,13 +146,15 @@ func parseFile(file string) (Article, error) {
 		//         break
 		//     }
 		// }
-		if article.Created.IsZero() {
-			article.Created = time.Now()
-		}
+		// if article.Created.IsZero() {
+		// 	article.Created = time.Now()
+		// }
 	}
-	if article.Updated.IsZero() {
-		article.Updated = article.Created
+	if rawArticle["created"] == "" {
+		rawArticle["created"] = time.Now().Format(defaultDateFormat)
 	}
+
+	var article Article
 
 	// Extract resources from HTML
 	article.Files = extractResources(content) // Pass content here, not article.Content
@@ -165,13 +169,13 @@ func parseFile(file string) (Article, error) {
 
 	return article, nil
 }
-func splitFrontmatterAndContent(data string) (string, string) {
-	parts := strings.SplitN(data, "---", 3)
-	if len(parts) != 3 {
-		return "", data
-	}
-	return parts[1], parts[2]
-}
+// func splitFrontmatterAndContent(data string) (string, string) {
+// 	parts := strings.SplitN(data, "---", 3)
+// 	if len(parts) != 3 {
+// 		return "", data
+// 	}
+// 	return parts[1], parts[2]
+// }
 
 func extractResources(htmlContent string) []string {
 	var resources []string
