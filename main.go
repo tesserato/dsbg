@@ -127,8 +127,7 @@ func parseFile(file string) (Article, error) {
 	content := buf.String()
 
 	// Retrieve frontmatter from the context
-	// var article Article
-	var rawArticle map[string]any
+	var rawArticle map[string]interface{}
 	d := frontmatter.Get(context)
 	if d != nil {
 		if err := d.Decode(&rawArticle); err != nil {
@@ -136,26 +135,53 @@ func parseFile(file string) (Article, error) {
 		}
 	}
 
-	// Set default values for created and updated if not provided
-	if rawArticle["created"] == "" {
-		rawArticle["created"] = time.Now().Format(defaultDateFormat)
-		// for _, layout := range []string{"2006-01-02", "02/01/2006", "01/02/2006"} { // Add more formats if needed
-		//     t, err := time.Parse(layout, d.)
-		//     if err == nil {
-		//         article.Created = t
-		//         break
-		//     }
-		// }
-		// if article.Created.IsZero() {
-		// 	article.Created = time.Now()
-		// }
-	}
-	if rawArticle["created"] == "" {
-		rawArticle["created"] = time.Now().Format(defaultDateFormat)
-	}
-
 	var article Article
 
+	// 1. Get info from rawArticle and add to article
+	if title, ok := rawArticle["title"].(string); ok {
+		article.Title = title
+	}
+	if description, ok := rawArticle["description"].(string); ok {
+		article.Description = description
+	}
+	if created, ok := rawArticle["created"].(string); ok {
+		t, err := time.Parse(defaultDateFormat, created)
+		if err != nil {
+			return Article{}, fmt.Errorf("invalid 'created' date format: %w", err)
+		}
+		article.Created = t
+	}
+	if updated, ok := rawArticle["updated"].(string); ok {
+		t, err := time.Parse(defaultDateFormat, updated)
+		if err != nil {
+			return Article{}, fmt.Errorf("invalid 'updated' date format: %w", err)
+		}
+		article.Updated = t
+	}
+	if tags, ok := rawArticle["tags"].([]interface{}); ok {
+		for _, tag := range tags {
+			if strTag, ok := tag.(string); ok {
+				article.Tags = append(article.Tags, strTag)
+			}
+		}
+	}
+
+	// 2. Set Created and Updated to file dates if not provided in frontmatter
+	fileInfo, err := os.Stat(file)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+	}
+	if article.Created.IsZero() {
+		article.Created = fileInfo.ModTime() // Use file modification time
+	}
+	if article.Updated.IsZero() {
+		article.Updated = fileInfo.ModTime() // Use file modification time
+	}
+
+	// 3. Default title to filename if not provided
+	if article.Title == "" {
+		article.Title = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
+	}
 	// Extract resources from HTML
 	article.Files = extractResources(content) // Pass content here, not article.Content
 
@@ -169,6 +195,7 @@ func parseFile(file string) (Article, error) {
 
 	return article, nil
 }
+
 // func splitFrontmatterAndContent(data string) (string, string) {
 // 	parts := strings.SplitN(data, "---", 3)
 // 	if len(parts) != 3 {
