@@ -49,12 +49,22 @@ func main() {
 	// 2. Parse each file into an Article struct
 	var articles []Article
 	for _, file := range files {
-		article, err := parseFile(file)
-		if err != nil {
-			log.Printf("Error parsing file %s: %s\n", file, err)
-			continue
+		if strings.HasSuffix(file, ".md") {
+			article, err := parseMarkdownFile(file)
+			if err != nil {
+				log.Printf("Error parsing file %s: %s\n", file, err)
+				continue
+			}
+			articles = append(articles, article)
+
+		} else if strings.HasSuffix(file, ".html") {
+			article, err := parseHTMLFile(file)
+			if err != nil {
+				log.Printf("Error parsing file %s: %s\n", file, err)
+				continue
+			}
+			articles = append(articles, article)
 		}
-		articles = append(articles, article)
 	}
 
 	// 3. Generate HTML for each article and page
@@ -100,7 +110,7 @@ func getFiles(root string, extensions []string) ([]string, error) {
 	return files, err
 }
 
-func parseFile(file string) (Article, error) {
+func parseMarkdownFile(file string) (Article, error) {
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return Article{}, err
@@ -145,11 +155,13 @@ func parseFile(file string) (Article, error) {
 		article.Description = description
 	}
 	if created, ok := rawArticle["created"].(string); ok {
-		t, err := time.Parse(defaultDateFormat, created)
-		if err != nil {
-			return Article{}, fmt.Errorf("invalid 'created' date format: %w", err)
+		for _, layout := range []string{"2006-01-02", "02/01/2006", "01/02/2006"} {
+			t, err := time.Parse(layout, created)
+			if err == nil {
+				article.Created = t
+				break
+			}
 		}
-		article.Created = t
 	}
 	if updated, ok := rawArticle["updated"].(string); ok {
 		t, err := time.Parse(defaultDateFormat, updated)
@@ -196,13 +208,71 @@ func parseFile(file string) (Article, error) {
 	return article, nil
 }
 
-// func splitFrontmatterAndContent(data string) (string, string) {
-// 	parts := strings.SplitN(data, "---", 3)
-// 	if len(parts) != 3 {
-// 		return "", data
-// 	}
-// 	return parts[1], parts[2]
-// }
+func parseHTMLFile(file string) (Article, error) {
+	// Read the HTML file content
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to read file %s: %w", file, err)
+	}
+	content := string(data)
+
+	// Create an article and populate common fields
+	article := Article{
+		Content: content,
+		Files:   extractResources(content),
+		IsPage:  true, // Assume HTML files represent pages
+		Path:    filepath.Dir(file),
+	}
+
+	// Extract title from the first H1 tag
+	doc, err := html.Parse(strings.NewReader(content))
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
+	}
+	if h1 := findFirstElement(doc, "h1"); h1 != nil {
+		article.Title = getTextContent(h1)
+	}
+
+	// If no H1 tag, default title to filename
+	if article.Title == "" {
+		article.Title = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
+	}
+
+	// Use file modification time for Created and Updated
+	fileInfo, err := os.Stat(file)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+	}
+	article.Created = fileInfo.ModTime()
+	article.Updated = fileInfo.ModTime()
+
+	return article, nil
+}
+
+// Helper function to find the first occurrence of an element by tag name
+func findFirstElement(n *html.Node, tag string) *html.Node {
+	if n.Type == html.ElementNode && n.Data == tag {
+		return n
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if found := findFirstElement(c, tag); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+// Helper function to extract text content from an HTML node
+func getTextContent(n *html.Node) string {
+	var text string
+	if n.Type == html.TextNode {
+		text += n.Data
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		text += getTextContent(c)
+	}
+	return strings.TrimSpace(text)
+}
 
 func extractResources(htmlContent string) []string {
 	var resources []string
@@ -253,7 +323,7 @@ func copyFile(src, dest string) error {
 
 func generateArticleHTML(article Article, outputDir string) error {
 	// Create the article folder if it doesn't exist
-	articleDir := filepath.Join(outputDir, strings.ReplaceAll(article.Title, " ", "-"))
+	articleDir := filepath.Join(outputDir, strings.ReplaceAll(article.Path, " ", "_"))
 	err := os.MkdirAll(articleDir, 0755)
 	if err != nil {
 		return err
