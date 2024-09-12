@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
-	"github.com/microcosm-cc/bluemonday"
 )
 
 const (
@@ -95,8 +93,8 @@ func (a Article) SaveHtml(outputDir string) error {
 	}
 
 	// Sanitize the HTML content
-	p := bluemonday.UGCPolicy()
-	html = p.Sanitize(html)
+	// p := bluemonday.UGCPolicy()
+	// html = p.Sanitize(html)
 
 	// Write the HTML content to the file
 	filename := filepath.Join(pageDir, defaultIndexName)

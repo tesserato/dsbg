@@ -1,7 +1,13 @@
-# mit the symbol table, debug information and the DWARF symbol table by passing -s and -w go build -ldflags="-s -w" .
-go build -ldflags="-s -w" .
+$exec_name = "./dsbg.exe"
 
-.\dsbg.exe
+if (Test-Path $exec_name) {
+    Remove-Item $exec_name
+}
+
+# go build -ldflags="-s -w" .
+go build .
+
+./dsbg.exe
 
 # ./codemerge -h
 
