@@ -17,6 +17,7 @@ import (
 	// "github.com/yuin/goldmark/renderer/html"
 	"go.abhg.dev/goldmark/frontmatter"
 	// "gopkg.in/yaml.v2"
+	"github.com/tesserato/dead-simple-blog-generator/article"
 )
 
 const (
@@ -27,17 +28,7 @@ const (
 	defaultDateFormat = "2006-01-02"
 )
 
-type Article struct {
-	Title       string    `yaml:"title"`
-	Description string    `yaml:"description"`
-	Created     time.Time `yaml:"created"`
-	Updated     time.Time `yaml:"updated"`
-	Tags        []string  `yaml:"tags"`
-	Content     string    `yaml:"-"`
-	Files       []string  `yaml:"-"`
-	IsPage      bool      `yaml:"-"`
-	Path        string    `yaml:"-"`
-}
+
 
 func main() {
 	// 1. Read all markdown and HTML files from the content folder
