@@ -1,4 +1,4 @@
-$exec_name = "./dsbg.exe"
+$exec_name = "dsbg.exe"
 
 if (Test-Path $exec_name) {
     Remove-Item $exec_name
@@ -7,8 +7,6 @@ if (Test-Path $exec_name) {
 # go build -ldflags="-s -w" .
 go build .
 
+Remove-Item "public/*" -Recurse -Force
+
 ./dsbg.exe
-
-# ./codemerge -h
-
-# ./codemerge -ignore="\.git.*,.+\.exe" -excluded-paths-file="excluded_paths.txt"
