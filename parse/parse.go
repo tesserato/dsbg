@@ -156,8 +156,7 @@ func extractResources(htmlContent string) []string {
 	var resources []string
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		fmt.Errorf("Error parsing HTML:", err)
-		return resources // Return an empty slice on error
+		fmt.Errorf("error parsing HTML: %w", err)
 	}
 
 	var f func(*html.Node)
