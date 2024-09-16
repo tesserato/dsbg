@@ -16,15 +16,15 @@ const (
 )
 
 type Article struct {
-	Title       string    `yaml:"title"`
-	Description string    `yaml:"description"`
-	Created     time.Time `yaml:"created"`
-	Updated     time.Time `yaml:"updated"`
-	Tags        []string  `yaml:"tags"`
-	HtmlContent string    `yaml:"-"`
-	Files       []string  `yaml:"-"`
-	IsPage      bool      `yaml:"-"`
-	Path        string    `yaml:"-"`
+	Title       string
+	Description string
+	Created     time.Time
+	Updated     time.Time
+	Tags        []string
+	HtmlContent string
+	Files       []string
+	IsPage      bool
+	Path        string
 }
 
 func (a Article) SaveHtml(outputDir string) error {

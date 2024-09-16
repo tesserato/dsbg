@@ -12,6 +12,13 @@ import (
 	"go.abhg.dev/goldmark/frontmatter"
 	"golang.org/x/net/html"
 )
+// type ArticleMarkdownMetadata struct {
+// 	Title         string   `yaml:"title"`
+// 	Description   string   `yaml:"description"`
+// 	CreatedString string   `yaml:"created"`
+// 	UpdatedString string   `yaml:"updated"`
+// 	Tags          []string `yaml:"tags"`
+// }
 
 func MarkdownFile(file string) (Article, error) {
 	data, err := os.ReadFile(file)
