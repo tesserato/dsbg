@@ -2,7 +2,10 @@ package parse
 
 import (
 	"fmt"
-	// "os"
+	// "strconv"
+	"strings"
+
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -14,7 +17,8 @@ description: {description}
 tags: {tags}
 created: {created}
 updated: {updated}
-___
+---
+
 # header 1
 
 paragraph beneath header 1
@@ -63,11 +67,16 @@ func genMarkdownText(template string, aStruct any) string {
 	for _, field := range fields {
 		val := vals.FieldByName(field.Name)
 		// val := fields.FieldByNamv.FieldByIndex(e.Index)
-        fmt.Printf("Key: %s\tType: %s \t Value: %s\n", field.Name, field.Type, val)
-    }
-	return ""
-}
+		fmt.Printf("Key: %s\tType: %s \t Value: %s\n", field.Name, field.Type, val)
 
+		// if field.Type.Kind() == reflect.String {
+		// val := val.String()
+
+		// }
+		template = strings.ReplaceAll(template, "{"+field.Name+"}", val.String())
+	}
+	return template
+}
 
 func compareTags(tags1 []string, tags2 []string) bool {
 	if len(tags1) != len(tags2) {
@@ -82,7 +91,7 @@ func compareTags(tags1 []string, tags2 []string) bool {
 }
 
 func TestMarkdownFile(t *testing.T) {
-	// dir := t.TempDir()
+	dir := t.TempDir()
 
 	for _, e := range dataTestMarkdownFile {
 
@@ -90,33 +99,33 @@ func TestMarkdownFile(t *testing.T) {
 
 		fmt.Println(mdText)
 
-		// path := dir + "/" + e.out.path
-		// os.WriteFile(path, []byte(e.in), 0644)
+		path := dir + "/" + e.path
+		os.WriteFile(path, []byte(mdText), 0644)
 		// fmt.Println(path)
 
-		// md, err := MarkdownFile(path)
-		// if err != nil {
-		// 	t.Fatalf("Error: %v", err)
-		// }
+		md, err := MarkdownFile(path)
+		if err != nil {
+			t.Fatalf("Error: %v", err)
+		}
 
-		// if md.Title != e.out.title {
-		// 	t.Errorf("Wrong title: %s != %s", md.Title, e.out.title)
-		// }
+		if md.Title != e.title {
+			t.Errorf("Wrong title: %s != %s", e.title, md.Title)
+		}
 
-		// if md.Description != e.out.description {
-		// 	t.Errorf("Wrong description: %s != %s", md.Description, e.out.description)
-		// }
+		if md.Description != e.description {
+			t.Errorf("Wrong description: %s != %s",  e.description, md.Description)
+		}
 
-		// if !compareTags(md.Tags, e.out.tags) {
-		// 	t.Errorf("Wrong tags: %v != %v", md.Tags, e.out.tags)
-		// }
+		if !compareTags(md.Tags, e.tagsOut) {
+			t.Errorf("Wrong tags: %v != %v", e.tagsOut, md.Tags)
+		}
 
-		// if !md.Created.Equal(e.out.created) {
-		// 	t.Errorf("Wrong created date: %s != %s", md.Created, e.out.created)
-		// }
+		if !md.Created.Equal(e.createdOut) {
+			t.Errorf("Wrong created date: %s != %s", e.createdOut, md.Created)
+		}
 
-		// if !md.Updated.Equal(e.out.updated) {
-		// 	t.Errorf("Wrong updated date: %s != %s", md.Updated, e.out.updated)
-		// }
+		if !md.Updated.Equal(e.updatedOut) {
+			t.Errorf("Wrong updated date: %s != %s", e.updatedOut, md.Updated)
+		}
 	}
 }
