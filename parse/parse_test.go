@@ -6,9 +6,16 @@ import (
 	"testing"
 )
 
+type markdown_tests_out struct {
+	path        string
+	title       string
+	description string
+	tags        []string
+}
+
 var markdown_tests = []struct {
 	in  string
-	out string
+	out markdown_tests_out
 }{
 	{
 		`---
@@ -26,7 +33,8 @@ paragraph beneath header 1
 ## header 2
 
 paragraph beneath header 1`,
-		" "},
+		markdown_tests_out{"2016 05 29 Test entry.md", "Title", "Description", []string{"tag1", "tag2", "compound tag1", "compound tag2"}},
+	},
 }
 
 func compareTags(tags1 []string, tags2 []string) bool {
@@ -44,22 +52,23 @@ func compareTags(tags1 []string, tags2 []string) bool {
 func TestMarkdownFile(t *testing.T) {
 	dir := t.TempDir()
 
-	path := dir + "/2016 05 29 Test entry.md"
+	for _, e := range markdown_tests {
+		path := dir + "/" + e.out.path
+		os.WriteFile(path, []byte(e.in), 0644)
+		fmt.Println(e.in)
 
-	fmt.Println(md1)
-	os.WriteFile(path, []byte(md1), 0644)
+		md, err := MarkdownFile(path)
+		if err != nil {
+			t.Fatalf("Error")
+		}
 
-	md, err := MarkdownFile(path)
-	if err != nil {
-		t.Fatalf("Error")
+		if md.Description != e.out.description {
+			t.Errorf("Wrong description")
+		}
+
+		if !compareTags(md.Tags, e.out.tags) {
+			t.Errorf("Wrong tags: %v != %v", md.Tags, e.out.tags)
+		}
 	}
 
-	if md.Description != "Description" {
-		t.Errorf("Wrong description")
-	}
-
-	tags := []string{"tag1", "tag2", "compound tag1", "compound tag2"}
-	if !compareTags(tags, md.Tags) {
-		t.Errorf("Wrong tags: %v != %v", tags, md.Tags)
-	}
 }
