@@ -43,7 +43,7 @@ func TestDateTimeFromString(t *testing.T) {
 	} {
 		tm := DateTimeFromString(d)
 		if tm != defaultTime {
-			t.Errorf("Wrong title: %s != %s", defaultTime, tm)
+			t.Errorf("Wrong date: %s != %s", defaultTime, tm)
 		}
 	}
 }

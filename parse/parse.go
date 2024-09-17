@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	// "reflect"
+
 	"regexp"
 	"strconv"
 	"strings"
@@ -28,7 +30,7 @@ func DateTimeFromString(date string) time.Time {
 	for _, pattern := range []string{
 		`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
 		`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
-		`(?P<hour>\d{2})\D+(?P<min>\d{2})\D+(?P<sec>\d{2})`,
+		`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
 	} {
 		r := regexp.MustCompile(pattern)
 
@@ -80,56 +82,57 @@ func MarkdownFile(path string) (Article, error) {
 	content := buf.String()
 
 	// Retrieve frontmatter from the context
-	var rawArticle map[string]interface{}
-	d := frontmatter.Get(context)
-	if d != nil {
-		if err := d.Decode(&rawArticle); err != nil {
-			return Article{}, fmt.Errorf("failed to unmarshal frontmatter: %w", err)
-		}
-	}
-
 	var article Article
-
-	// 1. Get info from rawArticle and add to article
-	if title, ok := rawArticle["title"].(string); ok {
-		article.Title = title
-	}
-
-	if description, ok := rawArticle["description"].(string); ok {
-		article.Description = description
-	}
-
-	fmt.Println("!!!! before")
-	if created, ok := rawArticle["created"].(string); ok {
-		fmt.Println("!!!! after", created)
-		datetime := DateTimeFromString(created)
-		if datetime.IsZero() {
-			datetime = DateTimeFromString(path)
+	fm := frontmatter.Get(context)
+	if fm != nil {
+		var d map[string]any
+		if err := fm.Decode(&d); err != nil {
+			panic(err)
 		}
-		article.Created = datetime
-	}
-	if updated, ok := rawArticle["updated"].(string); ok {
-		article.Updated = DateTimeFromString(updated)
+
+		for name, value := range d {
+			fmt.Printf("Key: %s\tValue: %v\tType: %T\n", name, value, value)
+			name = strings.ToLower(name)
+			name = strings.Trim(name, " ")
+
+			switch name {
+			case "title":
+				article.Title = value.(string)
+			case "description":
+				article.Description = value.(string)
+			case "created":
+				datetime := value.(time.Time)
+				if datetime.IsZero() {
+					datetime = DateTimeFromString(path)
+				}
+				article.Created = datetime
+			case "updated":
+				article.Updated = value.(time.Time)
+			case "tags":
+				// tags := strings.ReplaceAll(value.(string), ";", ",")
+				// tagsArray := strings.Split(tags, ",")
+				// for i, tag := range tagsArray {
+				// 	tag = strings.Trim(tag, " ")
+				// 	tagsArray[i] = tag
+				// }
+				tags := value.([]any)
+				for _, tag := range tags {
+					article.Tags = append(article.Tags, tag.(string))
+				}
+			}
+		}
 	}
 
 	// 2. Set Created and Updated to file dates if not provided in frontmatter
-	// fileInfo, err := os.Stat(path)
-	// if err != nil {
-	// 	return Article{}, fmt.Errorf("failed to get file info: %w", err)
-	// }
-	// if article.Created.IsZero() {
-	// 	article.Created = fileInfo.ModTime() // Use file modification time
-	// }
-	// if article.Updated.IsZero() {
-	// 	article.Updated = fileInfo.ModTime() // Use file modification time
-	// }
-
-	if tags, ok := rawArticle["tags"].([]interface{}); ok {
-		for _, tag := range tags {
-			if strTag, ok := tag.(string); ok {
-				article.Tags = append(article.Tags, strTag)
-			}
-		}
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+	}
+	if article.Created.IsZero() {
+		article.Created = fileInfo.ModTime() // Use file modification time
+	}
+	if article.Updated.IsZero() {
+		article.Updated = fileInfo.ModTime() // Use file modification time
 	}
 
 	// 3. Default title to filename if not provided
