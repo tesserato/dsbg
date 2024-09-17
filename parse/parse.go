@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +14,7 @@ import (
 	"go.abhg.dev/goldmark/frontmatter"
 	"golang.org/x/net/html"
 )
+
 // type ArticleMarkdownMetadata struct {
 // 	Title         string   `yaml:"title"`
 // 	Description   string   `yaml:"description"`
@@ -20,8 +23,38 @@ import (
 // 	Tags          []string `yaml:"tags"`
 // }
 
-func MarkdownFile(file string) (Article, error) {
-	data, err := os.ReadFile(file)
+func DateTimeFromString(date string) time.Time {
+	m := make(map[string]int)
+	for _, pattern := range []string{
+		`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
+		`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
+		`(?P<hour>\d{2})\D+(?P<min>\d{2})\D+(?P<sec>\d{2})`,
+	} {
+		r := regexp.MustCompile(pattern)
+
+		matches := r.FindStringSubmatch(date)
+		if len(matches) > 0 {
+			for i, name := range r.SubexpNames()[1:] {
+				integer, err := strconv.Atoi(matches[i+1])
+				if err != nil {
+					panic(err) // TODO handle error
+				}
+				m[name] = integer
+			}
+		}
+	}
+	year := m["year"]
+	month := time.Month(m["month"])
+	day := m["day"]
+	hour := m["hour"]
+	min := m["min"]
+	sec := m["sec"]
+	dateTime := time.Date(year, month, day, hour, min, sec, 0, time.UTC)
+	return dateTime
+}
+
+func MarkdownFile(path string) (Article, error) {
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return Article{}, err
 	}
@@ -61,25 +94,36 @@ func MarkdownFile(file string) (Article, error) {
 	if title, ok := rawArticle["title"].(string); ok {
 		article.Title = title
 	}
+
 	if description, ok := rawArticle["description"].(string); ok {
 		article.Description = description
 	}
+
+	fmt.Println("!!!! before")
 	if created, ok := rawArticle["created"].(string); ok {
-		for _, layout := range []string{"2006-01-02", "02/01/2006", "01/02/2006"} {
-			t, err := time.Parse(layout, created)
-			if err == nil {
-				article.Created = t
-				break
-			}
+		fmt.Println("!!!! after", created)
+		datetime := DateTimeFromString(created)
+		if datetime.IsZero() {
+			datetime = DateTimeFromString(path)
 		}
+		article.Created = datetime
 	}
 	if updated, ok := rawArticle["updated"].(string); ok {
-		t, err := time.Parse(defaultDateFormat, updated)
-		if err != nil {
-			return Article{}, fmt.Errorf("invalid 'updated' date format: %w", err)
-		}
-		article.Updated = t
+		article.Updated = DateTimeFromString(updated)
 	}
+
+	// 2. Set Created and Updated to file dates if not provided in frontmatter
+	// fileInfo, err := os.Stat(path)
+	// if err != nil {
+	// 	return Article{}, fmt.Errorf("failed to get file info: %w", err)
+	// }
+	// if article.Created.IsZero() {
+	// 	article.Created = fileInfo.ModTime() // Use file modification time
+	// }
+	// if article.Updated.IsZero() {
+	// 	article.Updated = fileInfo.ModTime() // Use file modification time
+	// }
+
 	if tags, ok := rawArticle["tags"].([]interface{}); ok {
 		for _, tag := range tags {
 			if strTag, ok := tag.(string); ok {
@@ -88,21 +132,9 @@ func MarkdownFile(file string) (Article, error) {
 		}
 	}
 
-	// 2. Set Created and Updated to file dates if not provided in frontmatter
-	fileInfo, err := os.Stat(file)
-	if err != nil {
-		return Article{}, fmt.Errorf("failed to get file info: %w", err)
-	}
-	if article.Created.IsZero() {
-		article.Created = fileInfo.ModTime() // Use file modification time
-	}
-	if article.Updated.IsZero() {
-		article.Updated = fileInfo.ModTime() // Use file modification time
-	}
-
 	// 3. Default title to filename if not provided
 	if article.Title == "" {
-		article.Title = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
+		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	}
 	// Extract resources from HTML
 	article.Files = extractResources(content) // Pass content here, not article.Content
@@ -111,7 +143,7 @@ func MarkdownFile(file string) (Article, error) {
 	article.IsPage = contains(article.Tags, "PAGE")
 
 	// Set the article path
-	article.Path = filepath.Dir(file)
+	article.Path = filepath.Dir(path)
 	// Set the HTML content (Goldmark already converted it)
 	article.HtmlContent = content
 

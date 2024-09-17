@@ -28,14 +28,25 @@ paragraph beneath header 1
 paragraph beneath header 1
 `
 
-// type markdown_tests_out struct {
-// 	path        string
-// 	title       string
-// 	description string
-// 	tags        []string
-// 	created     time.Time
-// 	updated     time.Time
-// }
+func TestDateTimeFromString(t *testing.T) {
+	defaultTime := time.Date(2014, 9, 6, 0, 0, 0, 0, time.UTC)
+	for _, d := range []string{
+		"2014 09 06",
+		"2014 9 06",
+		"2014-9-06",
+		"2014 09 6",
+		"6 9 2014",
+		"6   9   2014",
+		"6/9 2014",
+		"6.9.2014",
+		"6_9-2014",
+	} {
+		tm := DateTimeFromString(d)
+		if tm != defaultTime {
+			t.Errorf("Wrong title: %s != %s", defaultTime, tm)
+		}
+	}
+}
 
 var dataTestMarkdownFile = []struct {
 	path        string
@@ -53,19 +64,19 @@ var dataTestMarkdownFile = []struct {
 		title:       "Title",
 		description: "Description",
 		tags:        "[tag1, tag2, compound tag1, compound tag2]",
-		created:     "2023-05-11",
-		updated:     "2024-06-13",
+		created:     "2020-05-11",
+		updated:     "2021-06-13",
 		tagsOut:     []string{"tag1", "tag2", "compound tag1", "compound tag2"},
-		createdOut:  time.Date(2023, 5, 11, 0, 0, 0, 0, time.UTC),
-		updatedOut:  time.Date(2024, 6, 13, 0, 0, 0, 0, time.UTC),
+		createdOut:  time.Date(2020, 5, 11, 0, 0, 0, 0, time.UTC),
+		updatedOut:  time.Date(2021, 6, 13, 0, 0, 0, 0, time.UTC),
 	},
 }
 
 func genMarkdownText(template string, aStruct any) string {
 	fields := reflect.VisibleFields(reflect.TypeOf(aStruct))
-	vals := reflect.Indirect(reflect.ValueOf(aStruct))
+	values := reflect.Indirect(reflect.ValueOf(aStruct))
 	for _, field := range fields {
-		val := vals.FieldByName(field.Name)
+		val := values.FieldByName(field.Name)
 		// val := fields.FieldByNamv.FieldByIndex(e.Index)
 		fmt.Printf("Key: %s\tType: %s \t Value: %s\n", field.Name, field.Type, val)
 
@@ -92,7 +103,6 @@ func compareTags(tags1 []string, tags2 []string) bool {
 
 func TestMarkdownFile(t *testing.T) {
 	dir := t.TempDir()
-
 	for _, e := range dataTestMarkdownFile {
 
 		mdText := genMarkdownText(mdTemplate, e)
@@ -113,7 +123,7 @@ func TestMarkdownFile(t *testing.T) {
 		}
 
 		if md.Description != e.description {
-			t.Errorf("Wrong description: %s != %s",  e.description, md.Description)
+			t.Errorf("Wrong description: %s != %s", e.description, md.Description)
 		}
 
 		if !compareTags(md.Tags, e.tagsOut) {
@@ -121,11 +131,11 @@ func TestMarkdownFile(t *testing.T) {
 		}
 
 		if !md.Created.Equal(e.createdOut) {
-			t.Errorf("Wrong created date: %s != %s", e.createdOut, md.Created)
+			t.Errorf("Wrong created date: (%s) %s != %s", e.created, e.createdOut, md.Created)
 		}
 
 		if !md.Updated.Equal(e.updatedOut) {
-			t.Errorf("Wrong updated date: %s != %s", e.updatedOut, md.Updated)
+			t.Errorf("Wrong updated date: (%s) %s != %s", e.updated, e.updatedOut, md.Updated)
 		}
 	}
 }
