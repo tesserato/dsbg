@@ -93,11 +93,9 @@ func MarkdownFile(path string) (Article, error) {
 			// fmt.Printf("Key: %s\tValue: %v\tType: %T\n", name, value, value)
 			name = strings.ToLower(name)
 			name = strings.Trim(name, " ")
-
 			if value == nil {
 				continue
 			}
-
 			switch name {
 			case "title":
 				article.Title = value.(string)

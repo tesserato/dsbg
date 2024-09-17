@@ -40,6 +40,7 @@ func TestDateTimeFromString(t *testing.T) {
 		"6/9 2014",
 		"6.9.2014",
 		"6_9-2014",
+		"2014 06 06 How to set up a free blog.md",
 	} {
 		tm := DateTimeFromString(d)
 		if tm != defaultTime {
