@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	// "reflect"
+	"reflect"
 
 	"regexp"
 	"strconv"
@@ -89,11 +89,14 @@ func MarkdownFile(path string) (Article, error) {
 		if err := fm.Decode(&d); err != nil {
 			panic(err)
 		}
-
 		for name, value := range d {
-			fmt.Printf("Key: %s\tValue: %v\tType: %T\n", name, value, value)
+			// fmt.Printf("Key: %s\tValue: %v\tType: %T\n", name, value, value)
 			name = strings.ToLower(name)
 			name = strings.Trim(name, " ")
+
+			if value == nil {
+				continue
+			}
 
 			switch name {
 			case "title":
@@ -101,23 +104,35 @@ func MarkdownFile(path string) (Article, error) {
 			case "description":
 				article.Description = value.(string)
 			case "created":
-				datetime := value.(time.Time)
-				if datetime.IsZero() {
-					datetime = DateTimeFromString(path)
+				if reflect.TypeOf(value).Kind() == reflect.String {
+					article.Created = DateTimeFromString(value.(string))
+				} else {
+					article.Created = value.(time.Time)
 				}
-				article.Created = datetime
 			case "updated":
-				article.Updated = value.(time.Time)
+				if reflect.TypeOf(value).Kind() == reflect.String {
+					article.Updated = DateTimeFromString(value.(string))
+				} else {
+					article.Updated = value.(time.Time)
+				}
 			case "tags":
-				// tags := strings.ReplaceAll(value.(string), ";", ",")
-				// tagsArray := strings.Split(tags, ",")
-				// for i, tag := range tagsArray {
-				// 	tag = strings.Trim(tag, " ")
-				// 	tagsArray[i] = tag
-				// }
-				tags := value.([]any)
-				for _, tag := range tags {
-					article.Tags = append(article.Tags, tag.(string))
+				switch reflect.TypeOf(value).Kind() {
+
+				case reflect.Slice:
+					tags := value.([]any)
+					for _, tag := range tags {
+						tagString := strings.Trim(tag.(string), " ")
+						article.Tags = append(article.Tags, tagString)
+					}
+
+				case reflect.String:
+					tags := strings.ReplaceAll(value.(string), ";", ",")
+					tagsArray := strings.Split(tags, ",")
+					for i, tag := range tagsArray {
+						tag = strings.Trim(tag, " ")
+						tagsArray[i] = tag
+					}
+					article.Tags = tagsArray
 				}
 			}
 		}
@@ -129,7 +144,10 @@ func MarkdownFile(path string) (Article, error) {
 		return Article{}, fmt.Errorf("failed to get file info: %w", err)
 	}
 	if article.Created.IsZero() {
-		article.Created = fileInfo.ModTime() // Use file modification time
+		article.Created = DateTimeFromString(path) // Try to extract date from filename
+		if article.Created.IsZero() {
+			article.Created = fileInfo.ModTime() // Use file modification time
+		}
 	}
 	if article.Updated.IsZero() {
 		article.Updated = fileInfo.ModTime() // Use file modification time

@@ -65,11 +65,23 @@ var dataTestMarkdownFile = []struct {
 		description: "Description",
 		tags:        "[tag1, tag2, compound tag1, compound tag2]",
 		created:     "2020-05-11",
-		updated:     "2021-06-13",
+		updated:     "2021 06-13",
 		tagsOut:     []string{"tag1", "tag2", "compound tag1", "compound tag2"},
 		createdOut:  time.Date(2020, 5, 11, 0, 0, 0, 0, time.UTC),
 		updatedOut:  time.Date(2021, 6, 13, 0, 0, 0, 0, time.UTC),
 	},
+	{
+		path:        "2023-05-11-test-entry.md",
+		title:       "Title",
+		description: "Description",
+		tags:        "just this one compound tag",
+		// created:     "2020-05-11",
+		updated:     "13 06-2021",
+		tagsOut:     []string{"just this one compound tag"},
+		createdOut:  time.Date(2023, 5, 11, 0, 0, 0, 0, time.UTC),
+		updatedOut:  time.Date(2021, 6, 13, 0, 0, 0, 0, time.UTC),
+	},
+
 }
 
 func genMarkdownText(template string, aStruct any) string {
@@ -78,7 +90,7 @@ func genMarkdownText(template string, aStruct any) string {
 	for _, field := range fields {
 		val := values.FieldByName(field.Name)
 		// val := fields.FieldByNamv.FieldByIndex(e.Index)
-		fmt.Printf("Key: %s\tType: %s \t Value: %s\n", field.Name, field.Type, val)
+		// fmt.Printf("Key: %s\tType: %s \t Value: %s\n", field.Name, field.Type, val)
 
 		// if field.Type.Kind() == reflect.String {
 		// val := val.String()
@@ -106,14 +118,15 @@ func TestMarkdownFile(t *testing.T) {
 	for _, e := range dataTestMarkdownFile {
 
 		mdText := genMarkdownText(mdTemplate, e)
-
 		fmt.Println(mdText)
+
 
 		path := dir + "/" + e.path
 		os.WriteFile(path, []byte(mdText), 0644)
 		// fmt.Println(path)
 
 		md, err := MarkdownFile(path)
+		fmt.Println(md.HtmlContent)
 		if err != nil {
 			t.Fatalf("Error: %v", err)
 		}
