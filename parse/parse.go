@@ -17,14 +17,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-// type ArticleMarkdownMetadata struct {
-// 	Title         string   `yaml:"title"`
-// 	Description   string   `yaml:"description"`
-// 	CreatedString string   `yaml:"created"`
-// 	UpdatedString string   `yaml:"updated"`
-// 	Tags          []string `yaml:"tags"`
-// }
-
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
 	for _, pattern := range []string{
@@ -184,28 +176,39 @@ func HTMLFile(file string) (Article, error) {
 		IsPage:      true, // Assume HTML files represent pages
 		Path:        filepath.Dir(file),
 	}
-
-	// Extract title from the first H1 tag
 	doc, err := html.Parse(strings.NewReader(content))
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
 	}
-	if h1 := findFirstElement(doc, "h1"); h1 != nil {
-		article.Title = getTextContent(h1)
+
+	for _, metaTag := range findAllElements(doc, "meta") {
+		// fmt.Println(metaTag.Data)
+		// fmt.Println(metaTag.Attr[0].Key)
+		// fmt.Println(metaTag.Attr[0].Val)
+
+		fmt.Printf("Tag: %s, Attr: %s, Value: %s\n", metaTag.Data, metaTag.Attr[0].Key, metaTag.Attr[0].Val)
+		// switch metaTag.Data
+
 	}
 
-	// If no H1 tag, default title to filename
-	if article.Title == "" {
-		article.Title = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
-	}
+	
 
-	// Use file modification time for Created and Updated
-	fileInfo, err := os.Stat(file)
-	if err != nil {
-		return Article{}, fmt.Errorf("failed to get file info: %w", err)
-	}
-	article.Created = fileInfo.ModTime()
-	article.Updated = fileInfo.ModTime()
+	// if h1 := findFirstElement(doc, "h1"); h1 != nil {
+	// 	article.Title = getTextContent(h1)
+	// }
+
+	// // If no H1 tag, default title to filename
+	// if article.Title == "" {
+	// 	article.Title = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
+	// }
+
+	// // Use file modification time for Created and Updated
+	// fileInfo, err := os.Stat(file)
+	// if err != nil {
+	// 	return Article{}, fmt.Errorf("failed to get file info: %w", err)
+	// }
+	// article.Created = fileInfo.ModTime()
+	// article.Updated = fileInfo.ModTime()
 
 	return article, nil
 }
@@ -248,6 +251,17 @@ func findFirstElement(n *html.Node, tag string) *html.Node {
 		}
 	}
 	return nil
+}
+
+func findAllElements(n *html.Node, tag string) []*html.Node {
+	var elements []*html.Node
+	if n.Type == html.ElementNode && n.Data == tag {
+		elements = append(elements, n)
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		elements = append(elements, findAllElements(c, tag)...)
+	}
+	return elements
 }
 
 // Helper function to extract text content from an HTML node
