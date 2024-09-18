@@ -181,17 +181,24 @@ func HTMLFile(file string) (Article, error) {
 		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
+	metaTagsMap := map[string]string{}
 	for _, metaTag := range findAllElements(doc, "meta") {
-		// fmt.Println(metaTag.Data)
-		// fmt.Println(metaTag.Attr[0].Key)
-		// fmt.Println(metaTag.Attr[0].Val)
-
-		fmt.Printf("Tag: %s, Attr: %s, Value: %s\n", metaTag.Data, metaTag.Attr[0].Key, metaTag.Attr[0].Val)
-		// switch metaTag.Data
-
+		var key string
+		var val string
+		for _, attr := range metaTag.Attr {
+			fmt.Printf("Key: %s\tValue: %s\n", attr.Key, attr.Val)
+			switch strings.ToLower(attr.Key) {
+			case "name":
+				key = attr.Val
+			case "content":
+				val = attr.Val
+			}
+		}
+		if key != "" && val != "" {
+			metaTagsMap[key] = val
+		}
 	}
-
-	
+	fmt.Printf("Dict: %v\n", metaTagsMap)
 
 	// if h1 := findFirstElement(doc, "h1"); h1 != nil {
 	// 	article.Title = getTextContent(h1)
