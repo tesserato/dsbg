@@ -161,11 +161,11 @@ func MarkdownFile(path string) (Article, error) {
 	return article, nil
 }
 
-func HTMLFile(file string) (Article, error) {
+func HTMLFile(path string) (Article, error) {
 	// Read the HTML file content
-	data, err := os.ReadFile(file)
+	data, err := os.ReadFile(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to read file %s: %w", file, err)
+		return Article{}, fmt.Errorf("failed to read file %s: %w", path, err)
 	}
 	content := string(data)
 
@@ -173,21 +173,21 @@ func HTMLFile(file string) (Article, error) {
 	article := Article{
 		HtmlContent: content,
 		Files:       extractResources(content),
-		IsPage:      true, // Assume HTML files represent pages
-		Path:        filepath.Dir(file),
+		Path:        filepath.Dir(path),
 	}
 	doc, err := html.Parse(strings.NewReader(content))
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	metaTagsMap := map[string]string{}
 	for _, metaTag := range findAllElements(doc, "meta") {
-		var key string
-		var val string
+		key := ""
+		val := ""
 		for _, attr := range metaTag.Attr {
 			fmt.Printf("Key: %s\tValue: %s\n", attr.Key, attr.Val)
-			switch strings.ToLower(attr.Key) {
+			attrKey := strings.ToLower(attr.Key)
+			attrKey = strings.Trim(attrKey, " ")
+			switch attrKey {
 			case "name":
 				key = attr.Val
 			case "content":
@@ -195,10 +195,40 @@ func HTMLFile(file string) (Article, error) {
 			}
 		}
 		if key != "" && val != "" {
-			metaTagsMap[key] = val
+			switch key {
+			case "description":
+				article.Description = val
+			case "keywords":
+				tags := strings.ReplaceAll(val, ";", ",")
+				tagsArray := strings.Split(tags, ",")
+				for i, tag := range tagsArray {
+					tag = strings.Trim(tag, " ")
+					tagsArray[i] = tag
+				}
+				article.Tags = tagsArray
+			case "created":
+				article.Created = DateTimeFromString(val)
+			case "updated":
+				article.Updated = DateTimeFromString(val)
+			}
 		}
 	}
-	fmt.Printf("Dict: %v\n", metaTagsMap)
+
+	// 2. Set Created and Updated to file dates if not provided in frontmatter
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+	}
+	if article.Created.IsZero() {
+		article.Created = DateTimeFromString(path) // Try to extract date from filename
+		if article.Created.IsZero() {
+			article.Created = fileInfo.ModTime() // Use file modification time
+		}
+	}
+	if article.Updated.IsZero() {
+		article.Updated = fileInfo.ModTime() // Use file modification time
+	}
+	// fmt.Printf("Dict: %v\n", metaTagsMap)
 
 	// if h1 := findFirstElement(doc, "h1"); h1 != nil {
 	// 	article.Title = getTextContent(h1)
