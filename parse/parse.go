@@ -155,7 +155,16 @@ func MarkdownFile(path string) (Article, error) {
 
 	// Set the article path
 	article.Path = filepath.Dir(path)
+
 	// Set the HTML content (Goldmark already converted it)
+	// htmlTree, err := html.Parse(strings.NewReader(content))
+
+	// htmlTree.
+
+	// html.Render(htmlTree)
+
+	// htmlTree.AppendChild(htmlTree, html.NewComment(" DO NOT REMOVE THIS LINE "))
+
 	article.HtmlContent = content
 
 	return article, nil
@@ -175,16 +184,25 @@ func HTMLFile(path string) (Article, error) {
 		Files:       extractResources(content),
 		Path:        filepath.Dir(path),
 	}
-	doc, err := html.Parse(strings.NewReader(content))
+	htmlTree, err := html.Parse(strings.NewReader(content))
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	for _, metaTag := range findAllElements(doc, "meta") {
+	// Get info from <title> tag
+	titleTag := findFirstElement(htmlTree, "title")
+	article.Title = titleTag.FirstChild.Data
+
+	if article.Title == "" {
+		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	}
+
+	// Get info from meta tags
+	for _, metaTag := range findAllElements(htmlTree, "meta") {
 		key := ""
 		val := ""
 		for _, attr := range metaTag.Attr {
-			fmt.Printf("Key: %s\tValue: %s\n", attr.Key, attr.Val)
+			// fmt.Printf("Key: %s\tValue: %s\n", attr.Key, attr.Val)
 			attrKey := strings.ToLower(attr.Key)
 			attrKey = strings.Trim(attrKey, " ")
 			switch attrKey {
@@ -214,7 +232,7 @@ func HTMLFile(path string) (Article, error) {
 		}
 	}
 
-	// 2. Set Created and Updated to file dates if not provided in frontmatter
+	// Set Created and Updated to file dates if not provided in frontmatter
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to get file info: %w", err)
@@ -228,24 +246,6 @@ func HTMLFile(path string) (Article, error) {
 	if article.Updated.IsZero() {
 		article.Updated = fileInfo.ModTime() // Use file modification time
 	}
-	// fmt.Printf("Dict: %v\n", metaTagsMap)
-
-	// if h1 := findFirstElement(doc, "h1"); h1 != nil {
-	// 	article.Title = getTextContent(h1)
-	// }
-
-	// // If no H1 tag, default title to filename
-	// if article.Title == "" {
-	// 	article.Title = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
-	// }
-
-	// // Use file modification time for Created and Updated
-	// fileInfo, err := os.Stat(file)
-	// if err != nil {
-	// 	return Article{}, fmt.Errorf("failed to get file info: %w", err)
-	// }
-	// article.Created = fileInfo.ModTime()
-	// article.Updated = fileInfo.ModTime()
 
 	return article, nil
 }

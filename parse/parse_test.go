@@ -1,7 +1,10 @@
 package parse
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
+
 	// "strconv"
 	"strings"
 
@@ -12,11 +15,11 @@ import (
 )
 
 var mdTemplate string = `---
-title: {title}
-description: {description}
-tags: [{tags}]
-created: {created}
-updated: {updated}
+title: {{.Title}}
+description: {{.Description}}
+tags: {{stringsJoin .Tags ", "}}
+created: {{.Created}}
+updated: {{.Updated}}
 ---
 
 # header 1
@@ -31,11 +34,11 @@ var htmlTemplate string = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<title>{title}</title>
-	<meta name="description" content="{description}">
-	<meta name="keywords" content= "{tags}" >
-	<meta name="created" content="{created}">
-	<meta name="updated" content="{updated}">
+	<title>{{.Title}}</title>
+	<meta name="description" content="{{.Description}}">
+	<meta name="keywords" content= "{{stringsJoin .Tags ", "}}" >
+	<meta name="created" content="{{.Created}}">
+	<meta name="updated" content="{{.Updated}}">
 
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -62,7 +65,7 @@ func TestDateTimeFromString(t *testing.T) {
 		"6/9 2014",
 		"6.9.2014",
 		"6_9-2014",
-		"2014 06 06 How to set up a free blog.md",
+		"2014 09 06 How to set up a free blog.md",
 	} {
 		tm := DateTimeFromString(d)
 		if tm != defaultTime {
@@ -72,35 +75,32 @@ func TestDateTimeFromString(t *testing.T) {
 }
 
 var dataTestMarkdownFile = []struct {
-	path        string
-	title       string
-	description string
-	tags        string
-	created     string
-	updated     string
-	tagsOut     []string
+	Path        string
+	Title       string
+	Description string
+	Tags        []string
+	Created     string
+	Updated     string
 	createdOut  time.Time
 	updatedOut  time.Time
 }{
 	{
-		path:        "2023-05-11-test-entry",
-		title:       "Title",
-		description: "Description",
-		tags:        "tag1, tag2, compound tag1, compound tag2",
-		created:     "2020-05-11",
-		updated:     "2021 06-13",
-		tagsOut:     []string{"tag1", "tag2", "compound tag1", "compound tag2"},
+		Path:        "2023-05-11-test-entry",
+		Title:       "Title",
+		Description: "Description",
+		Tags:        []string{"tag1", "tag2", "compound tag1", "compound tag2"},
+		Created:     "2020-05-11",
+		Updated:     "2021 06-13",
 		createdOut:  time.Date(2020, 5, 11, 0, 0, 0, 0, time.UTC),
 		updatedOut:  time.Date(2021, 6, 13, 0, 0, 0, 0, time.UTC),
 	},
 	{
-		path:        "2023-05-11-test-entry",
-		title:       "Title",
-		description: "Description",
-		tags:        "just this one compound tag",
+		Path:        "2023-05-11-test-entry",
+		Title:       "Title",
+		Description: "Description",
+		Tags:        []string{"just this one compound tag"},
 		// created:     "2020-05-11",
-		updated:    "13 06-2021",
-		tagsOut:    []string{"just this one compound tag"},
+		Updated:    "13 06-2021",
 		createdOut: time.Date(2023, 5, 11, 0, 0, 0, 0, time.UTC),
 		updatedOut: time.Date(2021, 6, 13, 0, 0, 0, 0, time.UTC),
 	},
@@ -137,12 +137,22 @@ func compareTags(tags1 []string, tags2 []string) bool {
 
 func TestMarkdownFile(t *testing.T) {
 	dir := t.TempDir()
+	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join}).Parse(mdTemplate)
+	if err != nil {
+		panic(err)
+	}
+
 	for _, e := range dataTestMarkdownFile {
 
-		mdText := genMarkdownText(mdTemplate, e)
+		var tp bytes.Buffer
+		err = tmpl.Execute(&tp, e)
+		if err != nil {
+			panic(err)
+		}
+		mdText := tp.String()
 		fmt.Println(mdText)
 
-		path := dir + "/" + e.path + ".md"
+		path := dir + "/" + e.Path + ".md"
 		os.WriteFile(path, []byte(mdText), 0644)
 
 		md, err := MarkdownFile(path)
@@ -151,36 +161,45 @@ func TestMarkdownFile(t *testing.T) {
 			t.Fatalf("Error: %v", err)
 		}
 
-		if md.Title != e.title {
-			t.Errorf("Wrong title: %s != %s", e.title, md.Title)
+		if md.Title != e.Title {
+			t.Errorf("Wrong title: %s != %s", e.Title, md.Title)
 		}
 
-		if md.Description != e.description {
-			t.Errorf("Wrong description: %s != %s", e.description, md.Description)
+		if md.Description != e.Description {
+			t.Errorf("Wrong description: %s != %s", e.Description, md.Description)
 		}
 
-		if !compareTags(md.Tags, e.tagsOut) {
-			t.Errorf("Wrong tags: %v != %v", e.tagsOut, md.Tags)
+		if !compareTags(md.Tags, e.Tags) {
+			t.Errorf("Wrong tags: %v != %v", e.Tags, md.Tags)
 		}
 
 		if !md.Created.Equal(e.createdOut) {
-			t.Errorf("Wrong created date: (%s) %s != %s", e.created, e.createdOut, md.Created)
+			t.Errorf("Wrong created date: (%s) %s != %s", e.Created, e.createdOut, md.Created)
 		}
 
 		if !md.Updated.Equal(e.updatedOut) {
-			t.Errorf("Wrong updated date: (%s) %s != %s", e.updated, e.updatedOut, md.Updated)
+			t.Errorf("Wrong updated date: (%s) %s != %s", e.Updated, e.updatedOut, md.Updated)
 		}
 	}
 }
 
 func TestHTMLFile(t *testing.T) {
 	dir := t.TempDir()
+	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join}).Parse(htmlTemplate)
+	if err != nil {
+		panic(err)
+	}
 	for _, e := range dataTestMarkdownFile {
 
-		htmlText := genMarkdownText(htmlTemplate, e)
+		var tp bytes.Buffer
+		err = tmpl.Execute(&tp, e)
+		if err != nil {
+			panic(err)
+		}
+		htmlText := tp.String()
 		fmt.Println(htmlText)
-		
-		path := dir + "/" + e.path + ".html"
+
+		path := dir + "/" + e.Path + ".html"
 		os.WriteFile(path, []byte(htmlText), 0644)
 
 		html, err := HTMLFile(path)
@@ -188,24 +207,24 @@ func TestHTMLFile(t *testing.T) {
 			t.Fatalf("Error: %v", err)
 		}
 
-		if html.Title != e.title {
-			t.Errorf("Wrong title: %s != %s", e.title, html.Title)
+		if html.Title != e.Title {
+			t.Errorf("Wrong title: %s != %s", e.Title, html.Title)
 		}
 
-		if html.Description != e.description {
-			t.Errorf("Wrong description: %s != %s", e.description, html.Description)
+		if html.Description != e.Description {
+			t.Errorf("Wrong description: %s != %s", e.Description, html.Description)
 		}
 
-		if !compareTags(html.Tags, e.tagsOut) {
-			t.Errorf("Wrong tags: %v != %v", e.tagsOut, html.Tags)
+		if !compareTags(html.Tags, e.Tags) {
+			t.Errorf("Wrong tags: %v != %v", e.Tags, html.Tags)
 		}
 
 		if !html.Created.Equal(e.createdOut) {
-			t.Errorf("Wrong created date: (%s) %s != %s", e.created, e.createdOut, html.Created)
+			t.Errorf("Wrong created date: (%s) %s != %s", e.Created, e.createdOut, html.Created)
 		}
 
-		if !html.Updated.Equal(e.updatedOut) {	
-			t.Errorf("Wrong updated date: (%s) %s != %s", e.updated, e.updatedOut, html.Updated)
+		if !html.Updated.Equal(e.updatedOut) {
+			t.Errorf("Wrong updated date: (%s) %s != %s", e.Updated, e.updatedOut, html.Updated)
 		}
 	}
 }
