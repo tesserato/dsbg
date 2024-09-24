@@ -28,7 +28,7 @@ paragraph beneath header 1
 
 ## header 2
 
-paragraph beneath header 1
+paragraph beneath header 2
 `
 var htmlTemplate string = `<!DOCTYPE html>
 <html lang="en">

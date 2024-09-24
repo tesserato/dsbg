@@ -22,19 +22,20 @@ func main() {
 
 	// 2. Parse each file into an Article struct
 	var articles []parse.Article
-	for _, file := range files {
-		if strings.HasSuffix(file, ".md") {
-			article, err := parse.MarkdownFile(file)
+	for _, path := range files {
+		lowerCasePath := strings.ToLower(path)
+		if strings.HasSuffix(lowerCasePath, ".md") {
+			article, err := parse.MarkdownFile(path)
 			if err != nil {
-				log.Printf("Error parsing file %s: %s\n", file, err)
+				log.Printf("Error parsing file %s: %s\n", path, err)
 				continue
 			}
 			articles = append(articles, article)
 
-		} else if strings.HasSuffix(file, ".html") {
-			article, err := parse.HTMLFile(file)
+		} else if strings.HasSuffix(lowerCasePath, ".html") {
+			article, err := parse.HTMLFile(path)
 			if err != nil {
-				log.Printf("Error parsing file %s: %s\n", file, err)
+				log.Printf("Error parsing file %s: %s\n", path, err)
 				continue
 			}
 			articles = append(articles, article)

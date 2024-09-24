@@ -1,7 +1,9 @@
 package parse
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -47,6 +49,23 @@ func DateTimeFromString(date string) time.Time {
 	return dateTime
 }
 
+var htmlPageTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{.Art.Title}}</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+	<article>
+		<h1>{{.Art.Title}}</h1>
+		{{.Ctt}}
+	</article>
+</body>
+</html>
+`
+
 func MarkdownFile(path string) (Article, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -79,6 +98,7 @@ func MarkdownFile(path string) (Article, error) {
 	if fm != nil {
 		var d map[string]any
 		if err := fm.Decode(&d); err != nil {
+			fmt.Printf("Article path: %s", path)
 			panic(err)
 		}
 		for name, value := range d {
@@ -156,16 +176,21 @@ func MarkdownFile(path string) (Article, error) {
 	// Set the article path
 	article.Path = filepath.Dir(path)
 
-	// Set the HTML content (Goldmark already converted it)
-	// htmlTree, err := html.Parse(strings.NewReader(content))
+	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join}).Parse(htmlPageTemplate)
+	if err != nil {
+		panic(err)
+	}
 
-	// htmlTree.
-
-	// html.Render(htmlTree)
-
-	// htmlTree.AppendChild(htmlTree, html.NewComment(" DO NOT REMOVE THIS LINE "))
-
-	article.HtmlContent = content
+	var tp bytes.Buffer
+	err = tmpl.Execute(&tp, struct {
+		Art Article
+		Ctt template.HTML
+	}{article, template.HTML(content)})
+	if err != nil {
+		panic(err)
+	}
+	htmlContent := tp.String()
+	article.HtmlContent = htmlContent
 
 	return article, nil
 }
