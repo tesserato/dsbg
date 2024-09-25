@@ -20,6 +20,35 @@ import (
 	"golang.org/x/net/html"
 )
 
+type Settings struct {
+	Title           string
+	InputDirectory  string
+	OutputDirectory string
+	DateFormat      string
+	IndexName       string
+}
+
+func NewSettings() Settings {
+	settings := Settings{}
+	settings.Title = "Blog"
+	settings.InputDirectory = "content"
+	settings.OutputDirectory = "public"
+	settings.DateFormat = "2006-01-02"
+	settings.IndexName = "index.html"
+	return settings
+}
+
+type Article struct {
+	Title        string
+	Description  string
+	Created      time.Time
+	Updated      time.Time
+	Tags         []string
+	HtmlContent  string
+	OriginalPath string
+	Link         string
+}
+
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
 	for _, pattern := range []string{
@@ -102,7 +131,7 @@ func MarkdownFile(path string) (Article, error) {
 	content := buf.String()
 
 	// Retrieve frontmatter from the context
-	var article Article
+	var article = Article{OriginalPath: path}
 	fm := frontmatter.Get(context)
 	if fm != nil {
 		var d map[string]any
@@ -183,7 +212,7 @@ func MarkdownFile(path string) (Article, error) {
 	// article.IsPage = contains(article.Tags, "PAGE")
 
 	// Set the article path
-	article.OriginalPath = filepath.Dir(path)
+	// article.OriginalPath = filepath.Dir(path)
 
 	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
@@ -214,9 +243,9 @@ func HTMLFile(path string) (Article, error) {
 
 	// Create an article and populate common fields
 	article := Article{
-		HtmlContent: content,
+		OriginalPath: path,
+		HtmlContent:  content,
 		// Files:        extractResources(content),
-		OriginalPath: filepath.Dir(path),
 	}
 	htmlTree, err := html.Parse(strings.NewReader(content))
 	if err != nil {
@@ -308,22 +337,76 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 }
 
 // Helper function to extract text content from an HTML node
-func getTextContent(n *html.Node) string {
-	var text string
-	if n.Type == html.TextNode {
-		text += n.Data
-	}
-	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		text += getTextContent(c)
-	}
-	return strings.TrimSpace(text)
-}
+// func getTextContent(n *html.Node) string {
+// 	var text string
+// 	if n.Type == html.TextNode {
+// 		text += n.Data
+// 	}
+// 	for c := n.FirstChild; c != nil; c = c.NextSibling {
+// 		text += getTextContent(c)
+// 	}
+// 	return strings.TrimSpace(text)
+// }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
+// func contains(s []string, e string) bool {
+// 	for _, a := range s {
+// 		if a == e {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
+
+// func SaveHtml(article Article, settings Settings) error {
+// 	// Create the page folder if it doesn't exist
+// 	pageDir := filepath.Join(outputDir, a.OriginalPath)
+// 	err := os.MkdirAll(pageDir, 0755)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// resources := extractResources(a.HtmlContent)
+
+// 	// Sanitize the HTML content
+// 	// p := bluemonday.UGCPolicy()
+// 	// html = p.Sanitize(html)
+
+// 	// Write the HTML content to the file
+// 	filename := filepath.Join(pageDir, defaultIndexName)
+// 	return os.WriteFile(filename, []byte(a.HtmlContent), 0644)
+// }
+
+// func GenerateTagsHTML(tags []string) string {
+// 	var html string
+// 	for _, tag := range tags {
+// 		html += fmt.Sprintf("<li>%s</li>\n", tag)
+// 	}
+// 	return html
+// }
+
+func extractResources(htmlContent string) []string {
+	var resources []string
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		fmt.Errorf("error parsing HTML: %w", err)
+	}
+
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode {
+			if n.Data == "img" || n.Data == "script" || n.Data == "link" {
+				for _, attr := range n.Attr {
+					if attr.Key == "src" || attr.Key == "href" {
+						resources = append(resources, attr.Val)
+						break // Assuming only one relevant attribute per tag
+					}
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
 		}
 	}
-	return false
+	f(doc)
+	return resources
 }

@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"dsbg/parse"
 	"fmt"
+	"html"
 	"io/fs"
 	"log"
 	"os"
@@ -10,8 +12,6 @@ import (
 	"slices"
 	"strings"
 	"text/template"
-
-	"dsbg/parse"
 )
 
 func main() {
@@ -46,8 +46,33 @@ func main() {
 	}
 
 	// 3. Generate HTML for each article and page
-	for _, article := range articles {
-		article.SaveHtml(settings.OutputDirectory)
+	for i, article := range articles {
+		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
+		if err != nil {
+			return
+		}
+		pageDir := filepath.Join(settings.OutputDirectory, relPath)
+		pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
+
+		err = os.MkdirAll(pageDir, 0755)
+		if err != nil {
+			return
+		}
+		// name := filepath.Base(article.OriginalPath)
+		savePath := filepath.Join(pageDir, settings.IndexName)
+
+		os.WriteFile(savePath, []byte(article.HtmlContent), 0644)
+
+		link, err := filepath.Rel(settings.OutputDirectory, savePath)
+		if err != nil {
+			return
+		}
+		link = html.EscapeString(link)
+
+		articles[i].Link = link
+
+		fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, article.OriginalPath, relPath, pageDir, savePath, link)
+
 	}
 
 	// 4. Generate the index.html file
@@ -101,7 +126,7 @@ var htmlIndexTemplate = ` <!DOCTYPE html>
 	<ul>
 	{{range .ArticleList}}
 		<li>
-			<a href="{{makeLink .Title}}">{{.Title}}</a>
+			<a href="{{.Link}}">{{.Title}}</a>
 			<p>{{.Description}}</p>
 			<p>Created: {{.Created.Format "2006-01-02"}}</p>
 			<p>Updated: {{.Updated.Format "2006-01-02"}}</p>
