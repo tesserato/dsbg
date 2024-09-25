@@ -46,7 +46,10 @@ type Article struct {
 	Tags         []string
 	HtmlContent  string
 	OriginalPath string
-	Link         string
+	LinkToSelf   string
+	// LinkToCss    string
+	// LinkToJs     string
+	// InnerHTML string
 }
 
 func DateTimeFromString(date string) time.Time {
@@ -85,7 +88,8 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{.Art.Title}}</title>
-	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="{{.PathToCss}}">
+	<script src="{{.PathToJs}}"></script>
 </head>
 <body>
 	<article>
@@ -104,7 +108,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 </html>
 `
 
-func MarkdownFile(path string) (Article, error) {
+func MarkdownFile(path string, pathToCss string, pathToJs string) (Article, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return Article{}, err
@@ -223,7 +227,9 @@ func MarkdownFile(path string) (Article, error) {
 	err = tmpl.Execute(&tp, struct {
 		Art Article
 		Ctt template.HTML
-	}{article, template.HTML(content)})
+		PathToCss string
+		PathToJs  string
+	}{article, template.HTML(content), pathToCss, pathToJs})
 	if err != nil {
 		panic(err)
 	}
@@ -384,7 +390,7 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 // 	return html
 // }
 
-func extractResources(htmlContent string) []string {
+func ExtractResources(htmlContent string) []string {
 	var resources []string
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {

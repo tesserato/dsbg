@@ -45,18 +45,17 @@ func main() {
 		}
 	}
 
-	// 3. Generate HTML for each article and page
 	for i, article := range articles {
 		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 		if err != nil {
-			return
+			panic(err)
 		}
 		pageDir := filepath.Join(settings.OutputDirectory, relPath)
 		pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
 
 		err = os.MkdirAll(pageDir, 0755)
 		if err != nil {
-			return
+			panic(err)
 		}
 		// name := filepath.Base(article.OriginalPath)
 		savePath := filepath.Join(pageDir, settings.IndexName)
@@ -65,14 +64,23 @@ func main() {
 
 		link, err := filepath.Rel(settings.OutputDirectory, savePath)
 		if err != nil {
-			return
+			panic(err)
 		}
 		link = html.EscapeString(link)
 
-		articles[i].Link = link
+		articles[i].LinkToSelf = link
 
 		fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, article.OriginalPath, relPath, pageDir, savePath, link)
+		articleOrigFolderPath := filepath.Dir(article.OriginalPath)
+		articleDestFolderPath := filepath.Dir(savePath)
+		for _, resourceOrigRelPath := range parse.ExtractResources(article.HtmlContent) {
+			resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
+			resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
+			fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
 
+			// resourceDestPath := filepath.Join(pageDir, resourceRelPath)
+			// copyFile(resourceOrigPath, resourceDestPath)
+		}
 	}
 
 	// 4. Generate the index.html file
@@ -82,6 +90,10 @@ func main() {
 	}
 
 	log.Println("Blog generated successfully!")
+}
+
+func copyResources(){
+	
 }
 
 func getFiles(root string, extensions []string) ([]string, error) {
