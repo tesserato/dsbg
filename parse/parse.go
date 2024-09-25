@@ -50,7 +50,7 @@ func DateTimeFromString(date string) time.Time {
 	return dateTime
 }
 
-var htmlPageTemplate = `<!DOCTYPE html>
+var htmlArticleTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -185,7 +185,7 @@ func MarkdownFile(path string) (Article, error) {
 	// Set the article path
 	article.OriginalPath = filepath.Dir(path)
 
-	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlPageTemplate)
+	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -281,33 +281,6 @@ func HTMLFile(path string) (Article, error) {
 	}
 
 	return article, nil
-}
-
-func extractResources(htmlContent string) []string {
-	var resources []string
-	doc, err := html.Parse(strings.NewReader(htmlContent))
-	if err != nil {
-		fmt.Errorf("error parsing HTML: %w", err)
-	}
-
-	var f func(*html.Node)
-	f = func(n *html.Node) {
-		if n.Type == html.ElementNode {
-			if n.Data == "img" || n.Data == "script" || n.Data == "link" {
-				for _, attr := range n.Attr {
-					if attr.Key == "src" || attr.Key == "href" {
-						resources = append(resources, attr.Val)
-						break // Assuming only one relevant attribute per tag
-					}
-				}
-			}
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c)
-		}
-	}
-	f(doc)
-	return resources
 }
 
 // Helper function to find the first occurrence of an element by tag name

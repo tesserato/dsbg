@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
+	"text/template"
 
 	"dsbg/parse"
 )
@@ -85,55 +88,61 @@ func copyFile(src, dest string) error {
 	return os.WriteFile(dest, input, 0644)
 }
 
+var htmlIndexTemplate = ` <!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{.settings.Title}}</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+	<h1>{{.settings.Title}}</h1>
+	<ul>
+	{{range .Articles}}
+		<li>
+			<a href="{{makeLink .Title}}">{{.Title}}</a>
+			<p>{{.Description}}</p>
+			<p>Created: {{.Created}}</p>
+			<p>Updated: {{.Updated}}</p>
+		</li>
+	{{end}}
+	</ul>
+</body>
+</html>
+`
+
 func generateIndexHTML(articles []parse.Article, settings parse.Settings) error {
 	// Generate the article list HTML
-	var articleList string
+	var allTags []string
+	var pageList []parse.Article
+	var articleList []parse.Article
 	for _, article := range articles {
-		if !article.IsPage {
-			articleLink := strings.ReplaceAll(article.Title, " ", "-") + "/"
-			articleList += fmt.Sprintf(`
-			<li>
-				<a href="%s">%s</a>
-				<p>%s</p>
-				<p>Created: %s</p>
-				<p>Updated: %s</p>
-				<ul>
-					%s
-				</ul>
-			</li>
-			`,
-				articleLink,
-				article.Title,
-				article.Description,
-				article.Created.Format(settings.DateFormat),
-				article.Updated.Format(settings.DateFormat),
-				parse.GenerateTagsHTML(article.Tags),
-			)
+		if slices.Contains(article.Tags, "PAGE") {
+			pageList = append(pageList, article)
+			// allTags = append(allTags, article.Tags...) TODO implement
+		} else {
+			allTags = append(allTags, article.Tags...)
+			// articleLink := strings.ReplaceAll(article.Title, " ", "-") + "/"
+			articleList = append(articleList, article)
 		}
 	}
 
-	// Generate the index.html content
-	html := fmt.Sprintf(`
-	<!DOCTYPE html>
-	<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>%s</title>
-		<link rel="stylesheet" href="/style.css">
-	</head>
-	<body>
-		<h1>%s</h1>
-		<ul>
-			%s
-		</ul>
-	</body>
-	</html>
-	`,
-		settings.Title,
-		settings.Title,
-		articleList,
-	)
+	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlIndexTemplate)
+	if err != nil {
+		panic(err)
+	}
+
+	var tp bytes.Buffer
+
+	err = tmpl.Execute(&tp, struct {
+		Art Article
+		Ctt template.HTML
+	}{article, template.HTML(content)})
+	if err != nil {
+		panic(err)
+	}
+
 
 	// Write the HTML content to the file
 	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)

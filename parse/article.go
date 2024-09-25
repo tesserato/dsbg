@@ -1,10 +1,13 @@
 package parse
 
 import (
-	// "fmt"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
+
+	"golang.org/x/net/html"
 )
 
 const (
@@ -35,62 +38,8 @@ func (a Article) SaveHtml(outputDir string) error {
 		return err
 	}
 
-	// Generate the HTML content
-	// html := ""
-	// if a.IsPage {
-	// 	html = fmt.Sprintf(`
-	// 	<!DOCTYPE html>
-	// 	<html lang="en">
-	// 	<head>
-	// 		<meta charset="UTF-8">
-	// 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	// 		<title>%s</title>
-	// 		<link rel="stylesheet" href="/style.css">
-	// 	</head>
-	// 	<body>
-	// 		<article>
-	// 			<h1>%s</h1>
-	// 			%s
-	// 		</article>
-	// 	</body>
-	// 	</html>
-	// 	`,
-	// 		a.Title,
-	// 		a.Title,
-	// 		a.HtmlContent,
-	// 	)
-	// } else {
-	// 	html = fmt.Sprintf(`
-	// 	<!DOCTYPE html>
-	// 	<html lang="en">
-	// 	<head>
-	// 		<meta charset="UTF-8">
-	// 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	// 		<title>%s</title>
-	// 		<link rel="stylesheet" href="/style.css">
-	// 	</head>
-	// 	<body>
-	// 		<article>
-	// 			<h1>%s</h1>
-	// 			<p>Created: %s</p>
-	// 			<p>Updated: %s</p>
-	// 			<ul>
-	// 				%s
-	// 			</ul>
-	// 			%s
-	// 		</article>
-	// 	</body>
-	// 	</html>
-	// 	`,
-	// 		a.Title,
-	// 		a.Title,
-	// 		a.Created.Format(defaultDateFormat),
-	// 		a.Updated.Format(defaultDateFormat),
-	// 		GenerateTagsHTML(a.Tags),
-	// 		a.HtmlContent,
-	// 	)
+	// resources := extractResources(a.HtmlContent)
 
-	// }
 
 	// Sanitize the HTML content
 	// p := bluemonday.UGCPolicy()
@@ -108,3 +57,30 @@ func (a Article) SaveHtml(outputDir string) error {
 // 	}
 // 	return html
 // }
+
+func extractResources(htmlContent string) []string {
+	var resources []string
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		fmt.Errorf("error parsing HTML: %w", err)
+	}
+
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode {
+			if n.Data == "img" || n.Data == "script" || n.Data == "link" {
+				for _, attr := range n.Attr {
+					if attr.Key == "src" || attr.Key == "href" {
+						resources = append(resources, attr.Val)
+						break // Assuming only one relevant attribute per tag
+					}
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+	return resources
+}
