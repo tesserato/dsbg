@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 
 	"regexp"
 	"strconv"
@@ -60,6 +61,14 @@ var htmlPageTemplate = `<!DOCTYPE html>
 <body>
 	<article>
 		<h1>{{.Art.Title}}</h1>
+
+		{{if slicesContains .Art.Tags "PAGE"}}
+			<p>Created: {{.Art.Created}}</p>
+			<p>Updated: {{.Art.Updated}}</p>
+			<ul>
+				{{.Art.Tags}}
+			</ul>
+		{{end}}
 		{{.Ctt}}
 	</article>
 </body>
@@ -168,15 +177,15 @@ func MarkdownFile(path string) (Article, error) {
 		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	}
 	// Extract resources from HTML
-	article.Files = extractResources(content) // Pass content here, not article.Content
+	// article.Files = extractResources(content) // Pass content here, not article.Content
 
 	// Determine if the article is a page
-	article.IsPage = contains(article.Tags, "PAGE")
+	// article.IsPage = contains(article.Tags, "PAGE")
 
 	// Set the article path
-	article.Path = filepath.Dir(path)
+	article.OriginalPath = filepath.Dir(path)
 
-	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join}).Parse(htmlPageTemplate)
+	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlPageTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -206,8 +215,8 @@ func HTMLFile(path string) (Article, error) {
 	// Create an article and populate common fields
 	article := Article{
 		HtmlContent: content,
-		Files:       extractResources(content),
-		Path:        filepath.Dir(path),
+		// Files:        extractResources(content),
+		OriginalPath: filepath.Dir(path),
 	}
 	htmlTree, err := html.Parse(strings.NewReader(content))
 	if err != nil {
@@ -215,8 +224,7 @@ func HTMLFile(path string) (Article, error) {
 	}
 
 	// Get info from <title> tag
-	titleTag := findFirstElement(htmlTree, "title")
-	article.Title = titleTag.FirstChild.Data
+	article.Title = findFirstElement(htmlTree, "title").FirstChild.Data
 
 	if article.Title == "" {
 		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
