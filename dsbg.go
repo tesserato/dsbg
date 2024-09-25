@@ -93,18 +93,18 @@ var htmlIndexTemplate = ` <!DOCTYPE html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{.settings.Title}}</title>
+	<title>{{.Settings.Title}}</title>
 	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-	<h1>{{.settings.Title}}</h1>
+	<h1>{{.Settings.Title}}</h1>
 	<ul>
-	{{range .Articles}}
+	{{range .ArticleList}}
 		<li>
 			<a href="{{makeLink .Title}}">{{.Title}}</a>
 			<p>{{.Description}}</p>
-			<p>Created: {{.Created}}</p>
-			<p>Updated: {{.Updated}}</p>
+			<p>Created: {{.Created.Format "2006-01-02"}}</p>
+			<p>Updated: {{.Updated.Format "2006-01-02"}}</p>
 		</li>
 	{{end}}
 	</ul>
@@ -123,28 +123,34 @@ func generateIndexHTML(articles []parse.Article, settings parse.Settings) error 
 			// allTags = append(allTags, article.Tags...) TODO implement
 		} else {
 			allTags = append(allTags, article.Tags...)
-			// articleLink := strings.ReplaceAll(article.Title, " ", "-") + "/"
 			articleList = append(articleList, article)
 		}
 	}
 
-	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlIndexTemplate)
+	funcMap := template.FuncMap{
+		"makeLink": func(title string) string {
+			return strings.ReplaceAll(strings.ToLower(title), " ", "-") + "/"
+		},
+		"stringsJoin":    strings.Join,
+		"slicesContains": slices.Contains[[]string],
+	}
+	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error parsing template: %w", err)
 	}
 
 	var tp bytes.Buffer
-
 	err = tmpl.Execute(&tp, struct {
-		Art Article
-		Ctt template.HTML
-	}{article, template.HTML(content)})
+		AllTags     []string
+		PageList    []parse.Article
+		ArticleList []parse.Article
+		Settings    parse.Settings
+	}{allTags, pageList, articleList, settings})
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error executing template: %w", err)
 	}
-
 
 	// Write the HTML content to the file
 	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)
-	return os.WriteFile(filePath, []byte(html), 0644)
+	return os.WriteFile(filePath, tp.Bytes(), 0644)
 }
