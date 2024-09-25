@@ -45,43 +45,8 @@ func main() {
 		}
 	}
 
-	for i, article := range articles {
-		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
-		if err != nil {
-			panic(err)
-		}
-		pageDir := filepath.Join(settings.OutputDirectory, relPath)
-		pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
-
-		err = os.MkdirAll(pageDir, 0755)
-		if err != nil {
-			panic(err)
-		}
-		// name := filepath.Base(article.OriginalPath)
-		savePath := filepath.Join(pageDir, settings.IndexName)
-
-		os.WriteFile(savePath, []byte(article.HtmlContent), 0644)
-
-		link, err := filepath.Rel(settings.OutputDirectory, savePath)
-		if err != nil {
-			panic(err)
-		}
-		link = html.EscapeString(link)
-
-		articles[i].LinkToSelf = link
-
-		fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, article.OriginalPath, relPath, pageDir, savePath, link)
-		articleOrigFolderPath := filepath.Dir(article.OriginalPath)
-		articleDestFolderPath := filepath.Dir(savePath)
-		for _, resourceOrigRelPath := range parse.ExtractResources(article.HtmlContent) {
-			resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
-			resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
-			fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
-
-			// resourceDestPath := filepath.Join(pageDir, resourceRelPath)
-			// copyFile(resourceOrigPath, resourceDestPath)
-		}
-	}
+	// for i, article := range articles {
+	// }
 
 	// 4. Generate the index.html file
 	err = generateIndexHTML(articles, settings)
@@ -92,8 +57,50 @@ func main() {
 	log.Println("Blog generated successfully!")
 }
 
-func copyResources(){
-	
+type Links struct {
+	toSelf string
+	toCss  string
+	toJs   string
+}
+
+func copyResources(settings parse.Settings, originalArticlePath string, htmlContent string) Links {
+	relPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
+	if err != nil {
+		panic(err)
+	}
+	pageDir := filepath.Join(settings.OutputDirectory, relPath)
+	pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
+
+	err = os.MkdirAll(pageDir, 0755)
+	if err != nil {
+		panic(err)
+	}
+	// name := filepath.Base(article.OriginalPath)
+	savePath := filepath.Join(pageDir, settings.IndexName)
+
+	// os.WriteFile(savePath, []byte(article.HtmlContent), 0644)
+
+	link, err := filepath.Rel(settings.OutputDirectory, savePath)
+	if err != nil {
+		panic(err)
+	}
+	link = html.EscapeString(link)
+
+	// articles[i].LinkToSelf = link
+
+	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, article.OriginalPath, relPath, pageDir, savePath, link)
+	articleOrigFolderPath := filepath.Dir(originalArticlePath)
+	articleDestFolderPath := filepath.Dir(savePath)
+	for _, resourceOrigRelPath := range parse.ExtractResources(htmlContent) {
+		resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
+		resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
+		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
+
+		// resourceDestPath := filepath.Join(pageDir, resourceRelPath)
+		// copyFile(resourceOrigPath, resourceDestPath)
+	}
+
+	return Links{toSelf: link, toCss: pageDir + "/style.css", toJs: pageDir + "/script.js"}
 }
 
 func getFiles(root string, extensions []string) ([]string, error) {
