@@ -52,6 +52,13 @@ type Article struct {
 	// InnerHTML string
 }
 
+type Links struct {
+	ToSelf string
+	ToCss  string
+	ToJs   string
+	ToSave string
+}
+
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
 	for _, pattern := range []string{
@@ -88,8 +95,8 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{.Art.Title}}</title>
-	<link rel="stylesheet" href="{{.PathToCss}}">
-	<script src="{{.PathToJs}}"></script>
+	<link rel="stylesheet" href="{{.Lks.ToCss}}">
+	<script src="{{.Lks.ToJs}}"></script>
 </head>
 <body>
 	<article>
@@ -108,7 +115,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 </html>
 `
 
-func MarkdownFile(path string, pathToCss string, pathToJs string) (Article, error) {
+func MarkdownFile(path string) (Article, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return Article{}, err
@@ -218,6 +225,12 @@ func MarkdownFile(path string, pathToCss string, pathToJs string) (Article, erro
 	// Set the article path
 	// article.OriginalPath = filepath.Dir(path)
 
+	article.HtmlContent = content
+
+	return article, nil
+}
+
+func FormatMarkdown(article Article, links Links) Article {
 	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		panic(err)
@@ -227,16 +240,15 @@ func MarkdownFile(path string, pathToCss string, pathToJs string) (Article, erro
 	err = tmpl.Execute(&tp, struct {
 		Art Article
 		Ctt template.HTML
-		PathToCss string
-		PathToJs  string
-	}{article, template.HTML(content), pathToCss, pathToJs})
+		Lks Links
+	}{article, template.HTML(article.HtmlContent), links})
 	if err != nil {
 		panic(err)
 	}
 	htmlContent := tp.String()
 	article.HtmlContent = htmlContent
-
-	return article, nil
+	article.LinkToSelf = links.ToSelf
+	return article
 }
 
 func HTMLFile(path string) (Article, error) {

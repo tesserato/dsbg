@@ -33,7 +33,14 @@ func main() {
 				log.Printf("Error parsing file %s: %s\n", path, err)
 				continue
 			}
+
+			links := copyResources(settings, path, article.HtmlContent)
+
+			article = parse.FormatMarkdown(article, links)
+
 			articles = append(articles, article)
+
+			os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
 
 		} else if strings.HasSuffix(lowerCasePath, ".html") {
 			article, err := parse.HTMLFile(path)
@@ -41,7 +48,12 @@ func main() {
 				log.Printf("Error parsing file %s: %s\n", path, err)
 				continue
 			}
+			links := copyResources(settings, path, article.HtmlContent)
+
 			articles = append(articles, article)
+
+			os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
+
 		}
 	}
 
@@ -57,13 +69,7 @@ func main() {
 	log.Println("Blog generated successfully!")
 }
 
-type Links struct {
-	toSelf string
-	toCss  string
-	toJs   string
-}
-
-func copyResources(settings parse.Settings, originalArticlePath string, htmlContent string) Links {
+func copyResources(settings parse.Settings, originalArticlePath string, htmlContent string) parse.Links {
 	relPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
 	if err != nil {
 		panic(err)
@@ -88,7 +94,7 @@ func copyResources(settings parse.Settings, originalArticlePath string, htmlCont
 
 	// articles[i].LinkToSelf = link
 
-	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, article.OriginalPath, relPath, pageDir, savePath, link)
+	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, originalArticlePath, relPath, pageDir, savePath, link)
 	articleOrigFolderPath := filepath.Dir(originalArticlePath)
 	articleDestFolderPath := filepath.Dir(savePath)
 	for _, resourceOrigRelPath := range parse.ExtractResources(htmlContent) {
@@ -100,7 +106,7 @@ func copyResources(settings parse.Settings, originalArticlePath string, htmlCont
 		// copyFile(resourceOrigPath, resourceDestPath)
 	}
 
-	return Links{toSelf: link, toCss: pageDir + "/style.css", toJs: pageDir + "/script.js"}
+	return parse.Links{ToSelf: link, ToCss: pageDir + "/style.css", ToJs: pageDir + "/script.js", ToSave: savePath}
 }
 
 func getFiles(root string, extensions []string) ([]string, error) {
@@ -145,7 +151,7 @@ var htmlIndexTemplate = ` <!DOCTYPE html>
 	<ul>
 	{{range .ArticleList}}
 		<li>
-			<a href="{{.Link}}">{{.Title}}</a>
+			<a href="{{.LinkToSelf}}">{{.Title}}</a>
 			<p>{{.Description}}</p>
 			<p>Created: {{.Created.Format "2006-01-02"}}</p>
 			<p>Updated: {{.Updated.Format "2006-01-02"}}</p>
