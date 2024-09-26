@@ -113,12 +113,24 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 	articleOrigFolderPath := filepath.Dir(originalArticlePath)
 	articleDestFolderPath := filepath.Dir(savePath)
 	for _, resourceOrigRelPath := range extractResources(htmlContent) {
+		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
+		if strings.Contains(resourceOrigRelPathLower, "http")  {
+			continue
+		}
 		resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
 		resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
 		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
 
-		// resourceDestPath := filepath.Join(pageDir, resourceRelPath)
-		// copyFile(resourceOrigPath, resourceDestPath)
+		input, err := os.ReadFile(resourceOrigPath)
+		if err != nil {
+			panic(err)
+		}
+
+		err = os.WriteFile(resourceDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+
 	}
 
 	staticBaseLink, err := filepath.Rel(pageDir, settings.OutputDirectory)
@@ -171,7 +183,6 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)
 	return os.WriteFile(filePath, tp.Bytes(), 0644)
 }
-
 
 func MarkdownFile(path string) (Article, error) {
 	data, err := os.ReadFile(path)
@@ -389,7 +400,6 @@ func HTMLFile(path string) (Article, error) {
 	return article, nil
 }
 
-//////////////////////////////////////////
 
 // Helper function to find the first occurrence of an element by tag name
 func findFirstElement(n *html.Node, tag string) *html.Node {
@@ -414,54 +424,6 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 	}
 	return elements
 }
-
-// Helper function to extract text content from an HTML node
-// func getTextContent(n *html.Node) string {
-// 	var text string
-// 	if n.Type == html.TextNode {
-// 		text += n.Data
-// 	}
-// 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-// 		text += getTextContent(c)
-// 	}
-// 	return strings.TrimSpace(text)
-// }
-
-// func contains(s []string, e string) bool {
-// 	for _, a := range s {
-// 		if a == e {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
-// func SaveHtml(article Article, settings Settings) error {
-// 	// Create the page folder if it doesn't exist
-// 	pageDir := filepath.Join(outputDir, a.OriginalPath)
-// 	err := os.MkdirAll(pageDir, 0755)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	// resources := extractResources(a.HtmlContent)
-
-// 	// Sanitize the HTML content
-// 	// p := bluemonday.UGCPolicy()
-// 	// html = p.Sanitize(html)
-
-// 	// Write the HTML content to the file
-// 	filename := filepath.Join(pageDir, defaultIndexName)
-// 	return os.WriteFile(filename, []byte(a.HtmlContent), 0644)
-// }
-
-// func GenerateTagsHTML(tags []string) string {
-// 	var html string
-// 	for _, tag := range tags {
-// 		html += fmt.Sprintf("<li>%s</li>\n", tag)
-// 	}
-// 	return html
-// }
 
 func extractResources(htmlContent string) []string {
 	var resources []string
@@ -488,14 +450,4 @@ func extractResources(htmlContent string) []string {
 	}
 	f(doc)
 	return resources
-}
-
-// Helper function to copy a file
-func copyFile(src, dest string) error {
-	input, err := os.ReadFile(src)
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile(dest, input, 0644)
 }
