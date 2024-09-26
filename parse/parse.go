@@ -21,11 +21,13 @@ import (
 )
 
 type Settings struct {
-	Title           string
-	InputDirectory  string
-	OutputDirectory string
-	DateFormat      string
-	IndexName       string
+	Title                   string
+	InputDirectory          string
+	OutputDirectory         string
+	DateFormat              string
+	IndexName               string
+	AdditionalElementsTop   template.HTML
+	AdditionalElemensBottom template.HTML
 }
 
 func NewSettings() Settings {

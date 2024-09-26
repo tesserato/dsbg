@@ -146,6 +146,7 @@ func copyFile(src, dest string) error {
 var htmlIndexTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
+	{{.Settings.AdditionalElementsTop}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Settings.Title}}</title>
@@ -161,7 +162,8 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 		</nav>
 		<div id="buttons"></div>
         <aside></aside>
-    </header>    
+    </header>
+	{{ $dateFormat := .Settings.DateFormat}}
     {{range .ArticleList}}
         <div class="detail">
             <div class="headline">
@@ -174,15 +176,15 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                             <button class="on">{{.}}</button>
                         {{end}}
                     </div>
-                    <h4 class="date">⋆ {{.Created.Format "2006/01/02"}}</h4>
-                    <h4 class="date">♰ {{.Updated.Format "2006/01/02"}}</h4>
+                    <h4 class="date">⋆ {{.Created.Format $dateFormat}}</h4>
+                    <h4 class="date">♰ {{.Updated.Format $dateFormat}}</h4>
                 </div>
             </div>
             <p class="description">{{.Description}}</p>
         </div>
     {{end}}
     <script src="index.js" async defer></script>
-    <div class="giscus"></div>
+    {{.Settings.AdditionalElemensBottom}}
 </body>
 </html>
 `
