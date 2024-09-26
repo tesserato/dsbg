@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -20,16 +21,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-type Settings struct {
-	Title                   string
-	InputDirectory          string
-	OutputDirectory         string
-	DateFormat              string
-	IndexName               string
-	AdditionalElementsTop   template.HTML
-	AdditionalElemensBottom template.HTML
-}
-
 func NewSettings() Settings {
 	settings := Settings{}
 	settings.Title = "Blog"
@@ -38,27 +29,6 @@ func NewSettings() Settings {
 	settings.DateFormat = "2006-01-02"
 	settings.IndexName = "index.html"
 	return settings
-}
-
-type Article struct {
-	Title        string
-	Description  string
-	Created      time.Time
-	Updated      time.Time
-	Tags         []string
-	HtmlContent  string
-	OriginalPath string
-	LinkToSelf   string
-	// LinkToCss    string
-	// LinkToJs     string
-	// InnerHTML string
-}
-
-type Links struct {
-	ToSelf string
-	ToCss  string
-	ToJs   string
-	ToSave string
 }
 
 func DateTimeFromString(date string) time.Time {
@@ -90,32 +60,118 @@ func DateTimeFromString(date string) time.Time {
 	dateTime := time.Date(year, month, day, hour, min, sec, 0, time.UTC)
 	return dateTime
 }
+func GetPaths(root string, extensions []string) ([]string, error) {
+	for i, ext := range extensions {
+		ext = strings.Trim(ext, " ")
+		extensions[i] = strings.ToLower(ext)
+	}
+	var files []string
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			for _, ext := range extensions {
+				path = strings.ToLower(path)
+				if strings.HasSuffix(path, ext) {
+					files = append(files, path)
+					break
+				}
+			}
+		}
+		return nil
+	})
+	return files, err
+}
 
-var htmlArticleTemplate = `<!DOCTYPE html>
-<html lang="en">
-<head>
-	{{.Settings.AdditionalElementsTop}}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="ZBSCM">
-    <link rel="stylesheet" href="{{.Lks.ToCss}}">
-    <link rel="icon" type="image/x-icon" href="../favicon.ico">
-    <title>{{.Art.Title}}</title>
-</head>
+func CopyHtmlResources(settings Settings, originalArticlePath string, htmlContent string) Links {
+	relPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
+	if err != nil {
+		panic(err)
+	}
+	pageDir := filepath.Join(settings.OutputDirectory, relPath)
+	pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
 
-<body>
-    <header>
-        <h1>{{.Art.Title}}</h1>
-        <h2>{{.Art.Description}}</h2>
-    </header>
-    <div class="detail">
-        {{.Ctt}}
-    </div>
-    <div class="giscus"></div>
-	{{.Settings.AdditionalElemensBottom}}
-</body>
-</html>
-`
+	err = os.MkdirAll(pageDir, 0755)
+	if err != nil {
+		panic(err)
+	}
+	// name := filepath.Base(article.OriginalPath)
+	savePath := filepath.Join(pageDir, settings.IndexName)
+
+	// os.WriteFile(savePath, []byte(article.HtmlContent), 0644)
+
+	link, err := filepath.Rel(settings.OutputDirectory, savePath)
+	if err != nil {
+		panic(err)
+	}
+	link = html.EscapeString(link)
+
+	// articles[i].LinkToSelf = link
+
+	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, originalArticlePath, relPath, pageDir, savePath, link)
+	articleOrigFolderPath := filepath.Dir(originalArticlePath)
+	articleDestFolderPath := filepath.Dir(savePath)
+	for _, resourceOrigRelPath := range extractResources(htmlContent) {
+		resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
+		resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
+		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
+
+		// resourceDestPath := filepath.Join(pageDir, resourceRelPath)
+		// copyFile(resourceOrigPath, resourceDestPath)
+	}
+
+	staticBaseLink, err := filepath.Rel(pageDir, settings.OutputDirectory)
+	if err != nil {
+		panic(err)
+	}
+
+	return Links{ToSelf: link, ToCss: staticBaseLink + "/style.css", ToJs: staticBaseLink + "/script.js", ToSave: savePath}
+}
+
+func GenerateHtmlIndex(articles []Article, settings Settings) error {
+	// Generate the article list HTML
+	var allTags []string
+	var pageList []Article
+	var articleList []Article
+	for _, article := range articles {
+		if slices.Contains(article.Tags, "PAGE") {
+			pageList = append(pageList, article)
+			// allTags = append(allTags, article.Tags...) TODO implement
+		} else {
+			allTags = append(allTags, article.Tags...)
+			articleList = append(articleList, article)
+		}
+	}
+
+	funcMap := template.FuncMap{
+		"makeLink": func(title string) string {
+			return strings.ReplaceAll(strings.ToLower(title), " ", "-") + "/"
+		},
+		"stringsJoin":    strings.Join,
+		"slicesContains": slices.Contains[[]string],
+	}
+	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(HtmlIndexTemplate)
+	if err != nil {
+		return fmt.Errorf("error parsing template: %w", err)
+	}
+
+	var tp bytes.Buffer
+	err = tmpl.Execute(&tp, struct {
+		AllTags     []string
+		PageList    []Article
+		ArticleList []Article
+		Settings    Settings
+	}{allTags, pageList, articleList, settings})
+	if err != nil {
+		return fmt.Errorf("error executing template: %w", err)
+	}
+
+	// Write the HTML content to the file
+	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)
+	return os.WriteFile(filePath, tp.Bytes(), 0644)
+}
+
 
 func MarkdownFile(path string) (Article, error) {
 	data, err := os.ReadFile(path)
@@ -240,9 +296,9 @@ func FormatMarkdown(article Article, links Links, settings Settings) Article {
 
 	var tp bytes.Buffer
 	err = tmpl.Execute(&tp, struct {
-		Art Article
-		Ctt template.HTML
-		Lks Links
+		Art      Article
+		Ctt      template.HTML
+		Lks      Links
 		Settings Settings
 	}{article, template.HTML(article.HtmlContent), links, settings})
 	if err != nil {
@@ -333,6 +389,8 @@ func HTMLFile(path string) (Article, error) {
 	return article, nil
 }
 
+//////////////////////////////////////////
+
 // Helper function to find the first occurrence of an element by tag name
 func findFirstElement(n *html.Node, tag string) *html.Node {
 	if n.Type == html.ElementNode && n.Data == tag {
@@ -405,11 +463,11 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 // 	return html
 // }
 
-func ExtractResources(htmlContent string) []string {
+func extractResources(htmlContent string) []string {
 	var resources []string
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		fmt.Errorf("error parsing HTML: %w", err)
+		panic(err)
 	}
 
 	var f func(*html.Node)
@@ -430,4 +488,14 @@ func ExtractResources(htmlContent string) []string {
 	}
 	f(doc)
 	return resources
+}
+
+// Helper function to copy a file
+func copyFile(src, dest string) error {
+	input, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(dest, input, 0644)
 }
