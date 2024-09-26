@@ -106,7 +106,12 @@ func copyResources(settings parse.Settings, originalArticlePath string, htmlCont
 		// copyFile(resourceOrigPath, resourceDestPath)
 	}
 
-	return parse.Links{ToSelf: link, ToCss: pageDir + "/style.css", ToJs: pageDir + "/script.js", ToSave: savePath}
+	staticBaseLink, err := filepath.Rel(pageDir, settings.OutputDirectory)
+	if err != nil {
+		panic(err)
+	}
+
+	return parse.Links{ToSelf: link, ToCss: staticBaseLink + "/style.css", ToJs: staticBaseLink + "/script.js", ToSave: savePath}
 }
 
 func getFiles(root string, extensions []string) ([]string, error) {
@@ -138,26 +143,37 @@ func copyFile(src, dest string) error {
 	return os.WriteFile(dest, input, 0644)
 }
 
-var htmlIndexTemplate = ` <!DOCTYPE html>
+var htmlIndexTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{.Settings.Title}}</title>
-	<link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Settings.Title}}</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h1>{{.Settings.Title}}</h1>
-	<ul>
-	{{range .ArticleList}}
-		<li>
-			<a href="{{.LinkToSelf}}">{{.Title}}</a>
-			<p>{{.Description}}</p>
-			<p>Created: {{.Created.Format "2006-01-02"}}</p>
-			<p>Updated: {{.Updated.Format "2006-01-02"}}</p>
-		</li>
-	{{end}}
-	</ul>
+    <h1>{{.Settings.Title}}</h1>
+    {{range .ArticleList}}
+        <div class="detail">
+            <div class="headline">
+                <a href="{{.LinkToSelf}}">
+                    <h2>{{.Title}}</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        {{range .Tags}}
+                            <button class="on">{{.}}</button>
+                        {{end}}
+                    </div>
+                    <h4 class="date">⋆ {{.Created.Format "2006/01/02"}}</h4>
+                    <h4 class="date">♰ {{.Updated.Format "2006/01/02"}}</h4>
+                </div>
+            </div>
+            <p class="description">{{.Description}}</p>
+        </div>
+    {{end}}
+    <script src="index.js" async defer></script>
+    <div class="giscus"></div>
 </body>
 </html>
 `
