@@ -84,6 +84,16 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 	return files, err
 }
 
+func cleanString(url string) string {
+	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\.-]+`)
+
+	url = strings.ReplaceAll(url, "\\", "/")
+	url = strings.ReplaceAll(url, " ", "-")
+	url = nonAlphanumericRegex.ReplaceAllString(url, "")
+
+	return url
+}
+
 func CopyHtmlResources(settings Settings, originalArticlePath string, htmlContent string) Links {
 	relPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
 	if err != nil {
@@ -92,29 +102,31 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 	pageDir := filepath.Join(settings.OutputDirectory, relPath)
 	pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
 
-	err = os.MkdirAll(pageDir, 0755)
+	savePath := filepath.Join(pageDir, settings.IndexName)
+
+	savePath = cleanString(savePath)
+
+	articleOrigFolderPath := filepath.Dir(originalArticlePath)
+	articleDestFolderPath := filepath.Dir(savePath)
+
+	err = os.MkdirAll(articleDestFolderPath, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
-	// name := filepath.Base(article.OriginalPath)
-	savePath := filepath.Join(pageDir, settings.IndexName)
-
-	// os.WriteFile(savePath, []byte(article.HtmlContent), 0644)
 
 	link, err := filepath.Rel(settings.OutputDirectory, savePath)
 	if err != nil {
 		panic(err)
 	}
-	link = html.EscapeString(link)
+
+	link = cleanString(link)
 
 	// articles[i].LinkToSelf = link
 
 	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, originalArticlePath, relPath, pageDir, savePath, link)
-	articleOrigFolderPath := filepath.Dir(originalArticlePath)
-	articleDestFolderPath := filepath.Dir(savePath)
 	for _, resourceOrigRelPath := range extractResources(htmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
-		if strings.Contains(resourceOrigRelPathLower, "http")  {
+		if strings.Contains(resourceOrigRelPathLower, "http") {
 			continue
 		}
 		resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
@@ -130,7 +142,6 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 		if err != nil {
 			panic(err)
 		}
-
 	}
 
 	staticBaseLink, err := filepath.Rel(pageDir, settings.OutputDirectory)
@@ -399,7 +410,6 @@ func HTMLFile(path string) (Article, error) {
 
 	return article, nil
 }
-
 
 // Helper function to find the first occurrence of an element by tag name
 func findFirstElement(n *html.Node, tag string) *html.Node {
