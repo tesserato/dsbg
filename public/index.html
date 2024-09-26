@@ -1,71 +1,176 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Blog</title>
-	<link rel="stylesheet" href="/style.css">
+	
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h1>Blog</h1>
-	<ul>
+	<header>
+		<h1>Blog</h1>
+		<nav>
+		
+			<a href="to%20read%5cindex.html">Reading list</a>
+		
+			<a href="">Research Paper Structure</a>
+		
+		</nav>
+		<div id="buttons"></div>
+        <aside></aside>
+    </header>
 	
-		<li>
-			<a href="2022 02 16 How to set up a free blog\index.html">How to set up a free blog, the hard way</a>
-			<p>In this post I explore how a veritable nerd goes about setting a blog. Wix? no thanks. Medium? Too easy. Assembly? a bit too much, if you ask me. What, then? Come along and find out.</p>
-			<p>Created: 2022-02-16</p>
-			<p>Updated: 2024-05-19</p>
-		</li>
-	
-		<li>
-			<a href="2024 05 19 How a handful of prehistoric geniuses launched humanity’s technological revolution\index.html">From Spearpoints to Beads: Unveiling the Secrets of Our Ancestral Inventors</a>
-			<p>For millions of years, progress was slow. Then, around 500,000 years ago, a spark ignited a revolution. This article explores the surprising origins of groundbreaking inventions like spearpoints, fire, and the bow and arrow, revealing how these innovations spread not through independent discovery, but through a network of sharing across early human populations.</p>
-			<p>Created: 2024-05-19</p>
-			<p>Updated: 2024-09-24</p>
-		</li>
-	
-		<li>
-			<a href="2024 05 19 Making complex apps\index.html">Beyond the Weekend Hack: The Hidden Challenges of Building Software</a>
-			<p>Ever breeze through a quick coding project, only to hit a wall when tackling something more complex? This post explores the hidden challenges of software development, from maintaining mental models of large codebases to navigating the complexities of long-term projects. While rapid prototyping has its place, building lasting software requires a different approach.</p>
-			<p>Created: 2024-05-19</p>
-			<p>Updated: 2024-05-28</p>
-		</li>
-	
-		<li>
-			<a href="2024 05 20 stuff to watch\index.html">Stuff to watch</a>
-			<p>I'm thinking of collecting here some stuff to watch that lies scattered around my note taking services.</p>
-			<p>Created: 2024-05-20</p>
-			<p>Updated: 2024-05-20</p>
-		</li>
-	
-		<li>
-			<a href="2024 05 25 Replacing authy with proton pass\index.html">The quest to replace Authy desktop</a>
-			<p>Authy is dropping support for its desktop app. I comment a bit on some of the alternatives.</p>
-			<p>Created: 2024-05-25</p>
-			<p>Updated: 2024-05-28</p>
-		</li>
-	
-		<li>
-			<a href="about\about\index.html">About Me</a>
-			<p></p>
-			<p>Created: -0001-11-30</p>
-			<p>Updated: 2024-05-26</p>
-		</li>
-	
-		<li>
-			<a href="guide to publish\README\index.html">README</a>
-			<p></p>
-			<p>Created: -0001-11-30</p>
-			<p>Updated: 2020-10-02</p>
-		</li>
-	
-		<li>
-			<a href="roadmap\2022 02 17 Roadmap\index.html">Roadmap / TODO list for this blog</a>
-			<p>nothing makes more sense than storing the intended roadmap for the blog inside the blog itself! Genius, right?</p>
-			<p>Created: 2022-02-17</p>
-			<p>Updated: 2024-05-31</p>
-		</li>
-	
-	</ul>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="2022%2002%2016%20how%20to%20set%20up%20a%20free%20blog%5cindex.html">
+                    <h2>How to set up a free blog, the hard way</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                            <button class="on">post</button>
+                        
+                            <button class="on">web</button>
+                        
+                            <button class="on">python</button>
+                        
+                            <button class="on">DIY</button>
+                        
+                    </div>
+                    <h4 class="date">⋆ 2022-02-16</h4>
+                    <h4 class="date">♰ 2024-05-19</h4>
+                </div>
+            </div>
+            <p class="description">In this post I explore how a veritable nerd goes about setting a blog. Wix? no thanks. Medium? Too easy. Assembly? a bit too much, if you ask me. What, then? Come along and find out.</p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="2024%2005%2019%20how%20a%20handful%20of%20prehistoric%20geniuses%20launched%20humanity%e2%80%99s%20technological%20revolution%5cindex.html">
+                    <h2>From Spearpoints to Beads: Unveiling the Secrets of Our Ancestral Inventors</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                            <button class="on">Ancient innovation</button>
+                        
+                    </div>
+                    <h4 class="date">⋆ 2024-05-19</h4>
+                    <h4 class="date">♰ 2024-09-24</h4>
+                </div>
+            </div>
+            <p class="description">For millions of years, progress was slow. Then, around 500,000 years ago, a spark ignited a revolution. This article explores the surprising origins of groundbreaking inventions like spearpoints, fire, and the bow and arrow, revealing how these innovations spread not through independent discovery, but through a network of sharing across early human populations.</p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="2024%2005%2019%20making%20complex%20apps%5cindex.html">
+                    <h2>Beyond the Weekend Hack: The Hidden Challenges of Building Software</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                            <button class="on">Programming</button>
+                        
+                    </div>
+                    <h4 class="date">⋆ 2024-05-19</h4>
+                    <h4 class="date">♰ 2024-05-28</h4>
+                </div>
+            </div>
+            <p class="description">Ever breeze through a quick coding project, only to hit a wall when tackling something more complex? This post explores the hidden challenges of software development, from maintaining mental models of large codebases to navigating the complexities of long-term projects. While rapid prototyping has its place, building lasting software requires a different approach.</p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="2024%2005%2020%20stuff%20to%20watch%5cindex.html">
+                    <h2>Stuff to watch</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                            <button class="on">tv shows</button>
+                        
+                            <button class="on">movies</button>
+                        
+                    </div>
+                    <h4 class="date">⋆ 2024-05-20</h4>
+                    <h4 class="date">♰ 2024-05-20</h4>
+                </div>
+            </div>
+            <p class="description">I&#39;m thinking of collecting here some stuff to watch that lies scattered around my note taking services.</p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="2024%2005%2025%20replacing%20authy%20with%20proton%20pass%5cindex.html">
+                    <h2>The quest to replace Authy desktop</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                            <button class="on">2FA</button>
+                        
+                    </div>
+                    <h4 class="date">⋆ 2024-05-25</h4>
+                    <h4 class="date">♰ 2024-05-28</h4>
+                </div>
+            </div>
+            <p class="description">Authy is dropping support for its desktop app. I comment a bit on some of the alternatives.</p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="">
+                    <h2>About Me</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                    </div>
+                    <h4 class="date">⋆ -0001-11-30</h4>
+                    <h4 class="date">♰ 2024-05-26</h4>
+                </div>
+            </div>
+            <p class="description"></p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="guide%20to%20publish%5creadme%5cindex.html">
+                    <h2>readme</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                    </div>
+                    <h4 class="date">⋆ -0001-11-30</h4>
+                    <h4 class="date">♰ 2020-10-02</h4>
+                </div>
+            </div>
+            <p class="description"></p>
+        </div>
+    
+        <div class="detail">
+            <div class="headline">
+                <a href="roadmap%5c2022%2002%2017%20roadmap%5cindex.html">
+                    <h2>Roadmap / TODO list for this blog</h2>
+                </a>
+                <div class="info">
+                    <div class="tags">
+                        
+                            <button class="on">roadmap</button>
+                        
+                    </div>
+                    <h4 class="date">⋆ 2022-02-17</h4>
+                    <h4 class="date">♰ 2024-05-31</h4>
+                </div>
+            </div>
+            <p class="description">nothing makes more sense than storing the intended roadmap for the blog inside the blog itself! Genius, right?</p>
+        </div>
+    
+    <script src="index.js" async defer></script>
+    
 </body>
 </html>
