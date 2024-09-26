@@ -152,7 +152,16 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>{{.Settings.Title}}</h1>
+	<header>
+		<h1>{{.Settings.Title}}</h1>
+		<nav>
+		{{range .PageList}}
+			<a href="{{.LinkToSelf}}">{{.Title}}</a>
+		{{end}}
+		</nav>
+		<div id="buttons"></div>
+        <aside></aside>
+    </header>    
     {{range .ArticleList}}
         <div class="detail">
             <div class="headline">
