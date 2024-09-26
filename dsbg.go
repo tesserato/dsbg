@@ -36,7 +36,7 @@ func main() {
 
 			links := copyResources(settings, path, article.HtmlContent)
 
-			article = parse.FormatMarkdown(article, links)
+			article = parse.FormatMarkdown(article, links, settings)
 
 			articles = append(articles, article)
 

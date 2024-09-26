@@ -94,25 +94,25 @@ func DateTimeFromString(date string) time.Time {
 var htmlArticleTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{.Art.Title}}</title>
-	<link rel="stylesheet" href="{{.Lks.ToCss}}">
-	<script src="{{.Lks.ToJs}}"></script>
+	{{.Settings.AdditionalElementsTop}}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="ZBSCM">
+    <link rel="stylesheet" href="{{.Lks.ToCss}}">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <title>{{.Art.Title}}</title>
 </head>
-<body>
-	<article>
-		<h1>{{.Art.Title}}</h1>
 
-		{{if slicesContains .Art.Tags "PAGE"}}
-			<p>Created: {{.Art.Created}}</p>
-			<p>Updated: {{.Art.Updated}}</p>
-			<ul>
-				{{.Art.Tags}}
-			</ul>
-		{{end}}
-		{{.Ctt}}
-	</article>
+<body>
+    <header>
+        <h1>{{.Art.Title}}</h1>
+        <h2>{{.Art.Description}}</h2>
+    </header>
+    <div class="detail">
+        {{.Ctt}}
+    </div>
+    <div class="giscus"></div>
+	{{.Settings.AdditionalElemensBottom}}
 </body>
 </html>
 `
@@ -232,7 +232,7 @@ func MarkdownFile(path string) (Article, error) {
 	return article, nil
 }
 
-func FormatMarkdown(article Article, links Links) Article {
+func FormatMarkdown(article Article, links Links, settings Settings) Article {
 	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		panic(err)
@@ -243,7 +243,8 @@ func FormatMarkdown(article Article, links Links) Article {
 		Art Article
 		Ctt template.HTML
 		Lks Links
-	}{article, template.HTML(article.HtmlContent), links})
+		Settings Settings
+	}{article, template.HTML(article.HtmlContent), links, settings})
 	if err != nil {
 		panic(err)
 	}
