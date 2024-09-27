@@ -21,16 +21,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-func NewSettings() Settings {
-	settings := Settings{}
-	settings.Title = "Blog"
-	settings.InputDirectory = "content"
-	settings.OutputDirectory = "public"
-	settings.DateFormat = "2006-01-02"
-	settings.IndexName = "index.html"
-	return settings
-}
-
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
 	for _, pattern := range []string{
