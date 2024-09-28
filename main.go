@@ -16,19 +16,19 @@ import (
 var assets embed.FS
 
 func main() {
-	// Parse command line arguments
-	title := flag.String("title", "Blog", "The Title of the blog")
-	inputDirectory := flag.String("input-dir", "content", "Path to the directory that holds the source files")
-	outputDirectory := flag.String("output-dir", "public", "Path to the directory where the output files will be saved")
-	dateFormat := flag.String("date-format", "2006-01-02", "Date format")
-	indexName := flag.String("index-name", "index.html", "Name of the index files")
+	var settings parse.Settings
+
+	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
+	flag.StringVar(&settings.InputDirectory, "input-dir", "content", "Path to the directory that holds the source files")
+	flag.StringVar(&settings.OutputDirectory, "output-dir", "public", "Path to the directory where the output files will be saved")
+	flag.StringVar(&settings.DateFormat, "date-format", "2006-01-02", "Date format")
+	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
 	pathToAdditionalElementsTop := flag.String("path-to-additional-elements-top", "", "Path to a file with additional elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("path-to-additional-elements-bottom", "", "Path to a file with additional elements (basically scripts) to be placed at the bottom of the HTML outputs")
 	showHelp := flag.Bool("help", false, "Show help message")
 
 	flag.Parse()
 
-	// Check if help flag is set, if so, print help message and exit
 	if *showHelp {
 		fmt.Println("Usage: dsbg [options]")
 		fmt.Println("\nOptions:")
@@ -36,21 +36,11 @@ func main() {
 		return
 	}
 
-	// Parse command line arguments into settings struct
-	settings := parse.Settings{
-		Title:           *title,
-		InputDirectory:  *inputDirectory,
-		OutputDirectory: *outputDirectory,
-		DateFormat:      *dateFormat,
-		IndexName:       *indexName,
-	}
-
 	if *pathToAdditionalElementsTop != "" {
 		additionalElementsTop, err := os.ReadFile(*pathToAdditionalElementsTop)
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		settings.AdditionalElementsTop = template.HTML(additionalElementsTop)
 	}
 
@@ -62,67 +52,70 @@ func main() {
 		settings.AdditionalElemensBottom = template.HTML(additionalElemensBottom)
 	}
 
-	// Read all markdown and HTML files from the content folder
+	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
+		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
+	}
+	if err := os.MkdirAll(settings.OutputDirectory, 0755); err != nil {
+		log.Fatalf("Error creating output directory '%s': %v", settings.OutputDirectory, err)
+	}
+
 	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Parse each file into an Article struct and save it
 	var articles []parse.Article
 	for _, path := range files {
-		lowerCasePath := strings.ToLower(path)
-		if strings.HasSuffix(lowerCasePath, ".md") {
-			article, err := parse.MarkdownFile(path)
-			if err != nil {
-				log.Printf("Error parsing file %s: %s\n", path, err)
-				continue
-			}
-
-			links := parse.CopyHtmlResources(settings, path, article.HtmlContent)
-
-			article = parse.FormatMarkdown(article, links, settings)
-
-			articles = append(articles, article)
-
-			os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
-
-		} else if strings.HasSuffix(lowerCasePath, ".html") {
-			article, err := parse.HTMLFile(path)
-			if err != nil {
-				log.Printf("Error parsing file %s: %s\n", path, err)
-				continue
-			}
-			links := parse.CopyHtmlResources(settings, path, article.HtmlContent)
-
-			articles = append(articles, article)
-
-			os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
-
+		article, err := processFile(path, settings)
+		if err != nil {
+			log.Printf("Error processing file %s: %s\n", path, err)
+			continue
 		}
+		articles = append(articles, article)
 	}
 
-	// Generate the index.html file
 	err = parse.GenerateHtmlIndex(articles, settings)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Retrieve and save the css file
-	css, err := assets.ReadFile("assets/style.css")
-	if err != nil {
-		log.Fatal(err)
-	}
-	pathToSaveCss := path.Join(settings.OutputDirectory, "style.css")
-	os.WriteFile(pathToSaveCss, css, 0644)
-
-	// Retrieve and save the js file
-	js, err := assets.ReadFile("assets/script.js")
-	if err != nil {
-		log.Fatal(err)
-	}
-	pathToSaveJs := path.Join(settings.OutputDirectory, "script.js")
-	os.WriteFile(pathToSaveJs, js, 0644)
+	saveAsset("style.css", settings)
+	saveAsset("script.js", settings)
 
 	log.Println("Blog generated successfully!")
+}
+
+func processFile(filePath string, settings parse.Settings) (parse.Article, error) {
+	var article parse.Article
+	var err error
+
+	if strings.HasSuffix(filePath, ".md") {
+		article, err = parse.MarkdownFile(filePath)
+	} else if strings.HasSuffix(filePath, ".html") {
+		article, err = parse.HTMLFile(filePath)
+	} else {
+		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
+	}
+
+	if err != nil {
+		return parse.Article{}, err
+	}
+
+	links := parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+	article = parse.FormatMarkdown(article, links, settings)
+	os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
+
+	return article, nil
+}
+
+func saveAsset(assetName string, settings parse.Settings) {
+	file, err := assets.ReadFile("assets/" + assetName)
+	if err != nil {
+		log.Fatalf("Error reading asset '%s': %v", assetName, err)
+	}
+
+	pathToSave := path.Join(settings.OutputDirectory, assetName)
+	if err := os.WriteFile(pathToSave, file, 0644); err != nil {
+		log.Fatalf("Error saving asset '%s': %v", assetName, err)
+	}
 }
