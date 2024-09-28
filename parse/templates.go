@@ -66,7 +66,7 @@ var HtmlIndexTemplate = `<!DOCTYPE html>
             <p class="description">{{.Description}}</p>
         </div>
     {{end}}
-    <script src="index.js" async defer></script>
+    <script src="script.js" async defer></script>
     {{.Settings.AdditionalElemensBottom}}
 </body>
 </html>

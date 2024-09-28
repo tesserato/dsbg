@@ -2,13 +2,18 @@ package main
 
 import (
 	"dsbg/parse"
+	"embed"
 	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"os"
+	"path"
 	"strings"
 )
+
+//go:embed assets/*
+var assets embed.FS
 
 func main() {
 	// Parse command line arguments
@@ -23,7 +28,7 @@ func main() {
 
 	flag.Parse()
 
-	// Check if help flag is set
+	// Check if help flag is set, if so, print help message and exit
 	if *showHelp {
 		fmt.Println("Usage: dsbg [options]")
 		fmt.Println("\nOptions:")
@@ -31,6 +36,7 @@ func main() {
 		return
 	}
 
+	// Parse command line arguments into settings struct
 	settings := parse.Settings{
 		Title:           *title,
 		InputDirectory:  *inputDirectory,
@@ -62,7 +68,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// 2. Parse each file into an Article struct
+	// Parse each file into an Article struct and save it
 	var articles []parse.Article
 	for _, path := range files {
 		lowerCasePath := strings.ToLower(path)
@@ -96,14 +102,27 @@ func main() {
 		}
 	}
 
-	// for i, article := range articles {
-	// }
-
-	// 4. Generate the index.html file
+	// Generate the index.html file
 	err = parse.GenerateHtmlIndex(articles, settings)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Retrieve and save the css file
+	css, err := assets.ReadFile("assets/style.css")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pathToSaveCss := path.Join(settings.OutputDirectory, "style.css")
+	os.WriteFile(pathToSaveCss, css, 0644)
+
+	// Retrieve and save the js file
+	js, err := assets.ReadFile("assets/script.js")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pathToSaveJs := path.Join(settings.OutputDirectory, "script.js")
+	os.WriteFile(pathToSaveJs, js, 0644)
 
 	log.Println("Blog generated successfully!")
 }
