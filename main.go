@@ -79,8 +79,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	saveAsset("style.css", settings)
-	saveAsset("script.js", settings)
+	saveAsset("style.css", settings.OutputDirectory)
+	saveAsset("script.js", settings.OutputDirectory)
+	saveAsset("favicon.ico", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
@@ -113,13 +114,13 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 	return article, nil
 }
 
-func saveAsset(assetName string, settings parse.Settings) {
+func saveAsset(assetName string, outputDirectory string) {
 	file, err := assets.ReadFile("assets/" + assetName)
 	if err != nil {
 		log.Fatalf("Error reading asset '%s': %v", assetName, err)
 	}
 
-	pathToSave := path.Join(settings.OutputDirectory, assetName)
+	pathToSave := path.Join(outputDirectory, assetName)
 	if err := os.WriteFile(pathToSave, file, 0644); err != nil {
 		log.Fatalf("Error saving asset '%s': %v", assetName, err)
 	}
