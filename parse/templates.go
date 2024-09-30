@@ -1,5 +1,14 @@
 package parse
 
+var FrontMatterTemplate = `---
+title: 
+description: 
+created: {{.}}
+updated: {{.}}
+tags: 
+---
+`
+
 var htmlArticleTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +35,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 </html>
 `
 
-var HtmlIndexTemplate = `<!DOCTYPE html>
+var htmlIndexTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
 	{{.Settings.AdditionalElementsTop}}
