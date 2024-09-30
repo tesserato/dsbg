@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+type Style int64
+
+const (
+	Default Style = iota
+	Dark  
+)
+
 type Settings struct {
 	Title                   string
 	Description             string
@@ -12,6 +19,9 @@ type Settings struct {
 	OutputDirectory         string
 	DateFormat              string
 	IndexName               string
+	Style                   Style
+	PathToCustomCss         string
+	PathToCustomJs          string
 	AdditionalElementsTop   template.HTML
 	AdditionalElemensBottom template.HTML
 }

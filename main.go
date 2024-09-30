@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -36,6 +37,9 @@ func main() {
 	flag.StringVar(&settings.OutputDirectory, "output-dir", "public", "Path to the directory where the output files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
+	flag.StringVar(&settings.PathToCustomCss, "path-to-custom-css", "", "Path to a file with custom css")
+	flag.StringVar(&settings.PathToCustomJs, "path-to-custom-js", "", "Path to a file with custom js")
+	styleString := flag.String("style", "default", "Style to be used")
 	pathToAdditionalElementsTop := flag.String("path-to-additional-elements-top", "", "Path to a file with additional elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("path-to-additional-elements-bottom", "", "Path to a file with additional elements (basically scripts) to be placed at the bottom of the HTML outputs")
 	showHelp := flag.Bool("help", false, "Show help message")
@@ -134,6 +138,15 @@ func main() {
 		log.Fatalf("Error creating output directory '%s': %v", settings.OutputDirectory, err)
 	}
 
+	switch *styleString {
+	case "default":
+		settings.Style = parse.Default
+	case "dark":
+		settings.Style = parse.Dark
+	default:
+		settings.Style = parse.Default
+	}
+
 	// Initial build
 	buildWebsite(settings)
 
@@ -149,6 +162,14 @@ func main() {
 		err = watcher.Add(settings.InputDirectory)
 		if err != nil {
 			log.Fatal(err)
+		}
+
+		// Add custom css path, if any
+		if settings.PathToCustomCss != "" {
+			err = watcher.Add(settings.PathToCustomCss)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		log.Println("Watching for changes...")
@@ -193,9 +214,42 @@ func buildWebsite(settings parse.Settings) {
 		log.Fatal(err)
 	}
 
-	saveAsset("style.css", settings.OutputDirectory)
-	saveAsset("script.js", settings.OutputDirectory)
-	saveAsset("favicon.ico", settings.OutputDirectory)
+	if settings.PathToCustomCss == "" {
+		styleAsset := "style.css"
+		switch settings.Style {
+		case parse.Dark:
+			styleAsset = "style-dark.css"
+		}
+		saveAsset(styleAsset, "style.css", settings.OutputDirectory)
+
+	} else {
+		input, err := os.ReadFile(settings.PathToCustomCss)
+		if err != nil {
+			panic(err)
+		}
+
+		cssDestPath := filepath.Join(settings.OutputDirectory, "style.css")
+		err = os.WriteFile(cssDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if settings.PathToCustomJs == "" {
+		saveAsset("script.js", "script.js", settings.OutputDirectory)
+	} else{
+		input, err := os.ReadFile(settings.PathToCustomJs)
+		if err != nil {
+			panic(err)
+		}
+		jsDestPath := filepath.Join(settings.OutputDirectory, "script.js")
+		err = os.WriteFile(jsDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
@@ -227,13 +281,13 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 	return article, nil
 }
 
-func saveAsset(assetName string, outputDirectory string) {
+func saveAsset(assetName string, saveName string, outputDirectory string) {
 	file, err := assets.ReadFile("assets/" + assetName)
 	if err != nil {
 		log.Fatalf("Error reading asset '%s': %v", assetName, err)
 	}
 
-	pathToSave := path.Join(outputDirectory, assetName)
+	pathToSave := path.Join(outputDirectory, saveName)
 	if err := os.WriteFile(pathToSave, file, 0644); err != nil {
 		log.Fatalf("Error saving asset '%s': %v", assetName, err)
 	}
