@@ -5,6 +5,7 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"html/template"
 	"log"
 	"os"
@@ -38,6 +39,7 @@ func main() {
 	pathToAdditionalElementsTop := flag.String("path-to-additional-elements-top", "", "Path to a file with additional elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("path-to-additional-elements-bottom", "", "Path to a file with additional elements (basically scripts) to be placed at the bottom of the HTML outputs")
 	showHelp := flag.Bool("help", false, "Show help message")
+	watch := flag.Bool("watch", false, "Watch for changes and rebuild")
 	// generate md template
 	createTemplate := flag.Bool("template", false, "Create a markdown template with frontmatter fields. title, output-dir (defaults to current dir in this case) and date-format")
 
@@ -58,7 +60,6 @@ func main() {
 
 		formattedDate := time.Now().Format(settings.DateFormat)
 		// Data for the template
-
 
 		// Get filename from title or default to "template.md"
 		var filename string
@@ -109,6 +110,7 @@ func main() {
 		fmt.Printf("Markdown template created at: %s\n", templatePath)
 		return // Exit after creating the template
 	}
+
 	if *pathToAdditionalElementsTop != "" {
 		additionalElementsTop, err := os.ReadFile(*pathToAdditionalElementsTop)
 		if err != nil {
@@ -132,6 +134,45 @@ func main() {
 		log.Fatalf("Error creating output directory '%s': %v", settings.OutputDirectory, err)
 	}
 
+	// Initial build
+	buildWebsite(settings)
+
+	// Start watching for changes
+	if *watch {
+		watcher, err := fsnotify.NewWatcher()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer watcher.Close()
+
+		// Add the input directory to the watcher
+		err = watcher.Add(settings.InputDirectory)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println("Watching for changes...")
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					log.Println("Changes detected. Rebuilding...")
+					buildWebsite(settings)
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("Error:", err)
+			}
+		}
+	}
+}
+
+func buildWebsite(settings parse.Settings) {
 	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
 	if err != nil {
 		log.Fatal(err)
@@ -158,7 +199,6 @@ func main() {
 
 	log.Println("Blog generated successfully!")
 }
-
 func processFile(filePath string, settings parse.Settings) (parse.Article, error) {
 	var article parse.Article
 	var err error
