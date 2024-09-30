@@ -10,4 +10,4 @@ go build .
 Remove-Item "public/*" -Recurse -Force
 
 # ./dsbg.exe -template -title "MY Awesome Post" -description "My awesome description"
-./dsbg.exe -title "MY Awesome Blog" -description "My awesome description"
+./dsbg.exe -title "MY Awesome Blog" -description "My awesome description" -path-to-custom-css "./assets/style.css" -watch

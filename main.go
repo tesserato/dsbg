@@ -172,7 +172,7 @@ func main() {
 			}
 		}
 
-		log.Println("Watching for changes...")
+		log.Println("\nWatching for changes...\n")
 		for {
 			select {
 			case event, ok := <-watcher.Events:
@@ -182,6 +182,7 @@ func main() {
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					log.Println("Changes detected. Rebuilding...")
 					buildWebsite(settings)
+					log.Println("\nWatching for changes...\n")
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
