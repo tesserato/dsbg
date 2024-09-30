@@ -30,6 +30,7 @@ func main() {
 	var settings parse.Settings
 
 	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
+	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
 	flag.StringVar(&settings.InputDirectory, "input-dir", "content", "Path to the directory that holds the source files")
 	flag.StringVar(&settings.OutputDirectory, "output-dir", "public", "Path to the directory where the output files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
@@ -57,18 +58,34 @@ func main() {
 
 		formattedDate := time.Now().Format(settings.DateFormat)
 		// Data for the template
-		data := struct {
-			CurrentDate string
-		}{
-			CurrentDate: formattedDate,
-		}
+
 
 		// Get filename from title or default to "template.md"
 		var filename string
+		var title string
 		if isFlagPassed("title") { // check if title flag is passed
 			filename = formattedDate + " " + settings.Title + ".md"
+			title = settings.Title
 		} else {
 			filename = formattedDate + ".md"
+			title = ""
+		}
+
+		var description string
+		if isFlagPassed("description") { // check if description flag is passed
+			description = settings.Description
+		} else {
+			description = ""
+		}
+
+		data := struct {
+			Title       string
+			Description string
+			CurrentDate string
+		}{
+			Title:       title,
+			Description: description,
+			CurrentDate: formattedDate,
 		}
 
 		var templatePath string

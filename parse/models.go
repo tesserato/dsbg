@@ -7,6 +7,7 @@ import (
 
 type Settings struct {
 	Title                   string
+	Description             string
 	InputDirectory          string
 	OutputDirectory         string
 	DateFormat              string

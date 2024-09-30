@@ -1,10 +1,10 @@
 package parse
 
 var FrontMatterTemplate = `---
-title: 
-description: 
-created: {{.}}
-updated: {{.}}
+title: {{.Title}}
+description: {{.Description}}
+created: {{.CurrentDate}}
+updated: {{.CurrentDate}}
 tags: 
 ---
 `
