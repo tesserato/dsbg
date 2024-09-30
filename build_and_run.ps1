@@ -9,4 +9,5 @@ go build .
 
 Remove-Item "public/*" -Recurse -Force
 
-./dsbg.exe
+# ./dsbg.exe -template -title "MY Awesome Post" -description "My awesome description"
+./dsbg.exe -title "MY Awesome Blog" -description "My awesome description"

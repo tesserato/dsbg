@@ -53,6 +53,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 			<a href="{{.LinkToSelf}}">{{.Title}}</a>
 		{{end}}
 		</nav>
+		<h2>{{.Settings.Description}}</h2>
 		<div id="buttons"></div>
         <aside></aside>
     </header>
