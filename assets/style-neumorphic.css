@@ -4,7 +4,7 @@
     --background-color: #eaeaea;
     --text-color: #7b7b7b;
     --card-background-color: #ededed;
-    --link-color: #e33030;
+    --link-color: #e34e4e;
     --accent-color: #d0d0d0;
 }
 
@@ -174,6 +174,11 @@ header h2 {
     text-align: center;
 }
 
+header a {
+    align-self: flex-start;
+    text-align: left;
+}
+
 h1, h2, h3, h4, h5, p, a {
     text-align: justify;
     text-justify: inter-word;
@@ -195,9 +200,9 @@ p {
 
 a {
     text-decoration: none;
+    font-weight: 100;
     color: var(--link-color);
     text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.56);
-
 }
 
 a:hover {
@@ -229,7 +234,6 @@ h5 {
     font-family: var(--header-font);
 }
 
-
 .info {
     display: flex;
     flex-direction: column;
@@ -251,7 +255,6 @@ h5 {
     filter: brightness(80%);
     width: max-content;
 }
-
 
 img {
     max-width: 100%;

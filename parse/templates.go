@@ -23,6 +23,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 
 <body>
     <header>
+		<a href="/"> &#9665; {{.Settings.Title}} </a>
         <h1>{{.Art.Title}}</h1>
         <h2>{{.Art.Description}}</h2>
     </header>
