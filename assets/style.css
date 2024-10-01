@@ -1,11 +1,11 @@
 :root {
     --header-font: 'Georgia', 'Times New Roman', Times, serif;
     --body-font: 'Raleway', sans-serif;
-
-    --background-color: #fff;
+    --background-color: #ffffff;
     --text-color: #000000;
-    --primary-color: #50d459a7;
-    --secondary-color: #de1414;
+    --card-background-color: #50d459a7;
+    --link-color: #32158a;
+    --accent-color: #de1414;
 }
 
 * {
@@ -34,6 +34,7 @@ body {
     font-size: 1rem;
     padding: 1rem;
     margin: 0 auto;
+    line-height: 1.5;
 }
 
 nav {
@@ -55,7 +56,8 @@ nav a {
     text-decoration: none;
     color: var(--text-color);
     filter: opacity(80%);
-    background-color: var(--primary-color);
+    background-color: var(--card-background-color);
+    box-shadow: 0.1rem 0.1rem 0.3rem var(--accent-color);
     border-radius: 0.5em;
 }
 
@@ -63,14 +65,16 @@ img {
     max-width: 100%;
     height: auto;
     align-self: center;
+    filter: brightness(0.9) contrast(1.1);
+    /* Adjust image contrast for dark mode */
 }
 
 .detail {
-    background-color: var(--primary-color);
+    background-color: var(--card-background-color);
     padding: 2rem;
     margin: 0 0 1rem;
     border-radius: 0.3rem;
-    box-shadow: 0.1rem 0.3rem 0.3rem var(--secondary-color);
+    box-shadow: 0.1rem 0.1rem 0.3rem var(--accent-color);
     color: var(--text-color);
 }
 
@@ -104,6 +108,11 @@ button {
     font-family: var(--body-font);
 }
 
+button:hover {
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+}
+
 header {
     display: flex;
     flex-direction: column;
@@ -117,7 +126,7 @@ header h1 {
     padding: 0;
     font-size: 2rem;
     font-family: var(--header-font);
-    text-shadow: 0.1rem 0.1rem 0.1rem var(--secondary-color);
+    text-shadow: 0.1rem 0.1rem 0.1rem var(--accent-color);
 }
 
 header h2 {
@@ -125,18 +134,18 @@ header h2 {
     padding: 0;
     font-size: 1.3rem;
     font-family: var(--header-font);
+    opacity: 70%;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-p,
-a {
+h1, h2, h3, h4, h5, p, a {
     text-align: justify;
     text-justify: inter-word;
     margin: 0.5rem 0;
+}
+
+h1, h2, h3 {
+    letter-spacing: 0.05em;
+    margin-bottom: 1.2em;
 }
 
 p {
@@ -148,8 +157,9 @@ p {
 
 a {
     text-decoration: none;
-    color: var(--text-color);
-    filter: opacity(70%);
+    color: var(--link-color);
+    /* Blue links in dark mode */
+    filter: opacity(80%);
 }
 
 a:hover {
@@ -182,24 +192,28 @@ h5 {
 }
 
 .on {
-    background-color: var(--secondary-color);
+    background-color: var(--accent-color);
     opacity: 70%;
     color: var(--background-color);
 }
 
 .on:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--accent-color);
     opacity: 100%;
 }
 
 .off {
     background-color: var(--background-color);
-    color: var(--secondary-color);
+    /* opacity: 40%; */
+    color: var(--accent-color);
+    outline: solid 0.1rem var(--accent-color);
+    outline-offset: -0.1rem;
 }
 
 .off:hover {
-    opacity: 70%;
-    background-color: var(--secondary-color);
+    background-color: var(--accent-color);
+    opacity: 50%;
+    color: var(--background-color);
 }
 
 .info {
@@ -218,9 +232,12 @@ h5 {
     padding: 0;
     margin: 0;
     font-size: 0.6rem;
-    color: var(--background-color);
+    color: var(--text-color);
+    opacity: 50%;
+    /* Lighter color for dates */
     width: max-content;
 }
+
 
 a img {
     margin: 0 0.5rem;
@@ -229,7 +246,7 @@ a img {
 }
 
 input[type=checkbox] {
-    accent-color: var(--primary-color);
+    accent-color: var(--link-color);
     filter: saturate(1.5);
 }
 
@@ -263,6 +280,7 @@ aside img:hover {
 
 footer {
     height: 200px;
-    background-color: var(--primary-color);
+    background-color: var(--link-color);
+    /* Darker footer */
     width: 100%;
 }
