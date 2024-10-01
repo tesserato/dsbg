@@ -54,7 +54,7 @@ nav a {
     padding: 0.3rem 0.5rem;
     margin: 0rem;
     text-decoration: none;
-    color: var(--background-color); 
+    color: var(--background-color);
     background-color: var(--accent-color);
     border-radius: 0.15em;
     box-shadow: none;
@@ -72,9 +72,9 @@ img {
     padding: 1.5rem;
     margin: 0 0 1rem;
     border: none;
-    box-shadow: 
-    1rem 1rem 1.2rem 0 rgba(0, 0, 0, 0.25),
-    -.0rem -.0rem 1rem 0 rgb(208, 208, 208);
+    box-shadow:
+        1rem 1rem 1.2rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem 1rem 0 rgb(208, 208, 208);
     color: var(--text-color);
 }
 
@@ -106,29 +106,31 @@ button {
     cursor: pointer;
     font-size: .9rem;
     font-family: var(--body-font);
-    background-color: var(--accent-color);
+    background-color: var(--card-background-color);
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
 }
 
 
 button:hover {
-    /* outline: solid 0.1rem var(--accent-color); */
-    /* outline-offset: -0.1rem; */
-    opacity: 70%;
-    background-color: var(--accent-color);
+    box-shadow: none
 }
 
 
 .off {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    outline: solid 0.1rem var(--accent-color);
-    outline-offset: -0.1rem;
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
+
 }
 
 .off:hover {
     opacity: 30%;
-    background-color: var(--accent-color);
-    color: var(--text-color);
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
+
 }
 
 
@@ -244,7 +246,7 @@ h5 {
 img {
     max-width: 100%;
     height: auto;
-    align-self: center; 
+    align-self: center;
 }
 
 input[type=checkbox] {
