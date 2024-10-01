@@ -158,7 +158,6 @@ p {
 a {
     text-decoration: none;
     color: var(--link-color);
-    /* Blue links in dark mode */
     filter: opacity(80%);
 }
 
@@ -234,7 +233,6 @@ h5 {
     font-size: 0.6rem;
     color: var(--text-color);
     opacity: 50%;
-    /* Lighter color for dates */
     width: max-content;
 }
 
@@ -281,6 +279,5 @@ aside img:hover {
 footer {
     height: 200px;
     background-color: var(--link-color);
-    /* Darker footer */
     width: 100%;
 }

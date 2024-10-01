@@ -2,9 +2,9 @@
     --header-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --body-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --background-color: #f4f4f4;
-    --text-color: #6c6c6c;
+    --text-color: #7b7b7b;
     --card-background-color: #ededed;
-    --link-color: #6c6c6c;
+    --link-color: #1a5662;
     --accent-color: #d0d0d0;
 }
 
@@ -37,13 +37,6 @@ body {
     line-height: 1.5;
 }
 
-img {
-    max-width: 100%;
-    height: auto;
-    align-self: center;
-    filter: brightness(0.9) contrast(1.1);
-}
-
 nav {
     display: flex;
     align-items: center;
@@ -59,11 +52,18 @@ nav {
 nav a {
     display: block;
     padding: 0.3rem 0.5rem;
+    margin: 0rem;
     text-decoration: none;
-    color: var(--background-color);
+    color: var(--background-color); 
     background-color: var(--accent-color);
     border-radius: 0.15em;
     box-shadow: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    align-self: center;
 }
 
 .detail {
@@ -146,8 +146,8 @@ header h1 {
     font-family: var(--header-font);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    /* text-shadow: 0.1rem 0.1rem 0.2rem var(--background-color); */
     margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 header h2 {
@@ -158,10 +158,12 @@ header h2 {
     font-family: var(--header-font);
     opacity: 70%;
     margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 h1, h2, h3, h4, h5, p, a {
-    text-align: left;
+    text-align: justify;
+    text-justify: inter-word;
     margin: 0.5rem 0;
 }
 
@@ -172,7 +174,7 @@ h1, h2, h3 {
 
 p {
     font-size: 1rem;
-    text-indent: 0;
+    text-indent: 1.5rem;
     line-height: 140%;
     font-family: var(--body-font);
     margin-bottom: 1rem;
@@ -219,11 +221,12 @@ h5 {
     flex-direction: column;
     row-gap: 0.2rem;
     align-items: end;
-    justify-content: flex-start;
+    justify-content: space-between;
     font-size: 0.8rem;
     color: var(--text-color);
     opacity: 0.8;
     width: min-content;
+    flex-grow: 10;
 }
 
 .date {
@@ -231,15 +234,15 @@ h5 {
     margin: 0;
     font-size: 0.6rem;
     color: var(--accent-color);
-    /* opacity: 0.6; */
+    filter: brightness(80%);
     width: max-content;
 }
 
 
-a img {
-    margin: 0 0.5rem;
-    height: 1.2rem;
-    width: 1.2rem;
+img {
+    max-width: 100%;
+    height: auto;
+    align-self: center; 
 }
 
 input[type=checkbox] {
