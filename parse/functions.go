@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/k3a/html2text"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"go.abhg.dev/goldmark/frontmatter"
@@ -209,10 +210,10 @@ func MarkdownFile(path string) (Article, error) {
 	if err := markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
-	content := buf.String()
+	// content := buf.String()
 
 	// Retrieve frontmatter from the context
-	var article = Article{OriginalPath: path}
+	var article = Article{OriginalPath: path, TextContent: string(data), HtmlContent: buf.String()}
 	fm := frontmatter.Get(context)
 	if fm != nil {
 		var d map[string]any
@@ -295,13 +296,16 @@ func MarkdownFile(path string) (Article, error) {
 	// Set the article path
 	// article.OriginalPath = filepath.Dir(path)
 
-	article.HtmlContent = content
+	// article.HtmlContent = content
 
 	return article, nil
 }
 
 func FormatMarkdown(article Article, links Links, settings Settings) Article {
-	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
+	tmpl, err := template.New("markdown_template").Funcs(
+		template.FuncMap{
+			"stringsJoin":    strings.Join,
+			"slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		panic(err)
 	}
@@ -328,15 +332,16 @@ func HTMLFile(path string) (Article, error) {
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to read file %s: %w", path, err)
 	}
-	content := string(data)
+	htmlContent := string(data)
+	textContent := html2text.HTML2Text(htmlContent)
 
 	// Create an article and populate common fields
 	article := Article{
 		OriginalPath: path,
-		HtmlContent:  content,
-		// Files:        extractResources(content),
+		HtmlContent:  htmlContent,
+		TextContent:  textContent,
 	}
-	htmlTree, err := html.Parse(strings.NewReader(content))
+	htmlTree, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
 	}

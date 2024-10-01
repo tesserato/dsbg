@@ -3,16 +3,20 @@ package main
 import (
 	"dsbg/parse"
 	"embed"
+	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
 	"html/template"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
+	// "github.com/k3a/html2text"
 )
 
 //go:embed assets/*
@@ -33,15 +37,16 @@ func main() {
 
 	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
 	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
-	flag.StringVar(&settings.InputDirectory, "input-dir", "content", "Path to the directory that holds the source files")
-	flag.StringVar(&settings.OutputDirectory, "output-dir", "public", "Path to the directory where the output files will be saved")
+	flag.StringVar(&settings.InputDirectory, "input", "content", "Path to the directory that holds the source files")
+	flag.StringVar(&settings.OutputDirectory, "output", "public", "Path to the directory where the output files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
-	flag.StringVar(&settings.PathToCustomCss, "path-to-custom-css", "", "Path to a file with custom css")
-	flag.StringVar(&settings.PathToCustomJs, "path-to-custom-js", "", "Path to a file with custom js")
+	flag.StringVar(&settings.PathToCustomCss, "css", "", "Path to a file with custom css")
+	flag.StringVar(&settings.PathToCustomJs, "js", "", "Path to a file with custom js")
+	flag.BoolVar(&settings.ExtractTagsFromPath, "tags-from-path", true, "Extract tags from path")
 	styleString := flag.String("style", "default", "Style to be used")
-	pathToAdditionalElementsTop := flag.String("path-to-additional-elements-top", "", "Path to a file with additional elements (basically scripts) to be placed at the top of the HTML outputs")
-	pathToAdditionalElemensBottom := flag.String("path-to-additional-elements-bottom", "", "Path to a file with additional elements (basically scripts) to be placed at the bottom of the HTML outputs")
+	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the top of the HTML outputs")
+	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the bottom of the HTML outputs")
 	showHelp := flag.Bool("help", false, "Show help message")
 	watch := flag.Bool("watch", false, "Watch for changes and rebuild")
 	// generate md template
@@ -63,9 +68,6 @@ func main() {
 		}
 
 		formattedDate := time.Now().Format(settings.DateFormat)
-		// Data for the template
-
-		// Get filename from title or default to "template.md"
 		var filename string
 		var title string
 		if isFlagPassed("title") { // check if title flag is passed
@@ -172,6 +174,9 @@ func main() {
 			}
 		}
 
+		// serve files
+		go serve(settings)
+
 		log.Println("\nWatching for changes...\n")
 		for {
 			select {
@@ -194,6 +199,12 @@ func main() {
 	}
 }
 
+func serve(settings parse.Settings) {
+	fmt.Printf("Serving '%s' on http://localhost:666\n", settings.OutputDirectory)
+	http.Handle("/", http.FileServer(http.Dir(settings.OutputDirectory)))
+	http.ListenAndServe(":666", nil)
+}
+
 func buildWebsite(settings parse.Settings) {
 	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
 	if err != nil {
@@ -201,6 +212,7 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	var articles []parse.Article
+	searchIndex := []map[string]interface{}{}
 	for _, path := range files {
 		article, err := processFile(path, settings)
 		if err != nil {
@@ -208,6 +220,27 @@ func buildWebsite(settings parse.Settings) {
 			continue
 		}
 		articles = append(articles, article)
+
+		searchIndex = append(searchIndex, map[string]interface{}{
+			"title":       article.Title,
+			"content":     article.TextContent,
+			"description": article.Description,
+			"tags":        article.Tags,
+			"url":         article.LinkToSelf,
+		})
+	}
+
+	// Convert search index to JSON
+	searchIndexJSON, err := json.Marshal(searchIndex)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Save search index JSON to a file
+	searchIndexPath := filepath.Join(settings.OutputDirectory, "search_index.json")
+	err = os.WriteFile(searchIndexPath, searchIndexJSON, 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	err = parse.GenerateHtmlIndex(articles, settings)
@@ -238,7 +271,7 @@ func buildWebsite(settings parse.Settings) {
 
 	if settings.PathToCustomJs == "" {
 		saveAsset("script.js", "script.js", settings.OutputDirectory)
-	} else{
+	} else {
 		input, err := os.ReadFile(settings.PathToCustomJs)
 		if err != nil {
 			panic(err)
@@ -251,6 +284,8 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
+	// saveAsset("fuse.min.js","fuse.min.js", settings.OutputDirectory)
+	saveAsset("search.js", "search.js", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
@@ -271,9 +306,21 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 	} else {
 		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
 	}
-
 	if err != nil {
 		return parse.Article{}, err
+	}
+	if settings.ExtractTagsFromPath {
+		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
+		if err != nil {
+			return parse.Article{}, err
+		}
+		relPath = strings.ReplaceAll(relPath, "\\", "/")
+		pathTags := strings.Split(relPath, "/")
+		fmt.Printf("pathTags: %v\n", pathTags)
+		if len(pathTags) > 1 {
+			pathTags = pathTags[:len(pathTags)-1]
+			article.Tags = append(article.Tags, pathTags...)
+		}
 	}
 
 	os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)

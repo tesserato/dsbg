@@ -1,10 +1,10 @@
 :root {
     --header-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --body-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --background-color: #eaeaea;
+    --background-color: #f4f4f4;
     --text-color: #7b7b7b;
     --card-background-color: #ededed;
-    --link-color: #ea7070;
+    --link-color: #1a5662;
     --accent-color: #d0d0d0;
 }
 
@@ -24,7 +24,7 @@ html {
 }
 
 html * {
-    transition: all 0.1s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 body {
@@ -54,19 +54,10 @@ nav a {
     padding: 0.3rem 0.5rem;
     margin: 0rem;
     text-decoration: none;
-    color: var(--background-color);
-    background-color: var(--text-color);
+    color: var(--background-color); 
+    background-color: var(--accent-color);
     border-radius: 0.15em;
-    filter: opacity(100%);
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25),
-        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
-
-}
-
-nav a:hover {
-    background-color: var(--text-color);
-    box-shadow: none
+    box-shadow: none;
 }
 
 img {
@@ -81,9 +72,7 @@ img {
     padding: 1.5rem;
     margin: 0 0 1rem;
     border: none;
-    box-shadow:
-        1rem 1rem 1.2rem 0 rgba(0, 0, 0, 0.25),
-        -.0rem -.0rem 1rem 0 rgb(208, 208, 208);
+    box-shadow: 0.2rem 0.2rem 0.5rem var(--background-color);
     color: var(--text-color);
 }
 
@@ -95,11 +84,11 @@ details summary {
 .headline {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     column-gap: 1rem;
     margin: 0 0 .5rem;
-    /* flex-wrap: wrap; */
+    flex-wrap: wrap;
 }
 
 .description {
@@ -115,31 +104,29 @@ button {
     cursor: pointer;
     font-size: .9rem;
     font-family: var(--body-font);
-    background-color: var(--card-background-color);
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25),
-        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
+    background-color: var(--accent-color);
 }
 
 
 button:hover {
-    box-shadow: none
+    /* outline: solid 0.1rem var(--accent-color); */
+    /* outline-offset: -0.1rem; */
+    opacity: 70%;
+    background-color: var(--accent-color);
 }
 
 
 .off {
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
-        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
-
+    background-color: var(--background-color);
+    color: var(--text-color);
+    outline: solid 0.1rem var(--accent-color);
+    outline-offset: -0.1rem;
 }
 
 .off:hover {
     opacity: 30%;
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
-        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
-
+    background-color: var(--accent-color);
+    color: var(--text-color);
 }
 
 
@@ -174,11 +161,6 @@ header h2 {
     text-align: center;
 }
 
-header a {
-    align-self: flex-start;
-    text-align: left;
-}
-
 h1, h2, h3, h4, h5, p, a {
     text-align: justify;
     text-justify: inter-word;
@@ -199,16 +181,13 @@ p {
 }
 
 a {
-    font-size: .96rem;
     text-decoration: none;
-    font-weight: 100;
     color: var(--link-color);
-    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.2);
+    filter: opacity(80%);
 }
 
 a:hover {
-    color: var(--card-background-color);
-    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.911);
+    filter: opacity(100%);
 }
 
 h1 {
@@ -236,6 +215,7 @@ h5 {
     font-family: var(--header-font);
 }
 
+
 .info {
     display: flex;
     flex-direction: column;
@@ -258,15 +238,11 @@ h5 {
     width: max-content;
 }
 
+
 img {
-    display: block;
-    /* Makes img behave like a block element */
-    margin-left: auto;
-    margin-right: auto;
     max-width: 100%;
-    /* Ensures image doesn't exceed container width */
     height: auto;
-    /* Maintains aspect ratio */
+    align-self: center; 
 }
 
 input[type=checkbox] {
@@ -297,7 +273,7 @@ aside img:hover {
     align-items: center;
     justify-content: space-evenly;
     gap: .8rem;
-    margin: 0 0 0.1rem;
+    margin: 0 0 1rem;
     padding: 0;
     flex-wrap: wrap;
 }
@@ -306,54 +282,4 @@ footer {
     height: 200px;
     background-color: var(--link-color);
     width: 100%;
-}
-
-#search-input {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    border: none;
-    border-radius: 0.7rem;
-    font-size: 1rem;
-    color: var(--text-color);
-    background-color: var(--card-background-color);
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.15) inset,
-        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
-}
-
-#search-input:focus {
-    outline: none;
-    border-radius: 0.15rem;
-    box-shadow:
-        0.1rem 0.1rem .5rem 0 rgba(0, 0, 0, 0.25),
-        -.0rem -.0rem .2rem 0 rgb(208, 208, 208);
-}
-
-#search-results {
-    width: 100%;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    margin-bottom: 1rem;
-    border: none;
-    border-radius: 0.25rem;
-    background-color: var(--card-background-color);
-    box-shadow:
-        0.1rem 0.1rem .5rem 0 rgba(0, 0, 0, 0.25),
-        -.0rem -.0rem .2rem 0 rgb(208, 208, 208);
-}
-
-#search-results li {
-    padding: 0.5rem 1rem;
-}
-
-#search-results li a {
-    color: var(--link-color);
-    text-decoration: none;
-    font-size: 1rem;
-}
-
-#search-results li a:hover {
-    color: #ffffff;
 }

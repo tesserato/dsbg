@@ -24,6 +24,7 @@ type Settings struct {
 	PathToCustomJs          string
 	AdditionalElementsTop   template.HTML
 	AdditionalElemensBottom template.HTML
+	ExtractTagsFromPath     bool
 }
 
 type Article struct {
@@ -32,6 +33,7 @@ type Article struct {
 	Created      time.Time
 	Updated      time.Time
 	Tags         []string
+	TextContent  string
 	HtmlContent  string
 	OriginalPath string
 	LinkToSelf   string
