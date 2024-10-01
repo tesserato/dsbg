@@ -199,14 +199,16 @@ p {
 }
 
 a {
+    font-size: .96rem;
     text-decoration: none;
     font-weight: 100;
     color: var(--link-color);
-    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.56);
+    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.2);
 }
 
 a:hover {
     color: var(--card-background-color);
+    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.911);
 }
 
 h1 {
@@ -257,9 +259,11 @@ h5 {
 }
 
 img {
-    max-width: 100%;
-    height: auto;
-    align-self: center;
+    display: block; /* Makes img behave like a block element */
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;  /* Ensures image doesn't exceed container width */
+    height: auto;       /* Maintains aspect ratio */
 }
 
 input[type=checkbox] {

@@ -5,14 +5,16 @@ import (
 	"embed"
 	"flag"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
 	"html/template"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 //go:embed assets/*
@@ -172,6 +174,9 @@ func main() {
 			}
 		}
 
+		// serve files
+		go serve(settings)
+
 		log.Println("\nWatching for changes...\n")
 		for {
 			select {
@@ -192,6 +197,11 @@ func main() {
 			}
 		}
 	}
+}
+
+func serve(settings parse.Settings) {
+	http.Handle("/", http.FileServer(http.Dir(settings.OutputDirectory)))
+	http.ListenAndServe(":666", nil)
 }
 
 func buildWebsite(settings parse.Settings) {
