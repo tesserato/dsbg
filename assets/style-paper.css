@@ -24,7 +24,7 @@ html {
 }
 
 html * {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.1s ease-in-out;
 }
 
 body {
@@ -55,9 +55,18 @@ nav a {
     margin: 0rem;
     text-decoration: none;
     color: var(--background-color);
-    background-color: var(--accent-color);
+    background-color: var(--text-color);
     border-radius: 0.15em;
-    box-shadow: none;
+    filter: opacity(100%);
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
+
+}
+
+nav a:hover {
+    background-color: var(--text-color);
+    box-shadow: none
 }
 
 img {
@@ -186,12 +195,21 @@ p {
 
 a {
     text-decoration: none;
-    color: var(--link-color);
-    filter: opacity(80%);
+    /* color: var(--link-color); */
+    color: var(--card-background-color);
+    /* color: #ffffff; */
+    /* color: #ffffff; */
+    text-shadow: 0.07rem 0.07rem 0.13rem black;
+
 }
 
 a:hover {
-    filter: opacity(100%);
+    color: rgb(255, 58, 58);
+    /* color: rgb(255, 255, 255); */
+    /* text-shadow: none; */
+    /* text-shadow:
+        1rem 0.3rem 1rem 0 rgba(0, 0, 0, 0.25); */
+
 }
 
 h1 {
