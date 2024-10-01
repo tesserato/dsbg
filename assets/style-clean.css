@@ -97,6 +97,7 @@ details summary {
 }
 
 button {
+    width: fit-content;
     border: none;
     padding: 0.3rem 0.5rem;
     border-radius: 0.15rem;
@@ -104,24 +105,28 @@ button {
     font-size: .9rem;
     font-family: var(--body-font);
     background-color: var(--accent-color);
-    color: var(--text-color);
-    box-shadow: none;
 }
 
 
 button:hover {
-    background-color: var(--card-background-color);
+    /* outline: solid 0.1rem var(--accent-color); */
+    /* outline-offset: -0.1rem; */
+    opacity: 70%;
+    background-color: var(--accent-color);
 }
 
-button.on {
-    background-color: var(--accent-color);
+
+.off {
+    background-color: var(--background-color);
     color: var(--text-color);
+    outline: solid 0.1rem var(--accent-color);
+    outline-offset: -0.1rem;
 }
 
-button.off {
+.off:hover {
+    opacity: 30%;
     background-color: var(--accent-color);
     color: var(--text-color);
-    outline: none;
 }
 
 
