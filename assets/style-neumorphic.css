@@ -4,7 +4,7 @@
     --background-color: #eaeaea;
     --text-color: #7b7b7b;
     --card-background-color: #ededed;
-    --link-color: #e34e4e;
+    --link-color: #ea7070;
     --accent-color: #d0d0d0;
 }
 
@@ -95,11 +95,11 @@ details summary {
 .headline {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     column-gap: 1rem;
     margin: 0 0 .5rem;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
 .description {
@@ -294,7 +294,7 @@ aside img:hover {
     align-items: center;
     justify-content: space-evenly;
     gap: .8rem;
-    margin: 0 0 1rem;
+    margin: 0 0 0.1rem;
     padding: 0;
     flex-wrap: wrap;
 }
