@@ -1,11 +1,11 @@
 :root {
-    --header-font: 'Georgia', 'Times New Roman', Times, serif;
-    --body-font: 'Raleway', sans-serif;
-    --background-color: #ffffff;
-    --text-color: #000000;
-    --card-background-color: #50d459a7;
-    --link-color: #32158a;
-    --accent-color: #de1414;
+    --header-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --body-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --background-color: #eaeaea;
+    --text-color: #7b7b7b;
+    --card-background-color: #ededed;
+    --link-color: #ea7070;
+    --accent-color: #d0d0d0;
 }
 
 * {
@@ -24,7 +24,7 @@ html {
 }
 
 html * {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.1s ease-in-out;
 }
 
 body {
@@ -54,27 +54,36 @@ nav a {
     padding: 0.3rem 0.5rem;
     margin: 0rem;
     text-decoration: none;
-    color: var(--text-color);
-    filter: opacity(80%);
-    background-color: var(--card-background-color);
-    box-shadow: 0.1rem 0.1rem 0.3rem var(--accent-color);
-    border-radius: 0.5em;
+    color: var(--background-color);
+    background-color: var(--text-color);
+    border-radius: 0.15em;
+    filter: opacity(100%);
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
+
+}
+
+nav a:hover {
+    background-color: var(--text-color);
+    box-shadow: none
 }
 
 img {
     max-width: 100%;
     height: auto;
     align-self: center;
-    filter: brightness(0.9) contrast(1.1);
-    /* Adjust image contrast for dark mode */
 }
 
 .detail {
+    border-radius: 0.4em;
     background-color: var(--card-background-color);
-    padding: 2rem;
+    padding: 1.5rem;
     margin: 0 0 1rem;
-    border-radius: 0.3rem;
-    box-shadow: 0.1rem 0.1rem 0.3rem var(--accent-color);
+    border: none;
+    box-shadow:
+        1rem 1rem 1.2rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem 1rem 0 rgb(208, 208, 208);
     color: var(--text-color);
 }
 
@@ -86,11 +95,11 @@ details summary {
 .headline {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     column-gap: 1rem;
     margin: 0 0 .5rem;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
 .description {
@@ -102,16 +111,37 @@ button {
     width: fit-content;
     border: none;
     padding: 0.3rem 0.5rem;
-    border-radius: 0.5em;
+    border-radius: 0.15rem;
     cursor: pointer;
     font-size: .9rem;
     font-family: var(--body-font);
+    background-color: var(--card-background-color);
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
 }
 
+
 button:hover {
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+    box-shadow: none
 }
+
+
+.off {
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
+
+}
+
+.off:hover {
+    opacity: 30%;
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
+
+}
+
 
 header {
     display: flex;
@@ -124,17 +154,29 @@ header {
 header h1 {
     margin: 0 0 1rem;
     padding: 0;
-    font-size: 2rem;
+    font-size: 2.0rem;
+    font-weight: 700;
     font-family: var(--header-font);
-    text-shadow: 0.1rem 0.1rem 0.1rem var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 header h2 {
     margin: 0 0 1rem;
     padding: 0;
-    font-size: 1.3rem;
+    font-size: 1rem;
+    font-weight: 400;
     font-family: var(--header-font);
     opacity: 70%;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+header a {
+    align-self: flex-start;
+    text-align: left;
 }
 
 h1, h2, h3, h4, h5, p, a {
@@ -153,16 +195,20 @@ p {
     text-indent: 1.5rem;
     line-height: 140%;
     font-family: var(--body-font);
+    margin-bottom: 1rem;
 }
 
 a {
+    font-size: .96rem;
     text-decoration: none;
+    font-weight: 100;
     color: var(--link-color);
-    filter: opacity(80%);
+    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.2);
 }
 
 a:hover {
-    filter: opacity(100%);
+    color: var(--card-background-color);
+    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.911);
 }
 
 h1 {
@@ -190,31 +236,6 @@ h5 {
     font-family: var(--header-font);
 }
 
-.on {
-    background-color: var(--accent-color);
-    opacity: 70%;
-    color: var(--background-color);
-}
-
-.on:hover {
-    background-color: var(--accent-color);
-    opacity: 100%;
-}
-
-.off {
-    background-color: var(--background-color);
-    /* opacity: 40%; */
-    color: var(--accent-color);
-    outline: solid 0.1rem var(--accent-color);
-    outline-offset: -0.1rem;
-}
-
-.off:hover {
-    background-color: var(--accent-color);
-    opacity: 50%;
-    color: var(--background-color);
-}
-
 .info {
     display: flex;
     flex-direction: column;
@@ -223,6 +244,7 @@ h5 {
     justify-content: space-between;
     font-size: 0.8rem;
     color: var(--text-color);
+    opacity: 0.8;
     width: min-content;
     flex-grow: 10;
 }
@@ -231,16 +253,17 @@ h5 {
     padding: 0;
     margin: 0;
     font-size: 0.6rem;
-    color: var(--text-color);
-    opacity: 50%;
+    color: var(--accent-color);
+    filter: brightness(80%);
     width: max-content;
 }
 
-
-a img {
-    margin: 0 0.5rem;
-    height: 1.2rem;
-    width: 1.2rem;
+img {
+    display: block; /* Makes img behave like a block element */
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;  /* Ensures image doesn't exceed container width */
+    height: auto;       /* Maintains aspect ratio */
 }
 
 input[type=checkbox] {
@@ -271,7 +294,7 @@ aside img:hover {
     align-items: center;
     justify-content: space-evenly;
     gap: .8rem;
-    margin: 0 0 1rem;
+    margin: 0 0 0.1rem;
     padding: 0;
     flex-wrap: wrap;
 }
