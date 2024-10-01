@@ -4,7 +4,7 @@
     --background-color: #eaeaea;
     --text-color: #7b7b7b;
     --card-background-color: #ededed;
-    --link-color: #1a5662;
+    --link-color: #e33030;
     --accent-color: #d0d0d0;
 }
 
@@ -195,21 +195,13 @@ p {
 
 a {
     text-decoration: none;
-    /* color: var(--link-color); */
-    color: var(--card-background-color);
-    /* color: #ffffff; */
-    /* color: #ffffff; */
-    text-shadow: 0.07rem 0.07rem 0.13rem black;
+    color: var(--link-color);
+    text-shadow: 0.07rem 0.07rem 0.13rem rgba(0, 0, 0, 0.56);
 
 }
 
 a:hover {
-    color: rgb(255, 58, 58);
-    /* color: rgb(255, 255, 255); */
-    /* text-shadow: none; */
-    /* text-shadow:
-        1rem 0.3rem 1rem 0 rgba(0, 0, 0, 0.25); */
-
+    color: var(--card-background-color);
 }
 
 h1 {
