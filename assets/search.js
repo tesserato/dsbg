@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 includeScore: true,
                 findAllMatches: true,
                 includeMatches: true,
+                ignoreLocation: true,
                 minMatchCharLength: 3,
                 keys: ['title', 'content', 'description', 'tags']
             };

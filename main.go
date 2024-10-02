@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/k3a/html2text"
+	// "github.com/k3a/html2text"
 )
 
 //go:embed assets/*
@@ -221,10 +221,10 @@ func buildWebsite(settings parse.Settings) {
 			continue
 		}
 		articles = append(articles, article)
-		content := html2text.HTML2Text(article.HtmlContent)
+		
 		searchIndex = append(searchIndex, map[string]interface{}{
 			"title":       article.Title,
-			"content":     content,
+			"content":     article.TextContent,
 			"description": article.Description,
 			"tags":        article.Tags,
 			"url":         article.LinkToSelf,
