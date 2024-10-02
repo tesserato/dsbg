@@ -310,11 +310,9 @@ footer {
 
 #search-input {
     width: 100%;
-    /* Or a specific width if you prefer */
     padding: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border: none;
-    /* Light gray border */
     border-radius: 0.7rem;
     font-size: 1rem;
     color: var(--text-color);
@@ -332,12 +330,9 @@ footer {
         -.0rem -.0rem .2rem 0 rgb(208, 208, 208);
 }
 
-
-/* Search Results Styles */
 #search-results {
     width: 100%;
     list-style: none;
-    /* Remove default list styling */
     padding: 0;
     margin: 0;
     margin-bottom: 1rem;
@@ -355,12 +350,10 @@ footer {
 
 #search-results li a {
     color: var(--link-color);
-    /* Inherit link color */
     text-decoration: none;
     font-size: 1rem;
 }
 
 #search-results li a:hover {
     color: #ffffff;
-    /* text-decoration: underline; */
 }

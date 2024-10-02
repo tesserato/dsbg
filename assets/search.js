@@ -36,4 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     });
+
+    searchInput.addEventListener('blur', function(event) {
+        event.target.value = '';
+        searchResults.innerHTML = '';
+    });
 });
