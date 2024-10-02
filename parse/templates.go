@@ -45,10 +45,14 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     <title>{{.Settings.Title}}</title>
     <link rel="stylesheet" href="style.css">
 	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+	<script src="search.js"></script>
 </head>
 <body>
 	<header>
 		<h1>{{.Settings.Title}}</h1>
+		<input type="text" id="search-input" placeholder="Search...">
+    	<ul id="search-results"></ul>
 		<nav>
 		{{range .PageList}}
 			<a href="{{.LinkToSelf}}">{{.Title}}</a>

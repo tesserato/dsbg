@@ -3,6 +3,7 @@ package main
 import (
 	"dsbg/parse"
 	"embed"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
@@ -15,6 +16,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/k3a/html2text"
 )
 
 //go:embed assets/*
@@ -211,6 +213,7 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	var articles []parse.Article
+	searchIndex := []map[string]interface{}{}
 	for _, path := range files {
 		article, err := processFile(path, settings)
 		if err != nil {
@@ -218,6 +221,27 @@ func buildWebsite(settings parse.Settings) {
 			continue
 		}
 		articles = append(articles, article)
+		content := html2text.HTML2Text(article.HtmlContent)
+		searchIndex = append(searchIndex, map[string]interface{}{
+			"title":       article.Title,
+			"content":     content,
+			"description": article.Description,
+			"tags":        article.Tags,
+			"url":         article.LinkToSelf,
+		})
+	}
+
+	// Convert search index to JSON
+	searchIndexJSON, err := json.Marshal(searchIndex)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Save search index JSON to a file
+	searchIndexPath := filepath.Join(settings.OutputDirectory, "search_index.json")
+	err = os.WriteFile(searchIndexPath, searchIndexJSON, 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	err = parse.GenerateHtmlIndex(articles, settings)
@@ -248,7 +272,7 @@ func buildWebsite(settings parse.Settings) {
 
 	if settings.PathToCustomJs == "" {
 		saveAsset("script.js", "script.js", settings.OutputDirectory)
-	} else{
+	} else {
 		input, err := os.ReadFile(settings.PathToCustomJs)
 		if err != nil {
 			panic(err)
@@ -261,6 +285,8 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
+	// saveAsset("fuse.min.js","fuse.min.js", settings.OutputDirectory)
+	saveAsset("search.js", "search.js", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
