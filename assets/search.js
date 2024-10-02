@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     let fuse;
@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const options = {
                 includeScore: true,
                 findAllMatches: true,
+                includeMatches: true,
                 minMatchCharLength: 3,
                 keys: ['title', 'content', 'description', 'tags']
             };
@@ -16,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 
-    searchInput.addEventListener('keyup', function(event) {
-        if(fuse) {
+    searchInput.addEventListener('keyup', function (event) {
+        if (fuse) {
             const searchTerm = event.target.value;
             const results = fuse.search(searchTerm);
 
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 results.forEach(result => {
                     const article = result.item;
-                    resultsHTML += `<li><a href="${article.url}">${article.title}</a></li>`;
+                    resultsHTML += `<li>${result.score} <a href="${article.url}">${article.title}</a></li>`;
                 });
             }
             searchResults.innerHTML = resultsHTML;

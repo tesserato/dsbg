@@ -32,6 +32,7 @@ type Article struct {
 	Created      time.Time
 	Updated      time.Time
 	Tags         []string
+	TextContent  string
 	HtmlContent  string
 	OriginalPath string
 	LinkToSelf   string
