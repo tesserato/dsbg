@@ -10,11 +10,13 @@ var btn_container = document.getElementById("buttons");
 
 const show_all_btn = document.createElement("button");
 show_all_btn.className = "on";
-show_all_btn.innerHTML = "&ocir;";
+show_all_btn.innerHTML = "⬛";
+show_all_btn.title = "Select all tags";
 
 const hide_all_btn = document.createElement("button");
 hide_all_btn.className = "on";
-hide_all_btn.innerHTML = "&odot;";
+hide_all_btn.innerHTML = "⬜";
+hide_all_btn.title = "De-select all tags";
 
 for (const tag of tags) {
     var btn = document.createElement("button");
@@ -23,8 +25,8 @@ for (const tag of tags) {
     btn_container.appendChild(btn);
 }
 
-btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
 btn_container.insertBefore(show_all_btn, btn_container.firstChild);
+btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
 const posts = document.getElementsByClassName('detail');
 
 function refresh_posts() {
