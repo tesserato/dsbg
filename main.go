@@ -37,15 +37,15 @@ func main() {
 
 	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
 	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
-	flag.StringVar(&settings.InputDirectory, "input-dir", "content", "Path to the directory that holds the source files")
-	flag.StringVar(&settings.OutputDirectory, "output-dir", "public", "Path to the directory where the output files will be saved")
+	flag.StringVar(&settings.InputDirectory, "input", "content", "Path to the directory that holds the source files")
+	flag.StringVar(&settings.OutputDirectory, "output", "public", "Path to the directory where the output files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
-	flag.StringVar(&settings.PathToCustomCss, "path-to-custom-css", "", "Path to a file with custom css")
-	flag.StringVar(&settings.PathToCustomJs, "path-to-custom-js", "", "Path to a file with custom js")
+	flag.StringVar(&settings.PathToCustomCss, "css", "", "Path to a file with custom css")
+	flag.StringVar(&settings.PathToCustomJs, "js", "", "Path to a file with custom js")
 	styleString := flag.String("style", "default", "Style to be used")
-	pathToAdditionalElementsTop := flag.String("path-to-additional-elements-top", "", "Path to a file with additional elements (basically scripts) to be placed at the top of the HTML outputs")
-	pathToAdditionalElemensBottom := flag.String("path-to-additional-elements-bottom", "", "Path to a file with additional elements (basically scripts) to be placed at the bottom of the HTML outputs")
+	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the top of the HTML outputs")
+	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the bottom of the HTML outputs")
 	showHelp := flag.Bool("help", false, "Show help message")
 	watch := flag.Bool("watch", false, "Watch for changes and rebuild")
 	// generate md template
@@ -202,6 +202,7 @@ func main() {
 }
 
 func serve(settings parse.Settings) {
+	fmt.Printf("Serving '%s' on http://localhost:666\n", settings.OutputDirectory)
 	http.Handle("/", http.FileServer(http.Dir(settings.OutputDirectory)))
 	http.ListenAndServe(":666", nil)
 }

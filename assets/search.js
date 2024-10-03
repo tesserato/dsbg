@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 results.forEach(result => {
                     const article = result.item;
-                    resultsHTML += `<li>${result.score} <a href="${article.url}">${article.title}</a></li>`;
+                    resultsHTML += `<li>${(1.0 - result.score).toFixed(2)} <a href="${article.url}">${article.title}</a></li>`;
                 });
             }
             searchResults.innerHTML = resultsHTML;
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    searchInput.addEventListener('blur', function(event) {
+    searchInput.addEventListener('blur', function (event) {
         event.target.value = '';
         searchResults.innerHTML = '';
     });
