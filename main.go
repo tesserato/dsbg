@@ -205,6 +205,47 @@ func serve(settings parse.Settings) {
 	http.ListenAndServe(":666", nil)
 }
 
+func cleanContent(s string) []string {
+	toReplace := []struct {
+		old string
+		new string
+	}{
+		{"’", "'"},
+		{"–", " "},
+	}
+
+	toRemove := []string{
+		"\n",
+		"\r",
+		"\t",
+		"(",
+		")",
+		"[",
+		"]",
+		"{",
+		"}",
+		"\"",
+		"\\",
+		"/",
+		"”",
+		"#",
+		"-",
+		"*",
+	}
+
+	for _, pair := range toReplace {
+		s = strings.ReplaceAll(s, pair.old, pair.new)
+	}
+
+	for _, char := range toRemove {
+		s = strings.ReplaceAll(s, char, " ")
+	}
+
+
+
+	return strings.Fields(s)
+}
+
 func buildWebsite(settings parse.Settings) {
 	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
 	if err != nil {
@@ -223,7 +264,7 @@ func buildWebsite(settings parse.Settings) {
 
 		searchIndex = append(searchIndex, map[string]interface{}{
 			"title":       article.Title,
-			"content":     article.TextContent,
+			"content":     cleanContent(article.TextContent),
 			"description": article.Description,
 			"tags":        article.Tags,
 			"url":         article.LinkToSelf,

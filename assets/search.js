@@ -11,7 +11,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 findAllMatches: true,
                 includeMatches: true,
                 ignoreLocation: true,
-                minMatchCharLength: 3,
+                minMatchCharLength: 2,
+                useExtendedSearch: true,
+                threshold: 0.35,
+                distance: 10,
                 keys: ['title', 'content', 'description', 'tags']
             };
             fuse = new Fuse(searchIndex, options);
