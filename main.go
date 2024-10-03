@@ -37,14 +37,14 @@ func main() {
 
 	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
 	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
-	flag.StringVar(&settings.InputDirectory, "input", "content", "Path to the directory that holds the source files")
-	flag.StringVar(&settings.OutputDirectory, "output", "public", "Path to the directory where the output files will be saved")
+	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory that holds the source files")
+	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the output files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
-	flag.StringVar(&settings.PathToCustomCss, "css", "", "Path to a file with custom css")
-	flag.StringVar(&settings.PathToCustomJs, "js", "", "Path to a file with custom js")
-	flag.BoolVar(&settings.ExtractTagsFromPaths, "tags-from-path", true, "Extract tags from path")
-	flag.BoolVar(&settings.RemoveDateFromPaths, "remove-date-from-path", true, "Remove date from path")
+	flag.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a file with custom css")
+	flag.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a file with custom js")
+	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Do not extract tags from path")
+	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-on-paths", false, "Do not remove date from path")
 	styleString := flag.String("style", "default", "Style to be used")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the bottom of the HTML outputs")
@@ -351,7 +351,7 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 	if err != nil {
 		panic(err)
 	}
-	if settings.ExtractTagsFromPaths {
+	if !settings.DoNotExtractTagsFromPaths {
 		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 		if err != nil {
 			panic(err)

@@ -116,7 +116,7 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 	outputPath := filepath.Join(settings.OutputDirectory, relativeInputPath)
 	outputPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath))
 	outputPath = filepath.Join(outputPath, settings.IndexName)
-	if settings.RemoveDateFromPaths {
+	if !settings.DoNotRemoveDateFromPaths {
 		outputPath = RemoveDateFromPath(outputPath)
 	}
 	outputPath = cleanString(outputPath)

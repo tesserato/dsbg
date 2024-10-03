@@ -13,19 +13,19 @@ const (
 )
 
 type Settings struct {
-	Title                   string
-	Description             string
-	InputDirectory          string
-	OutputDirectory         string
-	DateFormat              string
-	IndexName               string
-	Style                   Style
-	PathToCustomCss         string
-	PathToCustomJs          string
-	AdditionalElementsTop   template.HTML
-	AdditionalElemensBottom template.HTML
-	ExtractTagsFromPaths    bool
-	RemoveDateFromPaths     bool
+	Title                     string
+	Description               string
+	InputDirectory            string
+	OutputDirectory           string
+	DateFormat                string
+	IndexName                 string
+	Style                     Style
+	PathToCustomCss           string
+	PathToCustomJs            string
+	AdditionalElementsTop     template.HTML
+	AdditionalElemensBottom   template.HTML
+	DoNotExtractTagsFromPaths bool
+	DoNotRemoveDateFromPaths  bool
 }
 
 type Article struct {
