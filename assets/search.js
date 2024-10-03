@@ -37,8 +37,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
+    searchResults.addEventListener('mousedown', function (event) {
+        event.preventDefault();
+    });
+
     searchInput.addEventListener('blur', function (event) {
-        event.target.value = '';
+        searchInput.value = '';
         searchResults.innerHTML = '';
     });
 });
