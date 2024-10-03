@@ -22,21 +22,32 @@ import (
 	"golang.org/x/net/html"
 )
 
+var regexPatterns = []string{
+	`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
+	`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
+	`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
+}
+
+func RemoveDateFromPath(stringWithDate string) string {
+	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
+	for _, pattern := range regexPatterns {
+		r := regexp.MustCompile(pattern)
+		stringWithDate = r.ReplaceAllString(stringWithDate, "")
+	}
+	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
+	return stringWithDate
+}
+
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
-	for _, pattern := range []string{
-		`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
-		`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
-		`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
-	} {
+	for _, pattern := range regexPatterns {
 		r := regexp.MustCompile(pattern)
-
 		matches := r.FindStringSubmatch(date)
 		if len(matches) > 0 {
 			for i, name := range r.SubexpNames()[1:] {
 				integer, err := strconv.Atoi(matches[i+1])
 				if err != nil {
-					panic(err) // TODO handle error
+					panic(err)
 				}
 				m[name] = integer
 			}
@@ -76,52 +87,69 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 }
 
 func cleanString(url string) string {
-	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\.-]+`)
-
-	url = strings.ReplaceAll(url, "\\", "/")
-	url = strings.ReplaceAll(url, " ", "-")
+	fmt.Printf("!! cleanString: %s\n", url)
+	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\\\. ]+`)
 	url = nonAlphanumericRegex.ReplaceAllString(url, "")
+	url = strings.ReplaceAll(url, "\\", "/")
+	pieces := strings.Split(url, "/")
+	for i, piece := range pieces {
+		pieces[i] = strings.Trim(piece, "-_ ")
+	}
+	url = strings.Join(pieces, "/")
+	pieces = strings.Fields(url)
+	for i, piece := range pieces {
+		pieces[i] = strings.Trim(piece, "-_ ")
+	}
+	url = strings.Join(pieces, "-")
 
+	url = strings.Trim(url, "-")
+	fmt.Printf("!! cleanString: %s\n", url)
 	return url
 }
 
-func CopyHtmlResources(settings Settings, originalArticlePath string, htmlContent string) Links {
-	relPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
-	if err != nil {
-		panic(err)
-	}
-	pageDir := filepath.Join(settings.OutputDirectory, relPath)
-	pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
-
-	savePath := filepath.Join(pageDir, settings.IndexName)
-
-	savePath = cleanString(savePath)
-
-	articleOrigFolderPath := filepath.Dir(originalArticlePath)
-	articleDestFolderPath := filepath.Dir(savePath)
-
-	err = os.MkdirAll(articleDestFolderPath, os.ModePerm)
+func CopyHtmlResources(settings Settings, article *Article) Links {
+	relativeInputPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 	if err != nil {
 		panic(err)
 	}
 
-	link, err := filepath.Rel(settings.OutputDirectory, savePath)
+	if !settings.DoNotExtractTagsFromPaths {
+		relativeInputPathNoDate := RemoveDateFromPath(relativeInputPath)
+		relativeInputPathNoDate = filepath.Clean(relativeInputPathNoDate)
+		pathTags := strings.Split(relativeInputPathNoDate, string(os.PathSeparator))
+		for i, tag := range pathTags {
+			pathTags[i] = strings.Trim(tag, "-_ ")
+		}
+		fmt.Printf("pathTags: %v\n", pathTags)
+		if len(pathTags) > 1 {
+			pathTags = pathTags[:len(pathTags)-1]
+			article.Tags = append(article.Tags, pathTags...)
+		}
+	}
+
+	// outputPath
+	outputPath := filepath.Join(settings.OutputDirectory, relativeInputPath)
+	outputPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath))
+	outputPath = filepath.Join(outputPath, settings.IndexName)
+
+	if !settings.DoNotRemoveDateFromPaths {
+		outputPath = RemoveDateFromPath(outputPath)
+	}
+	outputPath = cleanString(outputPath)
+	outputDirectory := filepath.Dir(outputPath)
+	err = os.MkdirAll(outputDirectory, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
 
-	link = cleanString(link)
-
-	// articles[i].LinkToSelf = link
-
-	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, originalArticlePath, relPath, pageDir, savePath, link)
-	for _, resourceOrigRelPath := range extractResources(htmlContent) {
+	originalDirectory := filepath.Dir(article.OriginalPath)
+	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
 		if strings.Contains(resourceOrigRelPathLower, "http") {
 			continue
 		}
-		resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
-		resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
+		resourceOrigPath := filepath.Join(originalDirectory, resourceOrigRelPath)
+		resourceDestPath := filepath.Join(outputDirectory, resourceOrigRelPath)
 		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
 
 		input, err := os.ReadFile(resourceOrigPath)
@@ -135,12 +163,16 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 		}
 	}
 
-	staticBaseLink, err := filepath.Rel(pageDir, settings.OutputDirectory)
+	LinkToSelf, err := filepath.Rel(settings.OutputDirectory, outputPath)
 	if err != nil {
 		panic(err)
 	}
+	LinkToSelf = strings.ReplaceAll(LinkToSelf, "\\", "/")
+	fmt.Printf(
+		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
+		settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, outputPath, LinkToSelf)
 
-	return Links{ToSelf: link, ToCss: staticBaseLink + "/style.css", ToJs: staticBaseLink + "/script.js", ToSave: savePath}
+	return Links{ToSelf: LinkToSelf, ToSave: outputPath}
 }
 
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
@@ -151,7 +183,6 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 	for _, article := range articles {
 		if slices.Contains(article.Tags, "PAGE") {
 			pageList = append(pageList, article)
-			// allTags = append(allTags, article.Tags...) TODO implement
 		} else {
 			allTags = append(allTags, article.Tags...)
 			articleList = append(articleList, article)

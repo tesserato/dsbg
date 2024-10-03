@@ -9,22 +9,25 @@ type Style int64
 
 const (
 	Default Style = iota
-	Dark  
+	Dark
+	Colorful
 )
 
 type Settings struct {
-	Title                   string
-	Description             string
-	InputDirectory          string
-	OutputDirectory         string
-	DateFormat              string
-	IndexName               string
-	Style                   Style
-	PathToCustomCss         string
-	PathToCustomJs          string
-	AdditionalElementsTop   template.HTML
-	AdditionalElemensBottom template.HTML
-	ExtractTagsFromPath     bool
+	Title                     string
+	Description               string
+	InputDirectory            string
+	OutputDirectory           string
+	DateFormat                string
+	IndexName                 string
+	Style                     Style
+	PathToCustomCss           string
+	PathToCustomJs            string
+	PathToCustomFavicon       string
+	AdditionalElementsTop     template.HTML
+	AdditionalElemensBottom   template.HTML
+	DoNotExtractTagsFromPaths bool
+	DoNotRemoveDateFromPaths  bool
 }
 
 type Article struct {
@@ -37,14 +40,11 @@ type Article struct {
 	HtmlContent  string
 	OriginalPath string
 	LinkToSelf   string
-	// LinkToCss    string
-	// LinkToJs     string
-	// InnerHTML string
 }
 
 type Links struct {
 	ToSelf string
-	ToCss  string
-	ToJs   string
+	// ToCss  string
+	// ToJs   string
 	ToSave string
 }

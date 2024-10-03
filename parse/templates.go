@@ -17,8 +17,8 @@ var htmlArticleTemplate = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="ZBSCM">
 	<meta name="keywords" content="{{stringsJoin .Art.Tags ", "}}">
-    <link rel="stylesheet" href="{{.Lks.ToCss}}">
-    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>{{.Art.Title}}</title>
 </head>
 
@@ -52,7 +52,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 <body>
 	<header>
 		<h1>{{.Settings.Title}}</h1>
-		<input type="text" id="search-input" placeholder="Search...">
+		<input type="text" id="search-input" placeholder="Search... (supports Unix-like search commands)">
     	<ul id="search-results"></ul>
 		<nav>
 		{{range .PageList}}

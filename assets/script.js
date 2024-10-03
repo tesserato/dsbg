@@ -1,31 +1,38 @@
-
 var tags = new Set();
 for (const tag_element of document.getElementsByTagName("button")) {
     tags.add(tag_element.innerHTML.trim());
 }
 
-const buttons = document.getElementsByTagName('button');
+var sortedTags = Array.from(tags);
+sortedTags.sort(Intl.Collator().compare);
 
 var btn_container = document.getElementById("buttons");
 
 const show_all_btn = document.createElement("button");
 show_all_btn.className = "on";
-show_all_btn.innerHTML = "&ocir;";
+show_all_btn.innerHTML = "⬤";
+show_all_btn.id = "show_all_btn";
+show_all_btn.title = "Select all tags";
 
 const hide_all_btn = document.createElement("button");
 hide_all_btn.className = "on";
-hide_all_btn.innerHTML = "&odot;";
+hide_all_btn.innerHTML = "⬤";
+hide_all_btn.id = "hide_all_btn";
+hide_all_btn.title = "De-select all tags";
 
-for (const tag of tags) {
+for (const tag of sortedTags) {
+    console.log(tag);
     var btn = document.createElement("button");
     btn.className = "on";
     btn.innerHTML = tag;
     btn_container.appendChild(btn);
 }
 
-btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
 btn_container.insertBefore(show_all_btn, btn_container.firstChild);
+btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
+
 const posts = document.getElementsByClassName('detail');
+const buttons = document.getElementsByTagName('button'); // Get buttons AFTER adding them
 
 function refresh_posts() {
     for (var post of posts) {

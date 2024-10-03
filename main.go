@@ -37,13 +37,15 @@ func main() {
 
 	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
 	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
-	flag.StringVar(&settings.InputDirectory, "input", "content", "Path to the directory that holds the source files")
-	flag.StringVar(&settings.OutputDirectory, "output", "public", "Path to the directory where the output files will be saved")
+	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory that holds the source files")
+	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the output files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Date format")
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
-	flag.StringVar(&settings.PathToCustomCss, "css", "", "Path to a file with custom css")
-	flag.StringVar(&settings.PathToCustomJs, "js", "", "Path to a file with custom js")
-	flag.BoolVar(&settings.ExtractTagsFromPath, "tags-from-path", true, "Extract tags from path")
+	flag.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a file with custom css")
+	flag.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a file with custom js")
+	flag.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a file with custom favicon")
+	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Do not extract tags from path")
+	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-on-paths", false, "Do not remove date from path")
 	styleString := flag.String("style", "default", "Style to be used")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the bottom of the HTML outputs")
@@ -145,6 +147,8 @@ func main() {
 		settings.Style = parse.Default
 	case "dark":
 		settings.Style = parse.Dark
+	case "colorful":
+		settings.Style = parse.Colorful
 	default:
 		settings.Style = parse.Default
 	}
@@ -169,6 +173,22 @@ func main() {
 		// Add custom css path, if any
 		if settings.PathToCustomCss != "" {
 			err = watcher.Add(settings.PathToCustomCss)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		// Add custom js path, if any
+		if settings.PathToCustomJs != "" {
+			err = watcher.Add(settings.PathToCustomJs)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		// Add custom favicon path, if any
+		if settings.PathToCustomFavicon != "" {
+			err = watcher.Add(settings.PathToCustomFavicon)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -241,12 +261,20 @@ func cleanContent(s string) []string {
 		s = strings.ReplaceAll(s, char, " ")
 	}
 
-
-
 	return strings.Fields(s)
 }
 
 func buildWebsite(settings parse.Settings) {
+	// Clear output directory
+	err := os.RemoveAll(settings.OutputDirectory)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = os.MkdirAll(settings.OutputDirectory, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
 	if err != nil {
 		log.Fatal(err)
@@ -294,19 +322,21 @@ func buildWebsite(settings parse.Settings) {
 		switch settings.Style {
 		case parse.Dark:
 			styleAsset = "style-dark.css"
+		case parse.Colorful:
+			styleAsset = "style-colorful.css"
 		}
 		saveAsset(styleAsset, "style.css", settings.OutputDirectory)
 
 	} else {
 		input, err := os.ReadFile(settings.PathToCustomCss)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		cssDestPath := filepath.Join(settings.OutputDirectory, "style.css")
 		err = os.WriteFile(cssDestPath, input, 0644)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 
@@ -324,12 +354,25 @@ func buildWebsite(settings parse.Settings) {
 		}
 	}
 
-	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
-	// saveAsset("fuse.min.js","fuse.min.js", settings.OutputDirectory)
+	if settings.PathToCustomFavicon == "" {
+		saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
+	} else {
+		input, err := os.ReadFile(settings.PathToCustomFavicon)
+		if err != nil {
+			panic(err)
+		}
+		faviconDestPath := filepath.Join(settings.OutputDirectory, "favicon.ico")
+		err = os.WriteFile(faviconDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
+
 func processFile(filePath string, settings parse.Settings) (parse.Article, error) {
 	var article parse.Article
 	var err error
@@ -339,29 +382,16 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 
 	if strings.HasSuffix(pathLower, ".md") {
 		article, err = parse.MarkdownFile(filePath)
-		links = parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+		links = parse.CopyHtmlResources(settings, &article)
 		article = parse.FormatMarkdown(article, links, settings)
 	} else if strings.HasSuffix(filePath, ".html") {
 		article, err = parse.HTMLFile(filePath)
-		links = parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+		links = parse.CopyHtmlResources(settings, &article)
 	} else {
 		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
 	}
 	if err != nil {
-		return parse.Article{}, err
-	}
-	if settings.ExtractTagsFromPath {
-		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
-		if err != nil {
-			return parse.Article{}, err
-		}
-		relPath = strings.ReplaceAll(relPath, "\\", "/")
-		pathTags := strings.Split(relPath, "/")
-		fmt.Printf("pathTags: %v\n", pathTags)
-		if len(pathTags) > 1 {
-			pathTags = pathTags[:len(pathTags)-1]
-			article.Tags = append(article.Tags, pathTags...)
-		}
+		panic(err)
 	}
 
 	os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
