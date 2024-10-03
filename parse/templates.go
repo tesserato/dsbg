@@ -52,7 +52,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 <body>
 	<header>
 		<h1>{{.Settings.Title}}</h1>
-		<input type="text" id="search-input" placeholder="Search...">
+		<input type="text" id="search-input" placeholder="Search... (supports Unix-like search commands)">
     	<ul id="search-results"></ul>
 		<nav>
 		{{range .PageList}}

@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 results.forEach(result => {
                     const article = result.item;
-                    resultsHTML += `<li>${(1.0 - result.score)} <a href="${article.url}">${article.title}</a></li>`;
+                    resultsHTML += `<li>${(1.0 - result.score).toFixed(2)} <a href="${article.url}">${article.title}</a></li>`;
                 });
             }
             searchResults.innerHTML = resultsHTML;
