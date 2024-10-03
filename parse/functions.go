@@ -302,7 +302,10 @@ func MarkdownFile(path string) (Article, error) {
 }
 
 func FormatMarkdown(article Article, links Links, settings Settings) Article {
-	tmpl, err := template.New("markdown_template").Funcs(template.FuncMap{"stringsJoin": strings.Join, "slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
+	tmpl, err := template.New("markdown_template").Funcs(
+		template.FuncMap{
+			"stringsJoin":    strings.Join,
+			"slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		panic(err)
 	}

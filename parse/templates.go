@@ -16,6 +16,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="ZBSCM">
+	<meta name="keywords" content="{{stringsJoin .Art.Tags ", "}}">
     <link rel="stylesheet" href="{{.Lks.ToCss}}">
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
     <title>{{.Art.Title}}</title>

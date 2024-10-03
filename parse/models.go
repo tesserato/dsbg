@@ -24,6 +24,7 @@ type Settings struct {
 	PathToCustomJs          string
 	AdditionalElementsTop   template.HTML
 	AdditionalElemensBottom template.HTML
+	ExtractTagsFromPath     bool
 }
 
 type Article struct {
