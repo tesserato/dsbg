@@ -9,7 +9,7 @@ type Style int64
 
 const (
 	Default Style = iota
-	Dark  
+	Dark
 )
 
 type Settings struct {
@@ -24,7 +24,8 @@ type Settings struct {
 	PathToCustomJs          string
 	AdditionalElementsTop   template.HTML
 	AdditionalElemensBottom template.HTML
-	ExtractTagsFromPath     bool
+	ExtractTagsFromPaths    bool
+	RemoveDateFromPaths     bool
 }
 
 type Article struct {

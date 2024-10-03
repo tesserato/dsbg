@@ -22,21 +22,30 @@ import (
 	"golang.org/x/net/html"
 )
 
+var regexPatterns = []string{
+	`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
+	`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
+	`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
+}
+
+func RemoveDateFromPath(stringWithDate string) string {
+	for _, pattern := range regexPatterns {
+		r := regexp.MustCompile(pattern)
+		stringWithDate = r.ReplaceAllString(stringWithDate, "")
+	}
+	return stringWithDate
+}
+
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
-	for _, pattern := range []string{
-		`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
-		`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
-		`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
-	} {
+	for _, pattern := range regexPatterns {
 		r := regexp.MustCompile(pattern)
-
 		matches := r.FindStringSubmatch(date)
 		if len(matches) > 0 {
 			for i, name := range r.SubexpNames()[1:] {
 				integer, err := strconv.Atoi(matches[i+1])
 				if err != nil {
-					panic(err) // TODO handle error
+					panic(err)
 				}
 				m[name] = integer
 			}
@@ -76,52 +85,46 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 }
 
 func cleanString(url string) string {
-	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\.-]+`)
-
-	url = strings.ReplaceAll(url, "\\", "/")
-	url = strings.ReplaceAll(url, " ", "-")
+	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\\\. ]+`)
 	url = nonAlphanumericRegex.ReplaceAllString(url, "")
-
+	url = strings.ReplaceAll(url, "\\", "/")
+	pieces := strings.Fields(url)
+	for i, piece := range pieces {
+		pieces[i] = strings.Trim(piece, "-_ ")
+	}
+	url = strings.Join(pieces, "-")
 	return url
 }
 
 func CopyHtmlResources(settings Settings, originalArticlePath string, htmlContent string) Links {
-	relPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
+	relativeInputPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
 	if err != nil {
 		panic(err)
 	}
-	pageDir := filepath.Join(settings.OutputDirectory, relPath)
-	pageDir = strings.TrimSuffix(pageDir, filepath.Ext(pageDir))
-
-	savePath := filepath.Join(pageDir, settings.IndexName)
-
-	savePath = cleanString(savePath)
-
-	articleOrigFolderPath := filepath.Dir(originalArticlePath)
-	articleDestFolderPath := filepath.Dir(savePath)
-
-	err = os.MkdirAll(articleDestFolderPath, os.ModePerm)
-	if err != nil {
-		panic(err)
+	// outputPath
+	outputPath := filepath.Join(settings.OutputDirectory, relativeInputPath)
+	outputPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath))
+	outputPath = filepath.Join(outputPath, settings.IndexName)
+	if settings.RemoveDateFromPaths {
+		outputPath = RemoveDateFromPath(outputPath)
 	}
+	outputPath = cleanString(outputPath)
 
-	link, err := filepath.Rel(settings.OutputDirectory, savePath)
+	outputDirectory := filepath.Dir(outputPath)
+
+	err = os.MkdirAll(outputDirectory, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
 
-	link = cleanString(link)
-
-	// articles[i].LinkToSelf = link
-
-	fmt.Printf("inputDir: %s\norigPath: %s\nrelPath: %s\npageDir: %s\nfilename: %s\nlink: %s\n\n", settings.InputDirectory, originalArticlePath, relPath, pageDir, savePath, link)
+	originalDirectory := filepath.Dir(originalArticlePath)
 	for _, resourceOrigRelPath := range extractResources(htmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
 		if strings.Contains(resourceOrigRelPathLower, "http") {
 			continue
 		}
-		resourceOrigPath := filepath.Join(articleOrigFolderPath, resourceOrigRelPath)
-		resourceDestPath := filepath.Join(articleDestFolderPath, resourceOrigRelPath)
+		resourceOrigPath := filepath.Join(originalDirectory, resourceOrigRelPath)
+		resourceDestPath := filepath.Join(outputDirectory, resourceOrigRelPath)
 		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
 
 		input, err := os.ReadFile(resourceOrigPath)
@@ -135,12 +138,21 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 		}
 	}
 
-	staticBaseLink, err := filepath.Rel(pageDir, settings.OutputDirectory)
+	staticBaseLink, err := filepath.Rel(outputDirectory, settings.OutputDirectory)
 	if err != nil {
 		panic(err)
 	}
 
-	return Links{ToSelf: link, ToCss: staticBaseLink + "/style.css", ToJs: staticBaseLink + "/script.js", ToSave: savePath}
+	LinkToSelf, err := filepath.Rel(settings.OutputDirectory, outputPath)
+	if err != nil {
+		panic(err)
+	}
+	LinkToSelf = strings.ReplaceAll(LinkToSelf, "\\", "/")
+	fmt.Printf(
+		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
+		settings.InputDirectory, originalArticlePath, relativeInputPath, outputDirectory, outputPath, LinkToSelf)
+
+	return Links{ToSelf: LinkToSelf, ToCss: staticBaseLink + "/style.css", ToJs: staticBaseLink + "/script.js", ToSave: outputPath}
 }
 
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
@@ -151,7 +163,6 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 	for _, article := range articles {
 		if slices.Contains(article.Tags, "PAGE") {
 			pageList = append(pageList, article)
-			// allTags = append(allTags, article.Tags...) TODO implement
 		} else {
 			allTags = append(allTags, article.Tags...)
 			articleList = append(articleList, article)

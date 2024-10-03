@@ -43,7 +43,8 @@ func main() {
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
 	flag.StringVar(&settings.PathToCustomCss, "css", "", "Path to a file with custom css")
 	flag.StringVar(&settings.PathToCustomJs, "js", "", "Path to a file with custom js")
-	flag.BoolVar(&settings.ExtractTagsFromPath, "tags-from-path", true, "Extract tags from path")
+	flag.BoolVar(&settings.ExtractTagsFromPaths, "tags-from-path", true, "Extract tags from path")
+	flag.BoolVar(&settings.RemoveDateFromPaths, "remove-date-from-path", true, "Remove date from path")
 	styleString := flag.String("style", "default", "Style to be used")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the bottom of the HTML outputs")
@@ -348,12 +349,12 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
 	}
 	if err != nil {
-		return parse.Article{}, err
+		panic(err)
 	}
-	if settings.ExtractTagsFromPath {
+	if settings.ExtractTagsFromPaths {
 		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 		if err != nil {
-			return parse.Article{}, err
+			panic(err)
 		}
 		relPath = strings.ReplaceAll(relPath, "\\", "/")
 		pathTags := strings.Split(relPath, "/")
