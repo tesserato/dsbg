@@ -29,10 +29,12 @@ var regexPatterns = []string{
 }
 
 func RemoveDateFromPath(stringWithDate string) string {
+	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
 	for _, pattern := range regexPatterns {
 		r := regexp.MustCompile(pattern)
 		stringWithDate = r.ReplaceAllString(stringWithDate, "")
 	}
+	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
 	return stringWithDate
 }
 
@@ -85,14 +87,23 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 }
 
 func cleanString(url string) string {
+	fmt.Printf("!! cleanString: %s\n", url)
 	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\\\. ]+`)
 	url = nonAlphanumericRegex.ReplaceAllString(url, "")
 	url = strings.ReplaceAll(url, "\\", "/")
-	pieces := strings.Fields(url)
+	pieces := strings.Split(url, "/")
+	for i, piece := range pieces {
+		pieces[i] = strings.Trim(piece, "-_ ")
+	}
+	url = strings.Join(pieces, "/")
+	pieces = strings.Fields(url)
 	for i, piece := range pieces {
 		pieces[i] = strings.Trim(piece, "-_ ")
 	}
 	url = strings.Join(pieces, "-")
+
+	url = strings.Trim(url, "-")
+	fmt.Printf("!! cleanString: %s\n", url)
 	return url
 }
 
