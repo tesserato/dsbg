@@ -259,11 +259,14 @@ h5 {
 }
 
 img {
-    display: block; /* Makes img behave like a block element */
+    display: block;
+    /* Makes img behave like a block element */
     margin-left: auto;
     margin-right: auto;
-    max-width: 100%;  /* Ensures image doesn't exceed container width */
-    height: auto;       /* Maintains aspect ratio */
+    max-width: 100%;
+    /* Ensures image doesn't exceed container width */
+    height: auto;
+    /* Maintains aspect ratio */
 }
 
 input[type=checkbox] {
@@ -303,4 +306,54 @@ footer {
     height: 200px;
     background-color: var(--link-color);
     width: 100%;
+}
+
+#search-input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: none;
+    border-radius: 0.7rem;
+    font-size: 1rem;
+    color: var(--text-color);
+    background-color: var(--card-background-color);
+    box-shadow:
+        0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.15) inset,
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208) inset;
+}
+
+#search-input:focus {
+    outline: none;
+    border-radius: 0.15rem;
+    box-shadow:
+        0.1rem 0.1rem .5rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem .2rem 0 rgb(208, 208, 208);
+}
+
+#search-results {
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    background-color: var(--card-background-color);
+    box-shadow:
+        0.1rem 0.1rem .5rem 0 rgba(0, 0, 0, 0.25),
+        -.0rem -.0rem .2rem 0 rgb(208, 208, 208);
+}
+
+#search-results li {
+    padding: 0.5rem 1rem;
+}
+
+#search-results li a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+#search-results li a:hover {
+    color: #ffffff;
 }

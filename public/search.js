@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 includeScore: true,
                 findAllMatches: true,
                 includeMatches: true,
-                minMatchCharLength: 3,
+                ignoreLocation: true,
+                minMatchCharLength: 2,
+                useExtendedSearch: true,
+                threshold: 0.35,
+                distance: 10,
                 keys: ['title', 'content', 'description', 'tags']
             };
             fuse = new Fuse(searchIndex, options);
@@ -28,11 +32,20 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 results.forEach(result => {
                     const article = result.item;
-                    resultsHTML += `<li>${result.score} <a href="${article.url}">${article.title}</a></li>`;
+                    resultsHTML += `<li>${(1.0 - result.score)} <a href="${article.url}">${article.title}</a></li>`;
                 });
             }
             searchResults.innerHTML = resultsHTML;
         }
 
+    });
+
+    searchResults.addEventListener('mousedown', function (event) {
+        event.preventDefault();
+    });
+
+    searchInput.addEventListener('blur', function (event) {
+        searchInput.value = '';
+        searchResults.innerHTML = '';
     });
 });
