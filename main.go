@@ -205,7 +205,7 @@ func serve(settings parse.Settings) {
 	http.ListenAndServe(":666", nil)
 }
 
-func cleanContent(s string) string {
+func cleanContent(s string) []string {
 	toReplace := []struct {
 		old string
 		new string
@@ -241,9 +241,9 @@ func cleanContent(s string) string {
 		s = strings.ReplaceAll(s, char, " ")
 	}
 
-	s = strings.Join(strings.Fields(s), " ")
 
-	return s
+
+	return strings.Fields(s)
 }
 
 func buildWebsite(settings parse.Settings) {
