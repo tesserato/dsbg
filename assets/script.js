@@ -10,12 +10,14 @@ var btn_container = document.getElementById("buttons");
 
 const show_all_btn = document.createElement("button");
 show_all_btn.className = "on";
-show_all_btn.innerHTML = "⬛";
+show_all_btn.innerHTML = "⬤";
+show_all_btn.id = "show_all_btn";
 show_all_btn.title = "Select all tags";
 
 const hide_all_btn = document.createElement("button");
 hide_all_btn.className = "on";
-hide_all_btn.innerHTML = "⬜";
+hide_all_btn.innerHTML = "⬤";
+hide_all_btn.id = "hide_all_btn";
 hide_all_btn.title = "De-select all tags";
 
 for (const tag of tags) {
