@@ -246,6 +246,16 @@ func cleanContent(s string) []string {
 }
 
 func buildWebsite(settings parse.Settings) {
+	// Clear output directory
+	err := os.RemoveAll(settings.OutputDirectory)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = os.MkdirAll(settings.OutputDirectory, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	files, err := parse.GetPaths(settings.InputDirectory, []string{".md", ".html"})
 	if err != nil {
 		log.Fatal(err)
@@ -299,13 +309,13 @@ func buildWebsite(settings parse.Settings) {
 	} else {
 		input, err := os.ReadFile(settings.PathToCustomCss)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		cssDestPath := filepath.Join(settings.OutputDirectory, "style.css")
 		err = os.WriteFile(cssDestPath, input, 0644)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 
@@ -324,11 +334,11 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
-	// saveAsset("fuse.min.js","fuse.min.js", settings.OutputDirectory)
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
+
 func processFile(filePath string, settings parse.Settings) (parse.Article, error) {
 	var article parse.Article
 	var err error
