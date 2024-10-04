@@ -107,11 +107,26 @@ func cleanString(url string) string {
 	return url
 }
 
-func CopyHtmlResources(settings Settings, originalArticlePath string, htmlContent string) Links {
-	relativeInputPath, err := filepath.Rel(settings.InputDirectory, originalArticlePath)
+func CopyHtmlResources(settings Settings, article Article) Links {
+	relativeInputPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 	if err != nil {
 		panic(err)
 	}
+
+	if !settings.DoNotExtractTagsFromPaths {
+		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
+		if err != nil {
+			panic(err)
+		}
+		relPath = strings.ReplaceAll(relPath, "\\", "/")
+		pathTags := strings.Split(relPath, "/")
+		fmt.Printf("pathTags: %v\n", pathTags)
+		if len(pathTags) > 1 {
+			pathTags = pathTags[:len(pathTags)-1]
+			article.Tags = append(article.Tags, pathTags...)
+		}
+	}
+
 	// outputPath
 	outputPath := filepath.Join(settings.OutputDirectory, relativeInputPath)
 	outputPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath))
@@ -128,8 +143,8 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 		panic(err)
 	}
 
-	originalDirectory := filepath.Dir(originalArticlePath)
-	for _, resourceOrigRelPath := range extractResources(htmlContent) {
+	originalDirectory := filepath.Dir(article.OriginalPath)
+	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
 		if strings.Contains(resourceOrigRelPathLower, "http") {
 			continue
@@ -156,7 +171,7 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 	LinkToSelf = strings.ReplaceAll(LinkToSelf, "\\", "/")
 	fmt.Printf(
 		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
-		settings.InputDirectory, originalArticlePath, relativeInputPath, outputDirectory, outputPath, LinkToSelf)
+		settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, outputPath, LinkToSelf)
 
 	return Links{ToSelf: LinkToSelf, ToSave: outputPath}
 }

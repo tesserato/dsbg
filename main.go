@@ -242,8 +242,6 @@ func cleanContent(s string) []string {
 		s = strings.ReplaceAll(s, char, " ")
 	}
 
-
-
 	return strings.Fields(s)
 }
 
@@ -340,29 +338,16 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 
 	if strings.HasSuffix(pathLower, ".md") {
 		article, err = parse.MarkdownFile(filePath)
-		links = parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+		links = parse.CopyHtmlResources(settings, article)
 		article = parse.FormatMarkdown(article, links, settings)
 	} else if strings.HasSuffix(filePath, ".html") {
 		article, err = parse.HTMLFile(filePath)
-		links = parse.CopyHtmlResources(settings, filePath, article.HtmlContent)
+		links = parse.CopyHtmlResources(settings, article)
 	} else {
 		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
 	}
 	if err != nil {
 		panic(err)
-	}
-	if !settings.DoNotExtractTagsFromPaths {
-		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
-		if err != nil {
-			panic(err)
-		}
-		relPath = strings.ReplaceAll(relPath, "\\", "/")
-		pathTags := strings.Split(relPath, "/")
-		fmt.Printf("pathTags: %v\n", pathTags)
-		if len(pathTags) > 1 {
-			pathTags = pathTags[:len(pathTags)-1]
-			article.Tags = append(article.Tags, pathTags...)
-		}
 	}
 
 	os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
