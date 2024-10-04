@@ -348,11 +348,11 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 
 	if strings.HasSuffix(pathLower, ".md") {
 		article, err = parse.MarkdownFile(filePath)
-		links = parse.CopyHtmlResources(settings, article)
+		links = parse.CopyHtmlResources(settings, &article)
 		article = parse.FormatMarkdown(article, links, settings)
 	} else if strings.HasSuffix(filePath, ".html") {
 		article, err = parse.HTMLFile(filePath)
-		links = parse.CopyHtmlResources(settings, article)
+		links = parse.CopyHtmlResources(settings, &article)
 	} else {
 		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
 	}

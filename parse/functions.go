@@ -107,19 +107,19 @@ func cleanString(url string) string {
 	return url
 }
 
-func CopyHtmlResources(settings Settings, article Article) Links {
+func CopyHtmlResources(settings Settings, article *Article) Links {
 	relativeInputPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 	if err != nil {
 		panic(err)
 	}
 
 	if !settings.DoNotExtractTagsFromPaths {
-		relPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
-		if err != nil {
-			panic(err)
+		relativeInputPathNoDate := RemoveDateFromPath(relativeInputPath)
+		relativeInputPathNoDate = filepath.Clean(relativeInputPathNoDate)
+		pathTags := strings.Split(relativeInputPathNoDate, string(os.PathSeparator))
+		for i, tag := range pathTags {
+			pathTags[i] = strings.Trim(tag, "-_ ")
 		}
-		relPath = strings.ReplaceAll(relPath, "\\", "/")
-		pathTags := strings.Split(relPath, "/")
 		fmt.Printf("pathTags: %v\n", pathTags)
 		if len(pathTags) > 1 {
 			pathTags = pathTags[:len(pathTags)-1]
@@ -131,13 +131,12 @@ func CopyHtmlResources(settings Settings, article Article) Links {
 	outputPath := filepath.Join(settings.OutputDirectory, relativeInputPath)
 	outputPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath))
 	outputPath = filepath.Join(outputPath, settings.IndexName)
+
 	if !settings.DoNotRemoveDateFromPaths {
 		outputPath = RemoveDateFromPath(outputPath)
 	}
 	outputPath = cleanString(outputPath)
-
 	outputDirectory := filepath.Dir(outputPath)
-
 	err = os.MkdirAll(outputDirectory, os.ModePerm)
 	if err != nil {
 		panic(err)
