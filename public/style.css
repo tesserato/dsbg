@@ -12,6 +12,33 @@
     box-sizing: border-box;
 }
 
+
+
+#hide_all_btn, #show_all_btn.off {
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0);
+    box-shadow:
+        /* 0.3rem 0.3rem .3rem 0 rgba(0, 0, 0, 0.25), */
+        0.2rem 0.2rem .3rem 0 rgba(0, 0, 0, 0.25) inset,
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
+}
+
+
+
+#show_all_btn, #hide_all_btn.off {
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0);
+    box-shadow:
+        0.3rem 0.3rem .3rem 0 rgba(0, 0, 0, 0.25),
+        /* 0.1rem 0.1rem .3rem 0 rgba(0, 0, 0, 0.25) inset, */
+        -.0rem -.0rem .1rem 0 rgb(208, 208, 208);
+}
+
+#hide_all_btn:hover, #show_all_btn:hover {
+    color: white;
+    text-shadow: 0 0 0.4rem white;
+}
+
 html {
     margin: 0;
     padding: 0;
