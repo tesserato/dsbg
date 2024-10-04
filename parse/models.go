@@ -38,14 +38,11 @@ type Article struct {
 	HtmlContent  string
 	OriginalPath string
 	LinkToSelf   string
-	// LinkToCss    string
-	// LinkToJs     string
-	// InnerHTML string
 }
 
 type Links struct {
 	ToSelf string
-	ToCss  string
-	ToJs   string
+	// ToCss  string
+	// ToJs   string
 	ToSave string
 }

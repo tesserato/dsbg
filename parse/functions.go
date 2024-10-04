@@ -149,11 +149,6 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 		}
 	}
 
-	staticBaseLink, err := filepath.Rel(outputDirectory, settings.OutputDirectory)
-	if err != nil {
-		panic(err)
-	}
-
 	LinkToSelf, err := filepath.Rel(settings.OutputDirectory, outputPath)
 	if err != nil {
 		panic(err)
@@ -163,7 +158,7 @@ func CopyHtmlResources(settings Settings, originalArticlePath string, htmlConten
 		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
 		settings.InputDirectory, originalArticlePath, relativeInputPath, outputDirectory, outputPath, LinkToSelf)
 
-	return Links{ToSelf: LinkToSelf, ToCss: staticBaseLink + "/style.css", ToJs: staticBaseLink + "/script.js", ToSave: outputPath}
+	return Links{ToSelf: LinkToSelf, ToSave: outputPath}
 }
 
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
