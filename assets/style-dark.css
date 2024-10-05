@@ -6,7 +6,6 @@
     --card: #3c3c3e;
     --link: #ff4b4b;
     --shadow: rgba(0, 0, 0, 0.777);
-    --color-button-off-hover: rgba(0, 0, 0, 0.25);
 }
 
 * {
@@ -105,7 +104,7 @@ img {
     margin: 0 0 1rem;
     border: none;
     box-shadow:
-        1rem 1rem 1.2rem 0 var(--shadow),
+        .5rem .5rem 1.2rem 0 var(--shadow),
         -.0rem -.0rem 1rem 0 var(--card);
     color: var(--text);
 }
@@ -375,7 +374,7 @@ footer {
 }
 
 #search-results li a {
-    color: var(--link-color);
+    color: var(--link);
     text-decoration: none;
     font-size: 1rem;
 }
