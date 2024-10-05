@@ -1,10 +1,10 @@
-
 var tags = new Set();
 for (const tag_element of document.getElementsByTagName("button")) {
     tags.add(tag_element.innerHTML.trim());
 }
 
-const buttons = document.getElementsByTagName('button');
+var sortedTags = Array.from(tags);
+sortedTags.sort(Intl.Collator().compare);
 
 var btn_container = document.getElementById("buttons");
 
@@ -20,7 +20,8 @@ hide_all_btn.innerHTML = "⬤";
 hide_all_btn.id = "hide_all_btn";
 hide_all_btn.title = "De-select all tags";
 
-for (const tag of tags) {
+for (const tag of sortedTags) {
+    console.log(tag);
     var btn = document.createElement("button");
     btn.className = "on";
     btn.innerHTML = tag;
@@ -29,7 +30,9 @@ for (const tag of tags) {
 
 btn_container.insertBefore(show_all_btn, btn_container.firstChild);
 btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
+
 const posts = document.getElementsByClassName('detail');
+const buttons = document.getElementsByTagName('button'); // Get buttons AFTER adding them
 
 function refresh_posts() {
     for (var post of posts) {
