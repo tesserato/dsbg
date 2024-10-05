@@ -10,6 +10,7 @@ type Style int64
 const (
 	Default Style = iota
 	Dark
+	Colorful
 )
 
 type Settings struct {

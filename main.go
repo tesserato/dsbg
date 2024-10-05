@@ -147,6 +147,8 @@ func main() {
 		settings.Style = parse.Default
 	case "dark":
 		settings.Style = parse.Dark
+	case "colorful":
+		settings.Style = parse.Colorful
 	default:
 		settings.Style = parse.Default
 	}
@@ -320,6 +322,8 @@ func buildWebsite(settings parse.Settings) {
 		switch settings.Style {
 		case parse.Dark:
 			styleAsset = "style-dark.css"
+		case parse.Colorful:
+			styleAsset = "style-colorful.css"
 		}
 		saveAsset(styleAsset, "style.css", settings.OutputDirectory)
 
