@@ -1,13 +1,13 @@
 :root {
     --header-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --body-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --color-background: #0c0c0c;
-    --color-text: #ffffff;
-    --color-card-background: #171010;
-    --color-link: #c92626;
+    --color-background: #303030;
+    --color-text: #bfbfbf;
+    --color-card-background: #3c3c3e;
+    --color-link: #ff4b4b;
     --color-accent: #d0d0d0;
-    --color-shadow-light: rgb(208, 208, 208);
-    --color-shadow-dark: rgba(0, 0, 0, 0.25);
+    --color-shadow-light: rgb(0, 0, 0);
+    --color-shadow-dark: rgba(0, 0, 0, 0.777);
     --color-button-off-hover: rgba(0, 0, 0, 0.25);
 }
 
@@ -17,7 +17,7 @@
 
 #hide_all_btn, #show_all_btn.off {
     border-radius: 50%;
-    color: rgba(255, 255, 255, 0);
+    color: var(--color-text);
     box-shadow:
         0.2rem 0.2rem .3rem 0 var(--color-shadow-dark) inset,
         -.0rem -.0rem .1rem 0 var(--color-shadow-light);
@@ -25,7 +25,7 @@
 
 #show_all_btn, #hide_all_btn.off {
     border-radius: 50%;
-    color: rgba(255, 255, 255, 0);
+    color: var(--color-text);
     box-shadow:
         0.3rem 0.3rem .3rem 0 var(--color-shadow-dark),
         -.0rem -.0rem .1rem 0 var(--color-shadow-light);
@@ -138,6 +138,7 @@ button {
     cursor: pointer;
     font-size: .9rem;
     font-family: var(--body-font);
+    color: var(--color-text);
     background-color: var(--color-card-background);
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--color-shadow-dark),
