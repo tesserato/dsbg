@@ -4,7 +4,7 @@
     --background-color: #eaeaea;
     --text-color: #7b7b7b;
     --card-background-color: #ededed;
-    --link-color: #ea7070;
+    --link-color: #c92626;
     --accent-color: #d0d0d0;
 }
 
@@ -283,6 +283,11 @@ h5 {
     color: var(--accent-color);
     filter: brightness(80%);
     width: max-content;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
 }
 
 img {
