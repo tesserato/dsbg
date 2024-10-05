@@ -43,6 +43,7 @@ func main() {
 	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Name of the index files")
 	flag.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a file with custom css")
 	flag.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a file with custom js")
+	flag.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a file with custom favicon")
 	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Do not extract tags from path")
 	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-on-paths", false, "Do not remove date from path")
 	styleString := flag.String("style", "default", "Style to be used")
@@ -170,6 +171,22 @@ func main() {
 		// Add custom css path, if any
 		if settings.PathToCustomCss != "" {
 			err = watcher.Add(settings.PathToCustomCss)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		// Add custom js path, if any
+		if settings.PathToCustomJs != "" {
+			err = watcher.Add(settings.PathToCustomJs)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		// Add custom favicon path, if any
+		if settings.PathToCustomFavicon != "" {
+			err = watcher.Add(settings.PathToCustomFavicon)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -333,7 +350,20 @@ func buildWebsite(settings parse.Settings) {
 		}
 	}
 
-	saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
+	if settings.PathToCustomFavicon == "" {
+		saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
+	} else {
+		input, err := os.ReadFile(settings.PathToCustomFavicon)
+		if err != nil {
+			panic(err)
+		}
+		faviconDestPath := filepath.Join(settings.OutputDirectory, "favicon.ico")
+		err = os.WriteFile(faviconDestPath, input, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")

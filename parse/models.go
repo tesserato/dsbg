@@ -22,6 +22,7 @@ type Settings struct {
 	Style                     Style
 	PathToCustomCss           string
 	PathToCustomJs            string
+	PathToCustomFavicon       string
 	AdditionalElementsTop     template.HTML
 	AdditionalElemensBottom   template.HTML
 	DoNotExtractTagsFromPaths bool
