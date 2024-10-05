@@ -1,13 +1,11 @@
 :root {
     --header-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --body-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --color-background: #303030;
-    --color-text: #bfbfbf;
-    --color-card-background: #3c3c3e;
-    --color-link: #ff4b4b;
-    --color-accent: #d0d0d0;
-    --color-shadow-light: rgb(0, 0, 0);
-    --color-shadow-dark: rgba(0, 0, 0, 0.777);
+    --background: #303030;
+    --text: #bfbfbf;
+    --card: #3c3c3e;
+    --link: #ff4b4b;
+    --shadow: rgba(0, 0, 0, 0.777);
     --color-button-off-hover: rgba(0, 0, 0, 0.25);
 }
 
@@ -17,23 +15,23 @@
 
 #hide_all_btn, #show_all_btn.off {
     border-radius: 50%;
-    color: var(--color-text);
+    color: transparent;
     box-shadow:
-        0.2rem 0.2rem .3rem 0 var(--color-shadow-dark) inset,
-        -.0rem -.0rem .1rem 0 var(--color-shadow-light);
+        0.2rem 0.2rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--card);
 }
 
 #show_all_btn, #hide_all_btn.off {
     border-radius: 50%;
-    color: var(--color-text);
+    color: transparent;
     box-shadow:
-        0.3rem 0.3rem .3rem 0 var(--color-shadow-dark),
-        -.0rem -.0rem .1rem 0 var(--color-shadow-light);
+        0.3rem 0.3rem .3rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--card);
 }
 
 #hide_all_btn:hover, #show_all_btn:hover {
-    color: var(--color-text);
-    text-shadow: 0 0 0.4rem var(--color-text);
+    color: var(--text);
+    text-shadow: 0 0 0.4rem var(--text);
 }
 
 html {
@@ -43,8 +41,8 @@ html {
     flex-direction: column;
     align-items: center;
     font-family: var(--body-font);
-    background-color: var(--color-background);
-    color: var(--color-text);
+    background-color: var(--background);
+    color: var(--text);
 }
 
 html * {
@@ -67,7 +65,7 @@ nav {
     justify-content: space-between;
     padding: 0;
     font-size: 1rem;
-    color: var(--color-text);
+    color: var(--text);
     gap: 0.7rem;
     margin-bottom: .7rem;
     flex-wrap: wrap;
@@ -75,21 +73,22 @@ nav {
 
 nav a {
     display: block;
-    padding: 0.3rem 0.5rem;
+    padding: 0.1rem 0.3rem;
     margin: 0rem;
     text-decoration: none;
-    color: var(--color-background);
-    background-color: var(--color-text);
+    color: var(--background);
+    background-color: var(--text);
     border-radius: 0.15em;
     filter: opacity(100%);
+    text-shadow: none;
     box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--color-shadow-dark),
-        -.0rem -.0rem .1rem 0 var(--color-shadow-light);
+        0.1rem 0.1rem .3rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--text);
 
 }
 
 nav a:hover {
-    background-color: var(--color-text);
+    background-color: var(--text);
     box-shadow: none;
 }
 
@@ -101,14 +100,14 @@ img {
 
 .detail {
     border-radius: 0.4em;
-    background-color: var(--color-card-background);
+    background-color: var(--card);
     padding: 1.5rem;
     margin: 0 0 1rem;
     border: none;
     box-shadow:
-        1rem 1rem 1.2rem 0 var(--color-shadow-dark),
-        -.0rem -.0rem 1rem 0 var(--color-shadow-light);
-    color: var(--color-text);
+        1rem 1rem 1.2rem 0 var(--shadow),
+        -.0rem -.0rem 1rem 0 var(--card);
+    color: var(--text);
 }
 
 details summary {
@@ -138,11 +137,11 @@ button {
     cursor: pointer;
     font-size: .9rem;
     font-family: var(--body-font);
-    color: var(--color-text);
-    background-color: var(--color-card-background);
+    color: var(--text);
+    background-color: var(--card);
     box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--color-shadow-dark),
-        -.0rem -.0rem .1rem 0 var(--color-shadow-light);
+        0.1rem 0.1rem .3rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--card);
 }
 
 
@@ -152,16 +151,16 @@ button:hover {
 
 .off {
     box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--color-shadow-dark) inset,
-        -.0rem -.0rem .1rem 0 var(--color-shadow-light) inset;
+        0.1rem 0.1rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--card) inset;
 
 }
 
 .off:hover {
     opacity: 30%;
     box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--color-button-off-hover) inset,
-        -.0rem -.0rem .1rem 0 var(--color-shadow-light) inset;
+        0.1rem 0.1rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--card) inset;
 }
 
 header {
@@ -223,13 +222,13 @@ a {
     font-size: .96rem;
     text-decoration: none;
     font-weight: 100;
-    color: var(--color-link);
-    text-shadow: 0.07rem 0.07rem 0.13rem var(--color-shadow-dark);
+    color: var(--link);
+    text-shadow: 0.07rem 0.07rem 0.13rem var(--shadow);
 }
 
 a:hover {
-    color: var(--color-card-background);
-    text-shadow: 0.07rem 0.07rem 0.13rem var(--color-shadow-dark);
+    color: var(--card);
+    text-shadow: 0.07rem 0.07rem 0.13rem var(--shadow);
 }
 
 
@@ -265,7 +264,7 @@ h5 {
     align-items: end;
     justify-content: space-between;
     font-size: 0.8rem;
-    color: var(--color-text);
+    color: var(--text);
     opacity: 0.8;
     width: min-content;
     flex-grow: 10;
@@ -275,7 +274,7 @@ h5 {
     padding: 0;
     margin: 0;
     font-size: 0.6rem;
-    color: var(--color-accent);
+    color: var(--text);
     filter: brightness(80%);
     width: max-content;
 }
@@ -294,7 +293,7 @@ img {
 }
 
 input[type=checkbox] {
-    accent-color: var(--color-link);
+    accent-color: var(--link);
     filter: saturate(1.5);
 }
 
@@ -330,7 +329,7 @@ aside img:hover {
 footer {
     height: 200px;
     /* Or adjust as needed */
-    background-color: var(--color-link);
+    background-color: var(--link);
     width: 100%;
 }
 
@@ -339,22 +338,22 @@ footer {
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
+    outline: none;
     border: none;
     border-radius: 0.7rem;
     font-size: 1rem;
     color: var(--text-color);
     background-color: var(--card-background-color);
     box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--color-shadow-dark) inset,
-        -.0rem -.0rem .1rem 0 var(--color-shadow-dark) inset;
+        0.1rem 0.1rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--background) inset;
 }
 
 #search-input:focus {
-    outline: none;
     border-radius: 0.15rem;
     box-shadow:
-        0.1rem 0.1rem .5rem 0 var(--color-shadow-dark),
-        -.0rem -.0rem .2rem 0 var(--color-shadow-light);
+        0.1rem 0.1rem .5rem 0 var(--shadow),
+        -.0rem -.0rem .2rem 0 var(--background);
 }
 
 #search-results {
@@ -367,8 +366,8 @@ footer {
     border-radius: 0.25rem;
     background-color: var(--card-background-color);
     box-shadow:
-        0.1rem 0.1rem .5rem 0 var(--color-shadow-dark),
-        -.0rem -.0rem .2rem 0 var(--color-shadow-light);
+        0.1rem 0.1rem .5rem 0 var(--shadow),
+        -.0rem -.0rem .2rem 0 var(--background);
 }
 
 #search-results li {
@@ -382,5 +381,5 @@ footer {
 }
 
 #search-results li a:hover {
-    color: #ffffff;
+    color: var(--text);
 }
