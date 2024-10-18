@@ -143,6 +143,40 @@ func CopyHtmlResources(settings Settings, article *Article) Links {
 	}
 
 	originalDirectory := filepath.Dir(article.OriginalPath)
+
+	visit := func(originalPath string, di fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
+		if err != nil {
+			return err
+		}
+		destPath := filepath.Join(outputDirectory, relativeOriginalPath)
+		destFolder := filepath.Dir(destPath)
+		err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
+		if err != nil {
+			return err
+		}
+
+		file, err := os.ReadFile(originalPath)
+		if err != nil {
+			return err
+		}
+
+		err = os.WriteFile(destPath, file, 0644)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
+		return nil
+	}
+
+	err = filepath.WalkDir(originalDirectory, visit)
+	if err != nil {
+		panic(err)
+	}
+
 	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
 		if strings.Contains(resourceOrigRelPathLower, "http") {
@@ -153,6 +187,11 @@ func CopyHtmlResources(settings Settings, article *Article) Links {
 		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
 
 		input, err := os.ReadFile(resourceOrigPath)
+		if err != nil {
+			panic(err)
+		}
+
+		err = os.MkdirAll(filepath.Dir(filepath.FromSlash(resourceDestPath)), 0755)
 		if err != nil {
 			panic(err)
 		}

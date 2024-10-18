@@ -395,8 +395,6 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 	}
 
 	os.WriteFile(links.ToSave, []byte(article.HtmlContent), 0644)
-	article = parse.FormatMarkdown(article, links, settings)
-
 	return article, nil
 }
 
