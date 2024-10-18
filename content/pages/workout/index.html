@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="keywords" content="PAGE" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+  <title>Workout</title>
+</head>
+
+<!-- 
+    https://www.youtube.com/watch?v=8Z96BBDtPPU&t=86s
+
+  https://www.reddit.com/r/bodyweightfitness/wiki/kb/recommended_routine#wiki_warm-up.3A_dynamic_stretches_.285-10min.29 
+-->
+
+<body>
+  <h1>Strength</h1>
+  <!-- Pull-up -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Pull-up</h3>
+      <canvas id="Pull up"></canvas>
+    </div>
+    <div>
+      <h3>TRX Assisted Pull-up</h3>
+      <canvas id="TRX Assisted Pull-up"></canvas>
+    </div>
+    <div>
+      <h3>Ball Lat Pullover</h3>
+      <img src="Gifs/Ball pullover.gif" alt="Ball Pullover">
+    </div>
+  </div>
+  <!-- Squat -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Squat</h3>
+      <canvas id="Squat"></canvas>
+    </div>
+    <div>
+      <h3>Ball Squat</h3>
+      <img src="Gifs/Ball Squat.gif" alt="Ball Squat">
+    </div>
+  </div>
+
+  <!-- lower Core -->
+  <h2>3 series of 8-12 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Hanging Knee Raises</h3>
+      <canvas id="Hanging knee raises"></canvas>
+    </div>
+    <div>
+      <h3>Ball Knee Tucks</h3>
+      <img src="Gifs/Ball Knee Tucks.gif" alt="Ball Knee Tucks">
+    </div>
+    <div>
+      <h3>TRX Knee Tucks</h3>
+      <img src="Gifs/trx knee tucks.webp" alt="TRX Knee Tucks">
+    </div>
+  </div>
+
+  <!-- Upper press -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h2>Push-up</h2>
+      <canvas id="Push up"></canvas>
+    </div>
+    <div>
+      <h2>TRX chest press</h2>
+      <canvas id="TRX chest press"></canvas>
+    </div>
+  </div>
+
+  <h3>TRX Row (3 series of 5-8 reps)</h3>
+  <canvas id="TRX inverted row"></canvas>
+
+  <h3>Single-leg Romanian deadlift (3 series of 5-8 reps)</h3>
+  <canvas id="Single-leg Romanian deadlift"></canvas>
+
+  <!-- Triceps -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Diamond Push-up</h3>
+      <canvas id="Diamond pushup"></canvas>
+    </div>
+    <div>
+      <h3>Ball Triceps Dip</h3>
+      <img src="Gifs/ball triceps dip.gif" alt="Ball Triceps Dip">
+    </div>
+    <div>
+      <h3>TRX Triceps Dip</h3>
+      <canvas id="TRX triceps dips"></canvas>
+    </div>
+    <div>
+      <h3>TRX Triceps Kick Back</h3>
+      <canvas id="TRX tricep kick back"></canvas>
+    </div>
+  </div>
+
+  <!-- Core -->
+  <h2>3 series of 8-12 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>TRX rollout</h3>
+      <canvas id="TRX rollout"></canvas>
+    </div>
+    <div>
+      <h3>Ball Crunches</h3>
+      <img src="Gifs/Ball crunches.gif" alt="">
+    </div>
+  </div>
+
+  <h2>3 series of 8-12 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball Circle Planks</h3>
+      <img src="Gifs/Ball Circle Planks.gif" alt="Ball Circle Planks">
+    </div>
+    <div>
+      <h3>Ball Deadbug</h3>
+      <img src="Gifs/Ball deadbug.gif" alt="Ball Deadbug">
+    </div>
+  </div>
+
+  <!-- Biceps fine tune -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>TRX Biceps Curl</h3>
+      <img src="Gifs/TRX biceps curl.gif" alt="TRX Biceps C">
+    </div>
+    <div>
+      <h3>Biceps Curl</h3>
+      <img src="Gifs/Biceps curl.gif" alt="TRX Biceps C">
+    </div>
+  </div>
+
+  <!-- Back Legs -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball Pike</h3>
+      <img src="Gifs/Ball pike.gif" alt="Ball Pike">
+    </div>
+    <div>
+      <h3>TRX Pike</h3>
+      <img src="Gifs/TRX pike.gif" alt="TRX Pike">
+    </div>
+  </div>
+
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball Reverse Hyperextension</h3>
+      <img src="Gifs/Ball Reverse Hyperextension.gif" alt="Ball Reverse Hyperextension">
+    </div>
+  </div>
+
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball Hamstring Roll-Ins</h3>
+      <img src="Gifs/Ball Hamstring Roll-Ins.gif" alt="Ball Hamstring Roll-Ins">
+    </div>
+  </div>
+
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball Hip Lift</h3>
+      <img src="Gifs/Ball Hip Lift.gif" alt="Ball Hip Lift">
+    </div>
+  </div>
+
+  <!-- Triceps fine tune -->
+  <h2>3 series of 5-8 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball PJR Pullover</h3>
+      <img src="Gifs/PJR Pullover.gif" alt="Ball Pullover">
+    </div>
+    <div>
+      <h3>Dumbell French Press</h3>
+      <img src="Gifs/Dumbell French Press.gif" alt="Dumbell French Press">
+    </div>
+  </div>
+
+
+
+  <!-- Core rotation -->
+  <h2>3 series of 8-12 reps</h2>
+  <div class="alternatives">
+    <div>
+      <h3>Ball Prone Twist</h3>
+      <img src="Gifs/Ball Prone Twists.gif" alt="Ball Prone Twist">
+    </div>
+    <div>
+      <h3>Ball Russian Twist</h3>
+      <img src="Gifs/stability Ball Reverse Bridge Twist 1.gif" alt="Ball Russian Twist">
+    </div>
+  </div>
+
+  <!-- 
+
+  <h1>Warm-up</h1>
+
+  <h1>Strength</h1>
+  <div class="alternatives">
+    <h2>Pull-up (3 series of 5-8 reps)</h2>
+
+    <h3>TRX Lat Pull (5-8 reps)</h3>
+    <img src="trx_lat_pull.gif" alt="">
+
+    <h3>Negative Pull-up (5-8 reps 10-30 seconds)</h3>
+    <img src="negative_pull_up.gif" alt="">
+
+    <h3>Scapular Pulls</h3>
+    <img src="scapular_pulls.gif" alt="">
+  </div>
+
+  <h2>Squat (3 series of 5-8 reps)</h2>
+  <img src="squat.gif" alt="">
+
+  <h2>TRX dips (3 series of 5-8 reps)</h2>
+  <img src="trx_dip.gif" alt="">
+  <h2>Single Leg Deadlift (3 series of 5-8 reps)</h2>
+  <img src="romanian_single_leg_deadlift.gif" alt="">
+  <h2>TRX Row (3 series of 5-8 reps)</h2>
+  <img src="trx_inverted_row.gif" alt="">
+  <img src="trx_row.gif" alt="">
+  <div class="alternatives">
+    <h2>(TRX) Push-up (3 series of 5-8 reps)</h2>
+    <img src="push_ups.gif" alt="">
+    <img src="close_grip_push_ups.gif" alt="">
+
+    <h2>TRX Chest press (3 series of 5-8 reps)</h2>
+    <img src="trx_chest_press.gif" alt="">
+  </div>
+  <div class="alternatives">
+    <h2>Plank (3 series of 30 seconds)</h2>
+    <img src="plank.jpg" alt="">
+
+    <h2>Rings rollout</h2>
+    <img src="rings_rollout.gif" alt="">
+
+    <h2>(Tucked) Hanging Leg Raises (3 series of 8-12 reps)</h2>
+    <img src="tucked_leg_raises.gif" alt="">
+    <img src="leg_raises.gif" alt="">
+  </div>
+  <h2>TRX Pallof Press (3 series of 8-12 reps)</h2>
+  <img src="trx_pallof_press.gif" alt="">
+  <div class="alternatives">
+    <h2>Arch Body Rocks (3 series of 8-12 reps)</h2>
+    <img src="arch_rock.gif" alt="">
+    <h2>Reverse Hyperextension (3 series of 8-12 reps)</h2>
+    <img src="reverse_hyperextension.gif" alt="">
+  </div>
+
+-->
+</body>
+<script src="index.js"></script>
+
+</html>
