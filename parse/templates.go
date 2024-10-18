@@ -56,7 +56,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     	<ul id="search-results"></ul>
 		<nav>
 		{{range .PageList}}
-			<a href="{{.LinkToSelf}}">{{.Title}}</a>
+			<a href="{{.LinkToSelf}}"  {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>{{.Title}}</a>
 		{{end}}
 		</nav>
 		<h2>{{.Settings.Description}}</h2>
@@ -67,7 +67,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     {{range .ArticleList}}
         <div class="detail">
             <div class="headline">
-                <a href="{{.LinkToSelf}}">
+                <a href="{{.LinkToSelf}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>
                     <h2>{{.Title}}</h2>
                 </a>
                 <div class="info">

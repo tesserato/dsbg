@@ -46,6 +46,7 @@ func main() {
 	flag.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a file with custom favicon")
 	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Do not extract tags from path")
 	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-on-paths", false, "Do not remove date from path")
+    flag.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open in new tab")
 	styleString := flag.String("style", "default", "Style to be used")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the top of the HTML outputs")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to a file with additional HTML elements (basically scripts) to be placed at the bottom of the HTML outputs")
@@ -57,9 +58,10 @@ func main() {
 	flag.Parse()
 
 	if *showHelp {
-		fmt.Println("Usage: dsbg [options]")
-		fmt.Println("\nOptions:")
-		flag.PrintDefaults()
+		// fmt.Println("Usage: dsbg [options]")
+		// fmt.Println("\nOptions:")
+		// flag.PrintDefaults()
+        flag.Usage()
 		return
 	}
 

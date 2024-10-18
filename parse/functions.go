@@ -67,11 +67,11 @@ func DateTimeFromString(date string) time.Time {
 // that match the specified extensions.
 func GetPaths(root string, extensions []string) ([]string, error) {
 	var files []string
-    extMap := make(map[string]bool) // Create a map for efficient extension lookup
+	extMap := make(map[string]bool) // Create a map for efficient extension lookup
 
 	for _, ext := range extensions {
-        extLower := strings.ToLower(strings.TrimSpace(ext)) // Normalize extension (lowercase, trim whitespace)
-        extMap[extLower] = true   // Add normalized extension to the map for faster checking
+		extLower := strings.ToLower(strings.TrimSpace(ext)) // Normalize extension (lowercase, trim whitespace)
+		extMap[extLower] = true                             // Add normalized extension to the map for faster checking
 
 	}
 
@@ -80,8 +80,8 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 			return err
 		}
 		if !d.IsDir() {
-            ext := strings.ToLower(filepath.Ext(path)) // Get and normalize file extension
-            if extMap[ext] {                           // Check if extension is in the allowed set
+			ext := strings.ToLower(filepath.Ext(path)) // Get and normalize file extension
+			if extMap[ext] {                           // Check if extension is in the allowed set
 				files = append(files, path)
 			}
 		}
@@ -148,46 +148,50 @@ func CopyHtmlResources(settings Settings, article *Article) {
 
 	originalDirectory := filepath.Dir(article.OriginalPath)
 
-	// visit := func(originalPath string, di fs.DirEntry, err error) error {
-	// 	if err != nil {
-	// 		return err
-	// 	}
+	if slices.Contains(article.Tags, "PAGE") {
+	visit := func(originalPath string, di fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
 
-	// 	if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
-	// 		fmt.Printf("Skipping non-regular file: %s\n", originalPath)
-	// 		return nil // Skip, but don't consider it an error
-	// 	}
+		if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
+			fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+			return nil // Skip, but don't consider it an error
+		}
 
-	// 	relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
-	// 	}
+		relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
+		if err != nil {
+			return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
+		}
 
-	// 	destPath := filepath.Join(outputDirectory, relativeOriginalPath)
-	// 	destFolder := filepath.Dir(destPath)
-	// 	err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
-	// 	}
+		destPath := filepath.Join(outputDirectory, relativeOriginalPath)
+		destFolder := filepath.Dir(destPath)
+		err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
+		if err != nil {
+			return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
+		}
 
-	// 	file, err := os.ReadFile(originalPath)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
-	// 	}
+		file, err := os.ReadFile(originalPath)
+		if err != nil {
+			return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
+		}
 
-	// 	err = os.WriteFile(destPath, file, 0644)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
-	// 	}
+		err = os.WriteFile(destPath, file, 0644)
+		if err != nil {
+			return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
+		}
 
-	// 	fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
-	// 	return nil
-	// }
+		fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
+		return nil
+	}
 
-	// err = filepath.WalkDir(originalDirectory, visit)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	err = filepath.WalkDir(originalDirectory, visit)
+	if err != nil {
+		panic(err)
+	}
+
+	}
+
 
 	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
@@ -223,8 +227,6 @@ func CopyHtmlResources(settings Settings, article *Article) {
 	fmt.Printf(
 		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
 		settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
-
-	return
 }
 
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
