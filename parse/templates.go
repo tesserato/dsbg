@@ -56,7 +56,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     	<ul id="search-results"></ul>
 		<nav>
 		{{range .PageList}}
-			<a href="{{.LinkToSelf}}">{{.Title}}</a>
+			<a href="{{.LinkToSelf}}"  {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>{{.Title}}</a>
 		{{end}}
 		</nav>
 		<h2>{{.Settings.Description}}</h2>
@@ -67,7 +67,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     {{range .ArticleList}}
         <div class="detail">
             <div class="headline">
-                <a href="{{.LinkToSelf}}">
+                <a href="{{.LinkToSelf}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>
                     <h2>{{.Title}}</h2>
                 </a>
                 <div class="info">
@@ -87,4 +87,24 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     {{.Settings.AdditionalElemensBottom}}
 </body>
 </html>
+`
+
+var rssTemplate = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+	<title>{{.Settings.Title}}</title>
+	<link>{{.Settings.BaseUrl}}</link>
+	<description>{{.Settings.Description}}</description>
+	<language>en</language>
+	<atom:link href="{{.Settings.BaseUrl}}rss.xml" rel="self" type="application/rss+xml"/>
+	{{range .Articles}}
+	<item>
+	  <title>{{.Title}}</title>
+	  <link>{{.LinkToSelf}}</link>
+	  <description>{{.Description}}</description>
+	  <pubDate>{{.Created.Format "Mon, 02 Jan 2006 15:04:05 -0700"}}</pubDate>
+	</item>
+	{{end}}
+	</channel>
+</rss>
 `

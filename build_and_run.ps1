@@ -12,4 +12,6 @@ Remove-Item "public/*" -Recurse -Force
 start chrome http://localhost:666/index.html
 
 # ./dsbg.exe -template -title "MY Awesome Post" -description "My awesome description"
-./dsbg.exe -title "My Awesome Blog" -description "My awesome description" -watch -css-path "assets/style.css"
+# ./dsbg.exe -title "My Awesome Blog" -description "My awesome description" -watch -css-path "assets/style-colorful.css"
+# ./dsbg.exe -title "My Awesome Blog" -description "My awesome description" -watch -style "dark"
+./dsbg.exe -title "My Awesome Blog" -description "My awesome description" -watch -open-in-new-tab -css-path "assets/style.css"
