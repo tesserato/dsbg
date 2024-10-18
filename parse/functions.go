@@ -148,26 +148,34 @@ func CopyHtmlResources(settings Settings, article *Article) Links {
 		if err != nil {
 			return err
 		}
+
+		if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
+			fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+			return nil // Skip, but don't consider it an error
+		}
+
 		relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
 		if err != nil {
-			return err
+			return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
 		}
+
 		destPath := filepath.Join(outputDirectory, relativeOriginalPath)
 		destFolder := filepath.Dir(destPath)
 		err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
 		if err != nil {
-			return err
+			return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
 		}
 
 		file, err := os.ReadFile(originalPath)
 		if err != nil {
-			return err
+			return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
 		}
 
 		err = os.WriteFile(destPath, file, 0644)
 		if err != nil {
-			return err
+			return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
 		}
+
 		fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
 		return nil
 	}
@@ -206,7 +214,7 @@ func CopyHtmlResources(settings Settings, article *Article) Links {
 	if err != nil {
 		panic(err)
 	}
-	LinkToSelf = strings.ReplaceAll(LinkToSelf, "\\", "/")
+	LinkToSelf = filepath.ToSlash(LinkToSelf)
 	fmt.Printf(
 		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
 		settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, outputPath, LinkToSelf)
