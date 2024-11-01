@@ -28,6 +28,7 @@ type Settings struct {
 	AdditionalElemensBottom   template.HTML
 	DoNotExtractTagsFromPaths bool
 	DoNotRemoveDateFromPaths  bool
+	DoNotRemoveDateFromTitles bool
 	OpenInNewTab              bool
 }
 

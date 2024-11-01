@@ -34,6 +34,7 @@ func RemoveDateFromPath(stringWithDate string) string {
 		r := regexp.MustCompile(pattern)
 		stringWithDate = r.ReplaceAllString(stringWithDate, "")
 	}
+	stringWithDate = strings.Trim(stringWithDate, "-_ ")
 	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
 	return stringWithDate
 }
@@ -117,6 +118,13 @@ func CopyHtmlResources(settings Settings, article *Article) {
 		panic(err)
 	}
 
+	if !settings.DoNotRemoveDateFromTitles {
+		datelessTitle := RemoveDateFromPath(article.Title)
+		if datelessTitle != "" {
+			article.Title = datelessTitle
+		}
+	}
+
 	if !settings.DoNotExtractTagsFromPaths {
 		relativeInputPathNoDate := RemoveDateFromPath(relativeInputPath)
 		relativeInputPathNoDate = filepath.Clean(relativeInputPathNoDate)
@@ -137,7 +145,10 @@ func CopyHtmlResources(settings Settings, article *Article) {
 	outputPath = filepath.Join(outputPath, settings.IndexName)
 
 	if !settings.DoNotRemoveDateFromPaths {
-		outputPath = RemoveDateFromPath(outputPath)
+		datelessOutputPath := RemoveDateFromPath(outputPath)
+		if !(strings.Contains(datelessOutputPath, "\\") || strings.Contains(datelessOutputPath, "//")) {
+			outputPath = datelessOutputPath
+		}
 	}
 	outputPath = cleanString(outputPath)
 	outputDirectory := filepath.Dir(outputPath)
@@ -149,49 +160,48 @@ func CopyHtmlResources(settings Settings, article *Article) {
 	originalDirectory := filepath.Dir(article.OriginalPath)
 
 	if slices.Contains(article.Tags, "PAGE") {
-	visit := func(originalPath string, di fs.DirEntry, err error) error {
+		visit := func(originalPath string, di fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
+				fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+				return nil // Skip, but don't consider it an error
+			}
+
+			relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
+			if err != nil {
+				return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
+			}
+
+			destPath := filepath.Join(outputDirectory, relativeOriginalPath)
+			destFolder := filepath.Dir(destPath)
+			err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
+			if err != nil {
+				return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
+			}
+
+			file, err := os.ReadFile(originalPath)
+			if err != nil {
+				return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
+			}
+
+			err = os.WriteFile(destPath, file, 0644)
+			if err != nil {
+				return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
+			}
+
+			fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
+			return nil
+		}
+
+		err = filepath.WalkDir(originalDirectory, visit)
 		if err != nil {
-			return err
+			panic(err)
 		}
 
-		if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
-			fmt.Printf("Skipping non-regular file: %s\n", originalPath)
-			return nil // Skip, but don't consider it an error
-		}
-
-		relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
-		if err != nil {
-			return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
-		}
-
-		destPath := filepath.Join(outputDirectory, relativeOriginalPath)
-		destFolder := filepath.Dir(destPath)
-		err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
-		if err != nil {
-			return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
-		}
-
-		file, err := os.ReadFile(originalPath)
-		if err != nil {
-			return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
-		}
-
-		err = os.WriteFile(destPath, file, 0644)
-		if err != nil {
-			return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
-		}
-
-		fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
-		return nil
 	}
-
-	err = filepath.WalkDir(originalDirectory, visit)
-	if err != nil {
-		panic(err)
-	}
-
-	}
-
 
 	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
@@ -371,7 +381,9 @@ func MarkdownFile(path string) (Article, error) {
 	// 3. Default title to filename if not provided
 	if article.Title == "" {
 		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+
 	}
+
 	// Extract resources from HTML
 	// article.Files = extractResources(content) // Pass content here, not article.Content
 

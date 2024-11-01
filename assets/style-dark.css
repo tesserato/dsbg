@@ -51,7 +51,7 @@ html * {
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    max-width: 850px;
+    max-width: 90%;
     font-size: 1rem;
     padding: 1rem;
     margin: 0 auto;
