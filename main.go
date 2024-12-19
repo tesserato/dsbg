@@ -36,6 +36,7 @@ func main() {
 	var settings parse.Settings
 
 	flag.StringVar(&settings.Title, "title", "Blog", "The Title of the blog")
+	flag.StringVar(&settings.BaseUrl, "base-url", "", "The base url of the blog")
 	flag.StringVar(&settings.Description, "description", "This is my blog", "The description of the blog")
 	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory that holds the source files")
 	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the output files will be saved")
@@ -316,6 +317,11 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	err = parse.GenerateHtmlIndex(articles, settings)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = parse.GenerateRSS(articles, settings)
 	if err != nil {
 		log.Fatal(err)
 	}

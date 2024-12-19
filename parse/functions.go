@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	texttemplate "text/template"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -278,6 +279,27 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 
 	// Write the HTML content to the file
 	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)
+	return os.WriteFile(filePath, tp.Bytes(), 0644)
+}
+
+func GenerateRSS(articles []Article, settings Settings) error {
+	// Generate the RSS feed
+	tmpl, err := texttemplate.New("rss.xml").Parse(rssTemplate)
+	if err != nil {
+		return fmt.Errorf("error parsing template: %w", err)
+	}
+
+	var tp bytes.Buffer
+	err = tmpl.Execute(&tp, struct {
+		Articles []Article
+		Settings Settings
+	}{articles, settings})
+	if err != nil {
+		return fmt.Errorf("error executing template: %w", err)
+	}
+
+	// Write the RSS content to the file
+	filePath := filepath.Join(settings.OutputDirectory, "rss.xml")
 	return os.WriteFile(filePath, tp.Bytes(), 0644)
 }
 

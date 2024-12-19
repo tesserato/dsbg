@@ -30,6 +30,7 @@ type Settings struct {
 	DoNotRemoveDateFromPaths  bool
 	DoNotRemoveDateFromTitles bool
 	OpenInNewTab              bool
+	BaseUrl                   string
 }
 
 type Article struct {
