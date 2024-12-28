@@ -17,9 +17,6 @@ for (const tag of sortedTags) {
     btn_container.appendChild(btn);
 }
 
-const posts = document.getElementsByClassName('detail');
-const buttons = document.getElementsByTagName('button');
-
 const show_all_btn = document.createElement("button");
 show_all_btn.className = "on";
 show_all_btn.innerHTML = "⬤";
@@ -35,6 +32,13 @@ hide_all_btn.title = "De-select all tags";
 btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
 btn_container.insertBefore(show_all_btn, btn_container.firstChild);
 
+const posts = document.getElementsByClassName('detail');
+var buttons = new Set();
+for (const btn of document.getElementsByTagName('button')) {
+    if (btn.id != "show_all_btn" && btn.id != "hide_all_btn") {
+        buttons.add(btn);
+    }
+}
 
 function refresh_posts() {
     for (var post of posts) {
