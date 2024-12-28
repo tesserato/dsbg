@@ -8,6 +8,18 @@ sortedTags.sort(Intl.Collator().compare);
 
 var btn_container = document.getElementById("buttons");
 
+
+for (const tag of sortedTags) {
+    console.log(tag);
+    var btn = document.createElement("button");
+    btn.className = "on";
+    btn.innerHTML = tag;
+    btn_container.appendChild(btn);
+}
+
+const posts = document.getElementsByClassName('detail');
+const buttons = document.getElementsByTagName('button');
+
 const show_all_btn = document.createElement("button");
 show_all_btn.className = "on";
 show_all_btn.innerHTML = "⬤";
@@ -20,19 +32,9 @@ hide_all_btn.innerHTML = "⬤";
 hide_all_btn.id = "hide_all_btn";
 hide_all_btn.title = "De-select all tags";
 
-for (const tag of sortedTags) {
-    console.log(tag);
-    var btn = document.createElement("button");
-    btn.className = "on";
-    btn.innerHTML = tag;
-    btn_container.appendChild(btn);
-}
-
-btn_container.insertBefore(show_all_btn, btn_container.firstChild);
 btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
+btn_container.insertBefore(show_all_btn, btn_container.firstChild);
 
-const posts = document.getElementsByClassName('detail');
-const buttons = document.getElementsByTagName('button'); // Get buttons AFTER adding them
 
 function refresh_posts() {
     for (var post of posts) {
@@ -49,10 +51,26 @@ function refresh_posts() {
 for (const btn of buttons) {
     btn.addEventListener("click",
         function (e) {
-            var target = e.target;
-            target.className = target.className === "on" ? "off" : "on";
+            var all_buttons_on = true;
             for (var btn of buttons) {
-                if (target.innerHTML.trim() == btn.innerHTML.trim()) {
+                if (btn.className == "off") {
+                    all_buttons_on = false;
+                    break;
+                }
+            }
+            var target = e.target;
+            if (all_buttons_on) {
+                for (var btn of buttons) {
+                    btn.className = "off";
+                }
+                target.className = "on";
+            } else {
+                target.className = target.className === "on" ? "off" : "on";
+            }
+
+            const target_inner = target.innerHTML.trim();
+            for (var btn of buttons) {
+                if (target_inner == btn.innerHTML.trim()) {
                     btn.className = target.className;
                 }
             }
