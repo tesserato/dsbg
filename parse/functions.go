@@ -3,58 +3,80 @@ package parse
 import (
 	"bytes"
 	"fmt"
-	"html/template"
-	texttemplate "text/template"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"reflect"
-	"slices"
-
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/k3a/html2text"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"go.abhg.dev/goldmark/frontmatter"
 	"golang.org/x/net/html"
+	"html/template"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"reflect"
+	"regexp"
+	"slices"
+	"strconv"
+	"strings"
+	texttemplate "text/template"
+	"time"
 )
 
-var regexPatterns = []string{
-	`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
-	`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
-	`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
+// regexPatterns defines a list of regular expression patterns to identify dates in strings.
+var regexPatterns = []*regexp.Regexp{
+	regexp.MustCompile(`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`),
+	regexp.MustCompile(`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`),
+	regexp.MustCompile(`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`),
 }
 
+// Configure Goldmark Markdown parser with frontmatter support.
+var markdown = goldmark.New(
+	goldmark.WithParserOptions(
+		parser.WithAttribute(),
+		parser.WithAutoHeadingID(),
+	),
+	goldmark.WithExtensions(
+		&frontmatter.Extender{},
+	),
+)
+
+// RemoveDateFromPath attempts to remove date patterns from a given string.
+// It iterates through predefined regex patterns and replaces matching substrings with an empty string.
+// Finally, it trims any leading/trailing hyphens, underscores, or spaces.
 func RemoveDateFromPath(stringWithDate string) string {
-	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
-	for _, pattern := range regexPatterns {
-		r := regexp.MustCompile(pattern)
-		stringWithDate = r.ReplaceAllString(stringWithDate, "")
+	for _, regexPattern := range regexPatterns {
+		stringWithDate = regexPattern.ReplaceAllString(stringWithDate, "")
 	}
 	stringWithDate = strings.Trim(stringWithDate, "-_ ")
-	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
 	return stringWithDate
 }
 
-func DateTimeFromString(date string) time.Time {
+// DateTimeFromString attempts to parse a date and time from a string using predefined regex patterns.
+// It extracts named capture groups (year, month, day, hour, min, sec) and constructs a time.Time value.
+// Returns an error if a matched group cannot be converted to an integer or if no date information is found.
+func DateTimeFromString(date string) (time.Time, error) {
 	m := make(map[string]int)
+	foundMatch := false
 	for _, pattern := range regexPatterns {
-		r := regexp.MustCompile(pattern)
-		matches := r.FindStringSubmatch(date)
+		matches := pattern.FindStringSubmatch(date)
 		if len(matches) > 0 {
-			for i, name := range r.SubexpNames()[1:] {
+			foundMatch = true
+			for i, name := range pattern.SubexpNames()[1:] {
+				if name == "" { // Skip unnamed capture groups
+					continue
+				}
 				integer, err := strconv.Atoi(matches[i+1])
 				if err != nil {
-					panic(err)
+					return time.Time{}, fmt.Errorf("failed to convert '%s' to integer in '%s': %w", matches[i+1], date, err)
 				}
 				m[name] = integer
 			}
 		}
 	}
+
+	if !foundMatch {
+		return time.Time{}, fmt.Errorf("no date information found in '%s'", date)
+	}
+
 	year := m["year"]
 	month := time.Month(m["month"])
 	day := m["day"]
@@ -62,11 +84,12 @@ func DateTimeFromString(date string) time.Time {
 	min := m["min"]
 	sec := m["sec"]
 	dateTime := time.Date(year, month, day, hour, min, sec, 0, time.UTC)
-	return dateTime
+	return dateTime, nil
 }
 
 // GetPaths retrieves all file paths within a directory and its subdirectories
 // that match the specified extensions.
+// Returns a slice of file paths and an error if the directory walk fails.
 func GetPaths(root string, extensions []string) ([]string, error) {
 	var files []string
 	extMap := make(map[string]bool) // Create a map for efficient extension lookup
@@ -74,7 +97,6 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 	for _, ext := range extensions {
 		extLower := strings.ToLower(strings.TrimSpace(ext)) // Normalize extension (lowercase, trim whitespace)
 		extMap[extLower] = true                             // Add normalized extension to the map for faster checking
-
 	}
 
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
@@ -92,8 +114,9 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 	return files, err
 }
 
+// cleanString removes non-alphanumeric characters (except '/', '\', '.'), replaces backslashes with forward slashes,
+// trims hyphens, underscores, and spaces from path segments, and joins them with hyphens.
 func cleanString(url string) string {
-	fmt.Printf("!! cleanString: %s\n", url)
 	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\\\. ]+`)
 	url = nonAlphanumericRegex.ReplaceAllString(url, "")
 	url = strings.ReplaceAll(url, "\\", "/")
@@ -109,16 +132,19 @@ func cleanString(url string) string {
 	url = strings.Join(pieces, "-")
 
 	url = strings.Trim(url, "-")
-	fmt.Printf("!! cleanString: %s\n", url)
 	return url
 }
 
-func CopyHtmlResources(settings Settings, article *Article) {
+// CopyHtmlResources copies associated resources (like images, scripts) for an article,
+// determines the output path, and handles special cases for "PAGE" tagged articles.
+// Returns an error if any file operations fail.
+func CopyHtmlResources(settings Settings, article *Article) error {
 	relativeInputPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to get relative path for '%s': %w", article.OriginalPath, err)
 	}
 
+	// Optionally remove date from the article title based on settings.
 	if !settings.DoNotRemoveDateFromTitles {
 		datelessTitle := RemoveDateFromPath(article.Title)
 		if datelessTitle != "" {
@@ -126,6 +152,7 @@ func CopyHtmlResources(settings Settings, article *Article) {
 		}
 	}
 
+	// Optionally extract tags from the input path based on settings.
 	if !settings.DoNotExtractTagsFromPaths {
 		relativeInputPathNoDate := RemoveDateFromPath(relativeInputPath)
 		relativeInputPathNoDate = filepath.Clean(relativeInputPathNoDate)
@@ -133,18 +160,18 @@ func CopyHtmlResources(settings Settings, article *Article) {
 		for i, tag := range pathTags {
 			pathTags[i] = strings.Trim(tag, "-_ ")
 		}
-		fmt.Printf("pathTags: %v\n", pathTags)
 		if len(pathTags) > 1 {
 			pathTags = pathTags[:len(pathTags)-1]
 			article.Tags = append(article.Tags, pathTags...)
 		}
 	}
 
-	// outputPath
+	// Determine the output path for the article.
 	outputPath := filepath.Join(settings.OutputDirectory, relativeInputPath)
 	outputPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath))
 	outputPath = filepath.Join(outputPath, settings.IndexName)
 
+	// Optionally remove date from the output path based on settings.
 	if !settings.DoNotRemoveDateFromPaths {
 		datelessOutputPath := RemoveDateFromPath(outputPath)
 		if !(strings.Contains(datelessOutputPath, "\\") || strings.Contains(datelessOutputPath, "//")) {
@@ -155,93 +182,131 @@ func CopyHtmlResources(settings Settings, article *Article) {
 	outputDirectory := filepath.Dir(outputPath)
 	err = os.MkdirAll(outputDirectory, os.ModePerm)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to create output directory '%s': %w", outputDirectory, err)
 	}
 
 	originalDirectory := filepath.Dir(article.OriginalPath)
 
-	if slices.Contains(article.Tags, "PAGE") {
+	// Special handling for articles tagged as "PAGE". Copies the entire original directory.
+	if slices.Contains(article.Tags, "PAGE") && originalDirectory != settings.InputDirectory {
 		visit := func(originalPath string, di fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
 
 			if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
-				fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+				switch di.Type() {
+				case fs.ModeSymlink:
+					fmt.Printf("Skipping symlink: %s\n", originalPath)
+				case fs.ModeDevice:
+					fmt.Printf("Skipping device: %s\n", originalPath)
+				case fs.ModeNamedPipe:
+					fmt.Printf("Skipping named pipe: %s\n", originalPath)
+				case fs.ModeSocket:
+					fmt.Printf("Skipping socket: %s\n", originalPath)
+				case fs.ModeDir:
+					return nil
+				default:
+					fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+				}
 				return nil // Skip, but don't consider it an error
 			}
 
 			relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
 			if err != nil {
-				return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
+				return fmt.Errorf("error getting relative path for '%s': %w", originalPath, err) // Wrap error for better context
 			}
 
 			destPath := filepath.Join(outputDirectory, relativeOriginalPath)
 			destFolder := filepath.Dir(destPath)
 			err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
 			if err != nil {
-				return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
+				return fmt.Errorf("error creating directories for '%s': %w", destPath, err) // Wrap error
 			}
 
 			file, err := os.ReadFile(originalPath)
 			if err != nil {
-				return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
+				return fmt.Errorf("error reading file '%s': %w", originalPath, err) // Wrap error
 			}
 
 			err = os.WriteFile(destPath, file, 0644)
 			if err != nil {
-				return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
+				return fmt.Errorf("error writing file '%s': %w", destPath, err) // Wrap error
 			}
 
-			fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
+			fmt.Printf("%s -> %s\n", originalPath, destPath)
 			return nil
 		}
 
 		err = filepath.WalkDir(originalDirectory, visit)
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("error walking directory '%s': %w", originalDirectory, err)
 		}
-
 	}
 
-	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
+	// Copy the cover image if it exists.
+	if article.CoverImagePath != "" {
+		coverImageOrigPath := filepath.Join(originalDirectory, article.CoverImagePath)
+		coverImageDestPath := filepath.Join(settings.OutputDirectory, article.CoverImagePath)
+		fmt.Printf("  Copying %s to %s\n", coverImageOrigPath, coverImageDestPath)
+		file, err := os.ReadFile(coverImageOrigPath)
+		if err != nil {
+			return fmt.Errorf("error reading file '%s': %w", coverImageOrigPath, err)
+		}
+
+		err = os.WriteFile(coverImageDestPath, file, 0644)
+		if err != nil {
+			return fmt.Errorf("error writing file '%s': %w", coverImageDestPath, err)
+		}
+	}
+
+	// Copy individual resources (images, scripts, etc.) linked in the HTML content.
+	resourcePaths, err := extractResources(article.HtmlContent)
+	if err != nil {
+		return fmt.Errorf("failed to extract resources from '%s': %w", article.OriginalPath, err)
+	}
+	for _, resourceOrigRelPath := range resourcePaths {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
 		if strings.Contains(resourceOrigRelPathLower, "http") {
 			continue
 		}
 		resourceOrigPath := filepath.Join(originalDirectory, resourceOrigRelPath)
 		resourceDestPath := filepath.Join(outputDirectory, resourceOrigRelPath)
-		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
+		fmt.Printf("  Copying %s to %s\n", resourceOrigPath, resourceDestPath)
 
 		input, err := os.ReadFile(resourceOrigPath)
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("failed to read resource file '%s': %w", resourceOrigPath, err)
 		}
 
 		err = os.MkdirAll(filepath.Dir(filepath.FromSlash(resourceDestPath)), 0755)
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("failed to create directory for resource '%s': %w", resourceDestPath, err)
 		}
 
 		err = os.WriteFile(resourceDestPath, input, 0644)
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("failed to write resource file to '%s': %w", resourceDestPath, err)
 		}
 	}
 
+	// Set the relative link to the generated article.
 	LinkToSelf, err := filepath.Rel(settings.OutputDirectory, outputPath)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to get relative link from '%s' to '%s': %w", settings.OutputDirectory, outputPath, err)
 	}
 	article.LinkToSelf = filepath.ToSlash(LinkToSelf)
 	article.LinkToSave = filepath.ToSlash(outputPath)
-	fmt.Printf(
-		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
-		settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
+	// fmt.Printf(
+	// 	"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
+	// 	settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
+	return nil
 }
 
+// GenerateHtmlIndex creates an HTML index page listing all processed articles.
+// Returns an error if template parsing or execution fails, or if writing the output file fails.
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
-	// Generate the article list HTML
+	// Separate articles into pages and regular articles based on tags.
 	var allTags []string
 	var pageList []Article
 	var articleList []Article
@@ -254,6 +319,7 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		}
 	}
 
+	// Define template functions.
 	funcMap := template.FuncMap{
 		"makeLink": func(title string) string {
 			return strings.ReplaceAll(strings.ToLower(title), " ", "-") + "/"
@@ -263,9 +329,10 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 	}
 	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
 	if err != nil {
-		return fmt.Errorf("error parsing template: %w", err)
+		return fmt.Errorf("error parsing HTML index template: %w", err)
 	}
 
+	// Execute the template with article data.
 	var tp bytes.Buffer
 	err = tmpl.Execute(&tp, struct {
 		AllTags     []string
@@ -274,72 +341,100 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		Settings    Settings
 	}{allTags, pageList, articleList, settings})
 	if err != nil {
-		return fmt.Errorf("error executing template: %w", err)
+		return fmt.Errorf("error executing HTML index template: %w", err)
 	}
 
-	// Write the HTML content to the file
+	// Write the generated HTML to the output file.
 	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)
-	return os.WriteFile(filePath, tp.Bytes(), 0644)
+	err = os.WriteFile(filePath, tp.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("error writing HTML index file to '%s': %w", filePath, err)
+	}
+	return nil
 }
 
+// GenerateRSS creates an RSS feed XML file from the processed articles.
+// It ensures proper formatting for RSS elements like title, link, description, and pubDate.
+// Returns an error if template parsing or execution fails, or if writing the output file fails.
 func GenerateRSS(articles []Article, settings Settings) error {
-	// Generate the RSS feed
-	tmpl, err := texttemplate.New("rss.xml").Parse(rssTemplate)
-	if err != nil {
-		return fmt.Errorf("error parsing template: %w", err)
+	// Sort articles by creation date in descending order for the RSS feed.
+	slices.SortFunc(articles, func(a, b Article) int {
+		return b.Created.Compare(a.Created)
+	})
+
+	// Define template functions specific to RSS generation.
+	funcMap := texttemplate.FuncMap{
+		"htmlEscape": func(s string) string {
+			// Escape HTML entities in the description to ensure valid XML.
+			buf := &strings.Builder{}
+			template.HTMLEscape(buf, []byte(s))
+			return buf.String()
+		},
+		"formatPubDate": func(t time.Time) string {
+			// Format the publication date according to RFC1123Z (required by RSS).
+			return t.Format(time.RFC1123Z)
+		},
+		"buildArticleURL": func(a Article, s Settings) string {
+			// Construct the full URL for the article.
+			return fmt.Sprintf("%s/%s", strings.TrimSuffix(s.BaseUrl, "/"), strings.TrimPrefix(a.LinkToSelf, "/"))
+		},
 	}
 
+	// Parse the RSS template with the custom function map.
+	tmpl, err := texttemplate.New("rss.xml").Funcs(funcMap).Parse(rssTemplate)
+	if err != nil {
+		return fmt.Errorf("error parsing RSS template: %w", err)
+	}
+
+	// Execute the template with article data and settings.
 	var tp bytes.Buffer
 	err = tmpl.Execute(&tp, struct {
-		Articles []Article
-		Settings Settings
-	}{articles, settings})
+		Articles  []Article
+		Settings  Settings
+		BuildDate string // Add a build date for the feed.
+	}{articles, settings, time.Now().Format(time.RFC1123Z)})
 	if err != nil {
-		return fmt.Errorf("error executing template: %w", err)
+		return fmt.Errorf("error executing RSS template: %w", err)
 	}
 
-	// Write the RSS content to the file
+	// Write the generated RSS feed to the output file.
 	filePath := filepath.Join(settings.OutputDirectory, "rss.xml")
-	return os.WriteFile(filePath, tp.Bytes(), 0644)
+	err = os.WriteFile(filePath, tp.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("error writing RSS file to '%s': %w", filePath, err)
+	}
+	return nil
 }
 
+// MarkdownFile parses a Markdown file, extracts frontmatter, and populates an Article struct.
+// Returns the parsed Article and an error if reading, parsing, or decoding fails.
 func MarkdownFile(path string) (Article, error) {
+	// Read the Markdown file content.
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Article{}, err
+		return Article{}, fmt.Errorf("failed to read Markdown file '%s': %w", path, err)
 	}
 
-	markdown := goldmark.New(
-		goldmark.WithParserOptions(
-			parser.WithAttribute(),
-			parser.WithAutoHeadingID(),
-		),
-		goldmark.WithExtensions(
-			&frontmatter.Extender{},
-		),
-	)
-
-	// Create a context to store frontmatter
+	// Create a context to store frontmatter.
 	context := parser.NewContext()
 
-	// Parse the Markdown file, storing frontmatter in the context
+	// Parse the Markdown content and render to HTML, storing frontmatter in the context.
 	var buf strings.Builder
 	if err := markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
-		panic(err)
+		return Article{}, fmt.Errorf("failed to convert Markdown to HTML for '%s': %w", path, err)
 	}
 	// content := buf.String()
 
-	// Retrieve frontmatter from the context
+	// Retrieve frontmatter from the context.
 	var article = Article{OriginalPath: path, TextContent: string(data), HtmlContent: buf.String()}
 	fm := frontmatter.Get(context)
 	if fm != nil {
 		var d map[string]any
 		if err := fm.Decode(&d); err != nil {
-			fmt.Printf("Article path: %s", path)
-			panic(err)
+			return Article{}, fmt.Errorf("failed to decode frontmatter in '%s': %w", path, err)
 		}
+		// Populate Article fields from frontmatter.
 		for name, value := range d {
-			// fmt.Printf("Key: %s\tValue: %v\tType: %T\n", name, value, value)
 			name = strings.ToLower(name)
 			name = strings.Trim(name, " ")
 			if value == nil {
@@ -352,16 +447,28 @@ func MarkdownFile(path string) (Article, error) {
 				article.Description = value.(string)
 			case "created":
 				if reflect.TypeOf(value).Kind() == reflect.String {
-					article.Created = DateTimeFromString(value.(string))
-				} else {
-					article.Created = value.(time.Time)
+					createdTime, err := DateTimeFromString(value.(string))
+					if err != nil {
+						fmt.Printf("Warning: Failed to parse 'created' date in '%s': %v\n", path, err)
+					} else {
+						article.Created = createdTime
+					}
+				} else if t, ok := value.(time.Time); ok {
+					article.Created = t
 				}
 			case "updated":
 				if reflect.TypeOf(value).Kind() == reflect.String {
-					article.Updated = DateTimeFromString(value.(string))
-				} else {
-					article.Updated = value.(time.Time)
+					updatedTime, err := DateTimeFromString(value.(string))
+					if err != nil {
+						fmt.Printf("Warning: Failed to parse 'updated' date in '%s': %v\n", path, err)
+					} else {
+						article.Updated = updatedTime
+					}
+				} else if t, ok := value.(time.Time); ok {
+					article.Updated = t
 				}
+			case "CoverImagePath":
+				article.CoverImagePath = value.(string)
 			case "tags":
 				switch reflect.TypeOf(value).Kind() {
 
@@ -385,50 +492,44 @@ func MarkdownFile(path string) (Article, error) {
 		}
 	}
 
-	// 2. Set Created and Updated to file dates if not provided in frontmatter
+	// Set Created and Updated to file dates if not provided in frontmatter.
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+		return Article{}, fmt.Errorf("failed to get file info for '%s': %w", path, err)
 	}
 	if article.Created.IsZero() {
-		article.Created = DateTimeFromString(path) // Try to extract date from filename
-		if article.Created.IsZero() {
+		createdFromFile, err := DateTimeFromString(path) // Try to extract date from filename
+		if err != nil {
 			article.Created = fileInfo.ModTime() // Use file modification time
+		} else {
+			article.Created = createdFromFile
 		}
 	}
 	if article.Updated.IsZero() {
 		article.Updated = fileInfo.ModTime() // Use file modification time
 	}
 
-	// 3. Default title to filename if not provided
+	// Default title to filename if not provided.
 	if article.Title == "" {
 		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-
 	}
-
-	// Extract resources from HTML
-	// article.Files = extractResources(content) // Pass content here, not article.Content
-
-	// Determine if the article is a page
-	// article.IsPage = contains(article.Tags, "PAGE")
-
-	// Set the article path
-	// article.OriginalPath = filepath.Dir(path)
-
-	// article.HtmlContent = content
 
 	return article, nil
 }
 
-func FormatMarkdown(article *Article, settings Settings) {
+// FormatMarkdown applies an HTML template to the Markdown content of an article.
+// Returns an error if template parsing or execution fails.
+func FormatMarkdown(article *Article, settings Settings) error {
+	// Define template functions.
 	tmpl, err := template.New("markdown_template").Funcs(
 		template.FuncMap{
 			"stringsJoin":    strings.Join,
 			"slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error parsing markdown article template: %w", err)
 	}
 
+	// Execute the template with article data and settings.
 	var tp bytes.Buffer
 	err = tmpl.Execute(&tp, struct {
 		Art      Article
@@ -436,44 +537,51 @@ func FormatMarkdown(article *Article, settings Settings) {
 		Settings Settings
 	}{*article, template.HTML(article.HtmlContent), settings})
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error executing markdown article template: %w", err)
 	}
 	article.HtmlContent = tp.String()
+	return nil
 }
 
+// HTMLFile parses an HTML file, extracts metadata from tags, and populates an Article struct.
+// Returns the parsed Article and an error if reading or parsing fails.
 func HTMLFile(path string) (Article, error) {
-	// Read the HTML file content
+	// Read the HTML file content.
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to read file %s: %w", path, err)
+		return Article{}, fmt.Errorf("failed to read HTML file '%s': %w", path, err)
 	}
 	htmlContent := string(data)
 	textContent := html2text.HTML2Text(htmlContent)
 
-	// Create an article and populate common fields
+	// Create an Article struct with basic information.
 	article := Article{
 		OriginalPath: path,
 		HtmlContent:  htmlContent,
 		TextContent:  textContent,
 	}
+	// Parse the HTML content.
 	htmlTree, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
+		return Article{}, fmt.Errorf("failed to parse HTML content of '%s': %w", path, err)
 	}
 
-	// Get info from <title> tag
-	article.Title = findFirstElement(htmlTree, "title").FirstChild.Data
+	// Get info from <title> tag.
+	titleNode := findFirstElement(htmlTree, "title")
+	if titleNode != nil && titleNode.FirstChild != nil {
+		article.Title = titleNode.FirstChild.Data
+	}
 
+	// Default title to filename if not found in <title> tag.
 	if article.Title == "" {
 		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	}
 
-	// Get info from meta tags
+	// Get info from meta tags.
 	for _, metaTag := range findAllElements(htmlTree, "meta") {
 		key := ""
 		val := ""
 		for _, attr := range metaTag.Attr {
-			// fmt.Printf("Key: %s\tValue: %s\n", attr.Key, attr.Val)
 			attrKey := strings.ToLower(attr.Key)
 			attrKey = strings.Trim(attrKey, " ")
 			switch attrKey {
@@ -483,6 +591,7 @@ func HTMLFile(path string) (Article, error) {
 				val = attr.Val
 			}
 		}
+		// Populate Article fields based on meta tag content.
 		if key != "" && val != "" {
 			switch key {
 			case "description":
@@ -496,22 +605,34 @@ func HTMLFile(path string) (Article, error) {
 				}
 				article.Tags = tagsArray
 			case "created":
-				article.Created = DateTimeFromString(val)
+				createdTime, err := DateTimeFromString(val)
+				if err != nil {
+					fmt.Printf("Warning: Failed to parse 'created' date from meta tag in '%s': %v\n", path, err)
+				} else {
+					article.Created = createdTime
+				}
 			case "updated":
-				article.Updated = DateTimeFromString(val)
+				updatedTime, err := DateTimeFromString(val)
+				if err != nil {
+					fmt.Printf("Warning: Failed to parse 'updated' date from meta tag in '%s': %v\n", path, err)
+				} else {
+					article.Updated = updatedTime
+				}
 			}
 		}
 	}
 
-	// Set Created and Updated to file dates if not provided in frontmatter
+	// Set Created and Updated to file dates if not provided in meta tags.
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+		return Article{}, fmt.Errorf("failed to get file info for '%s': %w", path, err)
 	}
 	if article.Created.IsZero() {
-		article.Created = DateTimeFromString(path) // Try to extract date from filename
-		if article.Created.IsZero() {
+		createdFromFile, err := DateTimeFromString(path) // Try to extract date from filename
+		if err != nil {
 			article.Created = fileInfo.ModTime() // Use file modification time
+		} else {
+			article.Created = createdFromFile
 		}
 	}
 	if article.Updated.IsZero() {
@@ -521,7 +642,7 @@ func HTMLFile(path string) (Article, error) {
 	return article, nil
 }
 
-// Helper function to find the first occurrence of an element by tag name
+// findFirstElement recursively searches for the first HTML element with the given tag name.
 func findFirstElement(n *html.Node, tag string) *html.Node {
 	if n.Type == html.ElementNode && n.Data == tag {
 		return n
@@ -534,6 +655,7 @@ func findFirstElement(n *html.Node, tag string) *html.Node {
 	return nil
 }
 
+// findAllElements recursively searches for all HTML elements with the given tag name.
 func findAllElements(n *html.Node, tag string) []*html.Node {
 	var elements []*html.Node
 	if n.Type == html.ElementNode && n.Data == tag {
@@ -545,11 +667,13 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 	return elements
 }
 
-func extractResources(htmlContent string) []string {
+// extractResources parses HTML content and extracts the values of "src" and "href" attributes
+// from "img", "script", and "link" tags, returning a list of resource paths and an error if parsing fails.
+func extractResources(htmlContent string) ([]string, error) {
 	var resources []string
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to parse HTML content for resource extraction: %w", err)
 	}
 
 	var f func(*html.Node)
@@ -569,5 +693,5 @@ func extractResources(htmlContent string) []string {
 		}
 	}
 	f(doc)
-	return resources
+	return resources, nil
 }

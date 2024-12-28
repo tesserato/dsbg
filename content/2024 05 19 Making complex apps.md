@@ -2,6 +2,7 @@
 title: "Beyond the Weekend Hack: The Hidden Challenges of Building Software"
 description: Ever breeze through a quick coding project, only to hit a wall when tackling something more complex? This post explores the hidden challenges of software development, from maintaining mental models of large codebases to navigating the complexities of long-term projects. While rapid prototyping has its place, building lasting software requires a different approach.
 tags: Programming
+CoverImagePath: butterfly.webp
 ---
 
 I'm toying with the program that I made to generate this blog for less than an hour, and found a bug already - tags must always be passed as a list. Also, besides other polishing needed, long tags are being formatted strangely. That reminded me of one thing that became abundantly clear for me in the last year or so: building software is hard. It is hard even when you are doing it as a side project, without time constraints. Building something relatively foolproof, to be used in real life. You know what I mean, right? Not a script, real software, reasonably reliable, that can be used, even if for a simple case, but usable in real life.

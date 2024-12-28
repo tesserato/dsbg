@@ -26,3 +26,7 @@ Directory to scan (default: current directory)
 Output file name (default: codebase.md)
 
 List of Path patterns to ignore (default: none)
+
+# Caveats
+
+Output directory gets reset every time the program is run

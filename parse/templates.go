@@ -51,7 +51,12 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 </head>
 <body>
 	<header>
-		<h1>{{.Settings.Title}}</h1>
+		<h1>
+			{{.Settings.Title}}
+			<a href="rss.xml" target="_blank" title="RSS Feed">
+			RSS
+			</a>
+		</h1>
 		<input type="text" id="search-input" placeholder="Search... (supports Unix-like search commands)">
     	<ul id="search-results"></ul>
 		<nav>
@@ -89,22 +94,32 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 </html>
 `
 
-var rssTemplate = `<?xml version="1.0" encoding="UTF-8" ?>
+const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-	<title>{{.Settings.Title}}</title>
-	<link>{{.Settings.BaseUrl}}</link>
-	<description>{{.Settings.Description}}</description>
-	<language>en</language>
-	<atom:link href="{{.Settings.BaseUrl}}rss.xml" rel="self" type="application/rss+xml"/>
-	{{range .Articles}}
-	<item>
-	  <title>{{.Title}}</title>
-	  <link>{{.LinkToSelf}}</link>
-	  <description>{{.Description}}</description>
-	  <pubDate>{{.Created.Format "Mon, 02 Jan 2006 15:04:05 -0700"}}</pubDate>
-	</item>
-	{{end}}
+	<channel>
+		<title>{{ .Settings.Title }}</title>
+		<link>{{ .Settings.BaseUrl }}</link>
+		<description>{{ .Settings.Description }}</description>
+		<generator>Go Simple Blog Generator</generator>
+		<lastBuildDate>{{ .BuildDate }}</lastBuildDate>
+		<atom:link href="{{ .Settings.BaseUrl }}/rss.xml" rel="self" type="application/rss+xml" />
+		{{- range .Articles }}
+		<item>
+			<title>{{ .Title | htmlEscape }}</title>
+			<link>{{ buildArticleURL . $.Settings  }}</link>
+			<guid>{{ buildArticleURL . $.Settings  }}</guid>
+			<pubDate>{{ .Created | formatPubDate }}</pubDate>
+			<description>{{ .Description | htmlEscape }}</description>
+			<media:content 
+				xmlns:media="http://search.yahoo.com/mrss/" 
+				url="https://www.pudim.com.br/pudim.jpg" 
+				medium="image" 
+				type="image/jpeg" 
+				width="150" 
+				height="150"
+			/>
+		</item>
+		{{- end }}
 	</channel>
 </rss>
 `

@@ -34,21 +34,15 @@ type Settings struct {
 }
 
 type Article struct {
-	Title        string
-	Description  string
-	Created      time.Time
-	Updated      time.Time
-	Tags         []string
-	TextContent  string
-	HtmlContent  string
-	OriginalPath string
-	LinkToSelf   string
-	LinkToSave   string
+	Title          string
+	Description    string
+	CoverImagePath string
+	Created        time.Time
+	Updated        time.Time
+	Tags           []string
+	TextContent    string
+	HtmlContent    string
+	OriginalPath   string
+	LinkToSelf     string
+	LinkToSave     string
 }
-
-// type Links struct {
-// 	ToSelf string
-// 	// ToCss  string
-// 	// ToJs   string
-// 	ToSave string
-// }
