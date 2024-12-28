@@ -1,80 +1,133 @@
-var tags = new Set();
-for (const tag_element of document.getElementsByTagName("button")) {
-    tags.add(tag_element.innerHTML.trim());
-}
+/**
+ * Extracts unique tags from button elements within the document,
+ * sorts them alphabetically, and creates corresponding filter buttons.
+ */
+function initializeTagFilters() {
+    // Create a Set to store unique tags.
+    const tags = new Set();
 
-var sortedTags = Array.from(tags);
-sortedTags.sort(Intl.Collator().compare);
+    // Iterate through all button elements in the document.
+    for (const tagElement of document.getElementsByTagName("button")) {
+        // Add the trimmed inner HTML of each button to the tags Set.
+        tagElement.innerHTML = tagElement.innerHTML.trim();
+        tags.add(tagElement.innerHTML);
+    }
 
-var btn_container = document.getElementById("buttons");
+    // Convert the Set of tags to an Array and sort it alphabetically.
+    const sortedTags = Array.from(tags);
+    sortedTags.sort(Intl.Collator().compare);
 
-const show_all_btn = document.createElement("button");
-show_all_btn.className = "on";
-show_all_btn.innerHTML = "⬤";
-show_all_btn.id = "show_all_btn";
-show_all_btn.title = "Select all tags";
+    // Get the container element where the tag buttons will be placed.
+    const btnContainer = document.getElementById("buttons");
 
-const hide_all_btn = document.createElement("button");
-hide_all_btn.className = "on";
-hide_all_btn.innerHTML = "⬤";
-hide_all_btn.id = "hide_all_btn";
-hide_all_btn.title = "De-select all tags";
+    // Create filter buttons for each tag.
+    for (const tag of sortedTags) {
+        const btn = document.createElement("button");
+        btn.className = "on"; // Initially set the button to the 'on' state.
+        btn.innerHTML = tag;
+        btnContainer.appendChild(btn);
+    }
 
-for (const tag of sortedTags) {
-    console.log(tag);
-    var btn = document.createElement("button");
-    btn.className = "on";
-    btn.innerHTML = tag;
-    btn_container.appendChild(btn);
-}
+    // Create a "Show All" button.
+    const showAllBtn = document.createElement("button");
+    showAllBtn.className = "on";
+    showAllBtn.innerHTML = "⬤";
+    showAllBtn.id = "show_all_btn";
+    showAllBtn.title = "Select all tags";
 
-btn_container.insertBefore(show_all_btn, btn_container.firstChild);
-btn_container.insertBefore(hide_all_btn, btn_container.firstChild);
+    // Create a "Hide All" button.
+    const hideAllBtn = document.createElement("button");
+    hideAllBtn.className = "on";
+    hideAllBtn.innerHTML = "⬤";
+    hideAllBtn.id = "hide_all_btn";
+    hideAllBtn.title = "De-select all tags";
 
-const posts = document.getElementsByClassName('detail');
-const buttons = document.getElementsByTagName('button'); // Get buttons AFTER adding them
+    // Insert the "Show All" and "Hide All" buttons at the beginning of the container.
+    btnContainer.insertBefore(hideAllBtn, btnContainer.firstChild);
+    btnContainer.insertBefore(showAllBtn, btnContainer.firstChild);
 
-function refresh_posts() {
-    for (var post of posts) {
-        for (var btn of post.getElementsByTagName("button")) {
-            if (btn.className == "on") {
-                post.style.display = "block";
-                break;
-            }
-            post.style.display = "none";
+    // Get all elements with the class 'detail' (the posts).
+    const posts = document.getElementsByClassName('detail');
+
+    // Create a Set to store the tag filter buttons (excluding "Show All" and "Hide All").
+    const filterButtons = new Set();
+    for (const btn of document.getElementsByTagName('button')) {
+        if (btn.id !== "show_all_btn" && btn.id !== "hide_all_btn") {
+            filterButtons.add(btn);
         }
     }
-}
 
-for (const btn of buttons) {
-    btn.addEventListener("click",
-        function (e) {
-            var target = e.target;
-            target.className = target.className === "on" ? "off" : "on";
-            for (var btn of buttons) {
-                if (target.innerHTML.trim() == btn.innerHTML.trim()) {
-                    btn.className = target.className;
+    /**
+     * Refreshes the visibility of posts based on the currently active tag filters.
+     */
+    function refreshPosts() {
+        for (const post of posts) {
+            let isVisible = false;
+            // Iterate through the tag buttons within each post.
+            for (const btn of post.getElementsByTagName("button")) {
+                // If any tag button within the post is in the 'on' state, show the post.
+                if (btn.className === "on") {
+                    post.style.display = "block";
+                    break; // No need to check further tags for this post.
+                }
+                // If all tag buttons within the post are in the 'off' state, hide the post.
+                post.style.display = "none";
+            }
+        }
+    }
+
+    // Add event listeners to the tag filter buttons.
+    for (const btn of filterButtons) {
+        btn.addEventListener("click", function (e) {
+            // Check if all filter buttons were 'on' before the click.
+            let allButtonsOn = true;
+            for (const filterBtn of filterButtons) {
+                if (filterBtn.className === "off") {
+                    allButtonsOn = false;
+                    break;
                 }
             }
-            refresh_posts();
+
+            const target = e.target;
+
+            // If all buttons were on, turn all off except the clicked one.
+            if (allButtonsOn) {
+                for (const filterBtn of filterButtons) {
+                    filterBtn.className = "off";
+                }
+                target.className = "on";
+            } else {
+                // Otherwise, toggle the state of the clicked button.
+                target.className = target.className === "on" ? "off" : "on";
+            }
+
+            // Ensure consistency between the clicked button and other buttons with the same tag.
+            const targetInner = target.innerHTML;
+            for (const filterBtn of filterButtons) {
+                if (targetInner === filterBtn.innerHTML) {
+                    filterBtn.className = target.className;
+                }
+            }
+            refreshPosts(); // Update the visibility of posts.
+        }, false);
+    }
+
+    // Add event listener to the "Show All" button.
+    showAllBtn.addEventListener("click", function (e) {
+        for (const btn of filterButtons) {
+            btn.className = "on"; // Set all filter buttons to 'on'.
         }
-        , false);
+        refreshPosts(); // Update the visibility of posts.
+    }, false);
+
+    // Add event listener to the "Hide All" button.
+    hideAllBtn.addEventListener("click", function (e) {
+        for (const btn of filterButtons) {
+            btn.className = "off"; // Set all filter buttons to 'off'.
+        }
+        refreshPosts(); // Update the visibility of posts.
+    }, false);
 }
 
-show_all_btn.addEventListener("click",
-    function (e) {
-        for (var btn of buttons) {
-            btn.className = "on";
-        }
-        refresh_posts();
-    }
-    , false);
-
-hide_all_btn.addEventListener("click",
-    function (e) {
-        for (var btn of buttons) {
-            btn.className = "off";
-        }
-        refresh_posts();
-    }
-    , false);
+// Call the function to initialize the tag filters when the script runs.
+initializeTagFilters();
