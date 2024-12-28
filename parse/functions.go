@@ -155,7 +155,7 @@ func CopyHtmlResources(settings Settings, article *Article) {
 
 	originalDirectory := filepath.Dir(article.OriginalPath)
 
-	if slices.Contains(article.Tags, "PAGE") {
+	if slices.Contains(article.Tags, "PAGE") && originalDirectory != settings.InputDirectory {
 		visit := func(originalPath string, di fs.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -209,7 +209,6 @@ func CopyHtmlResources(settings Settings, article *Article) {
 		if err != nil {
 			panic(err)
 		}
-
 	}
 
 	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
