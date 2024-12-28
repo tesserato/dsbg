@@ -30,13 +30,11 @@ var regexPatterns = []string{
 }
 
 func RemoveDateFromPath(stringWithDate string) string {
-	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
 	for _, pattern := range regexPatterns {
 		r := regexp.MustCompile(pattern)
 		stringWithDate = r.ReplaceAllString(stringWithDate, "")
 	}
 	stringWithDate = strings.Trim(stringWithDate, "-_ ")
-	fmt.Printf("?? RemoveDateFromPath: %s\n", stringWithDate)
 	return stringWithDate
 }
 
@@ -93,7 +91,6 @@ func GetPaths(root string, extensions []string) ([]string, error) {
 }
 
 func cleanString(url string) string {
-	fmt.Printf("!! cleanString: %s\n", url)
 	var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9\/\\\. ]+`)
 	url = nonAlphanumericRegex.ReplaceAllString(url, "")
 	url = strings.ReplaceAll(url, "\\", "/")
@@ -109,7 +106,6 @@ func cleanString(url string) string {
 	url = strings.Join(pieces, "-")
 
 	url = strings.Trim(url, "-")
-	fmt.Printf("!! cleanString: %s\n", url)
 	return url
 }
 
@@ -133,7 +129,6 @@ func CopyHtmlResources(settings Settings, article *Article) {
 		for i, tag := range pathTags {
 			pathTags[i] = strings.Trim(tag, "-_ ")
 		}
-		fmt.Printf("pathTags: %v\n", pathTags)
 		if len(pathTags) > 1 {
 			pathTags = pathTags[:len(pathTags)-1]
 			article.Tags = append(article.Tags, pathTags...)
@@ -167,7 +162,20 @@ func CopyHtmlResources(settings Settings, article *Article) {
 			}
 
 			if !di.Type().IsRegular() { // Skip non-regular files (e.g., directories, symlinks, devices)
-				fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+				switch di.Type() {
+				case fs.ModeSymlink:
+					fmt.Printf("Skipping symlink: %s\n", originalPath)
+				case fs.ModeDevice:
+					fmt.Printf("Skipping device: %s\n", originalPath)
+				case fs.ModeNamedPipe:
+					fmt.Printf("Skipping named pipe: %s\n", originalPath)
+				case fs.ModeSocket:
+					fmt.Printf("Skipping socket: %s\n", originalPath)
+				case fs.ModeDir:
+					return nil;
+				default: 
+					fmt.Printf("Skipping non-regular file: %s\n", originalPath)
+				}
 				return nil // Skip, but don't consider it an error
 			}
 
@@ -193,7 +201,7 @@ func CopyHtmlResources(settings Settings, article *Article) {
 				return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
 			}
 
-			fmt.Printf("Visited: %s\n  -> %s\n", originalPath, destPath)
+			fmt.Printf("%s -> %s\n", originalPath, destPath)
 			return nil
 		}
 
@@ -211,7 +219,7 @@ func CopyHtmlResources(settings Settings, article *Article) {
 		}
 		resourceOrigPath := filepath.Join(originalDirectory, resourceOrigRelPath)
 		resourceDestPath := filepath.Join(outputDirectory, resourceOrigRelPath)
-		fmt.Printf("  resourceOrigPath: %s\n  resourceDestPath: %s\n\n", resourceOrigPath, resourceDestPath)
+		fmt.Printf("  Copying %s to %s\n", resourceOrigPath, resourceDestPath)
 
 		input, err := os.ReadFile(resourceOrigPath)
 		if err != nil {
@@ -235,9 +243,9 @@ func CopyHtmlResources(settings Settings, article *Article) {
 	}
 	article.LinkToSelf = filepath.ToSlash(LinkToSelf)
 	article.LinkToSave = filepath.ToSlash(outputPath)
-	fmt.Printf(
-		"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
-		settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
+	// fmt.Printf(
+	// 	"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
+	// 	settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
 }
 
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
@@ -339,7 +347,6 @@ func MarkdownFile(path string) (Article, error) {
 			panic(err)
 		}
 		for name, value := range d {
-			// fmt.Printf("Key: %s\tValue: %v\tType: %T\n", name, value, value)
 			name = strings.ToLower(name)
 			name = strings.Trim(name, " ")
 			if value == nil {
@@ -473,7 +480,6 @@ func HTMLFile(path string) (Article, error) {
 		key := ""
 		val := ""
 		for _, attr := range metaTag.Attr {
-			// fmt.Printf("Key: %s\tValue: %s\n", attr.Key, attr.Val)
 			attrKey := strings.ToLower(attr.Key)
 			attrKey = strings.Trim(attrKey, " ")
 			switch attrKey {
