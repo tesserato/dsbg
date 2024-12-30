@@ -51,7 +51,12 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 </head>
 <body>
 	<header>
-		<h1>{{.Settings.Title}}</h1>
+		<h1>
+			{{.Settings.Title}}
+			<a href="rss.xml" target="_blank" title="RSS Feed">
+			RSS
+			</a>
+		</h1>
 		<input type="text" id="search-input" placeholder="Search... (supports Unix-like search commands)">
     	<ul id="search-results"></ul>
 		<nav>
