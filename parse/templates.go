@@ -89,22 +89,24 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 </html>
 `
 
-var rssTemplate = `<?xml version="1.0" encoding="UTF-8" ?>
+const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-	<title>{{.Settings.Title}}</title>
-	<link>{{.Settings.BaseUrl}}</link>
-	<description>{{.Settings.Description}}</description>
-	<language>en</language>
-	<atom:link href="{{.Settings.BaseUrl}}rss.xml" rel="self" type="application/rss+xml"/>
-	{{range .Articles}}
-	<item>
-	  <title>{{.Title}}</title>
-	  <link>{{.LinkToSelf}}</link>
-	  <description>{{.Description}}</description>
-	  <pubDate>{{.Created.Format "Mon, 02 Jan 2006 15:04:05 -0700"}}</pubDate>
-	</item>
-	{{end}}
+	<channel>
+		<title>{{ .Settings.Title }}</title>
+		<link>{{ .Settings.BaseUrl }}</link>
+		<description>{{ .Settings.Description }}</description>
+		<generator>Go Simple Blog Generator</generator>
+		<lastBuildDate>{{ .BuildDate }}</lastBuildDate>
+		<atom:link href="{{ .Settings.BaseUrl }}/rss.xml" rel="self" type="application/rss+xml" />
+		{{- range .Articles }}
+		<item>
+			<title>{{ .Title | htmlEscape }}</title>
+			<link>{{ buildArticleURL . $.Settings  }}</link>
+			<guid>{{ buildArticleURL . $.Settings  }}</guid>
+			<pubDate>{{ .Created | formatPubDate }}</pubDate>
+			<description>{{ .Description | htmlEscape }}{{ if .Description | eq "" }}{{ .TextContent | htmlEscape }}{{ end }}</description> {{/* Fallback to text content if no description */}}
+		</item>
+		{{- end }}
 	</channel>
 </rss>
 `

@@ -327,20 +327,45 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 }
 
 // GenerateRSS creates an RSS feed XML file from the processed articles.
+// It ensures proper formatting for RSS elements like title, link, description, and pubDate.
 // Returns an error if template parsing or execution fails, or if writing the output file fails.
 func GenerateRSS(articles []Article, settings Settings) error {
-	// Parse the RSS template.
-	tmpl, err := texttemplate.New("rss.xml").Parse(rssTemplate)
+	// Sort articles by creation date in descending order for the RSS feed.
+	slices.SortFunc(articles, func(a, b Article) int {
+		return b.Created.Compare(a.Created)
+	})
+
+	// Define template functions specific to RSS generation.
+	funcMap := texttemplate.FuncMap{
+		"htmlEscape": func(s string) string {
+			// Escape HTML entities in the description to ensure valid XML.
+			buf := &strings.Builder{}
+			template.HTMLEscape(buf, []byte(s))
+			return buf.String()
+		},
+		"formatPubDate": func(t time.Time) string {
+			// Format the publication date according to RFC1123Z (required by RSS).
+			return t.Format(time.RFC1123Z)
+		},
+		"buildArticleURL": func(a Article, s Settings) string {
+			// Construct the full URL for the article.
+			return fmt.Sprintf("%s/%s", strings.TrimSuffix(s.BaseUrl, "/"), strings.TrimPrefix(a.LinkToSelf, "/"))
+		},
+	}
+
+	// Parse the RSS template with the custom function map.
+	tmpl, err := texttemplate.New("rss.xml").Funcs(funcMap).Parse(rssTemplate)
 	if err != nil {
 		return fmt.Errorf("error parsing RSS template: %w", err)
 	}
 
-	// Execute the template with article data.
+	// Execute the template with article data and settings.
 	var tp bytes.Buffer
 	err = tmpl.Execute(&tp, struct {
 		Articles []Article
 		Settings Settings
-	}{articles, settings})
+		BuildDate string // Add a build date for the feed.
+	}{articles, settings, time.Now().Format(time.RFC1123Z)})
 	if err != nil {
 		return fmt.Errorf("error executing RSS template: %w", err)
 	}
@@ -353,7 +378,6 @@ func GenerateRSS(articles []Article, settings Settings) error {
 	}
 	return nil
 }
-
 // MarkdownFile parses a Markdown file, extracts frontmatter, and populates an Article struct.
 // Returns the parsed Article and an error if reading, parsing, or decoding fails.
 func MarkdownFile(path string) (Article, error) {
