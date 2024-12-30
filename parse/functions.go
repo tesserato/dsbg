@@ -3,39 +3,37 @@ package parse
 import (
 	"bytes"
 	"fmt"
-	"html/template"
-	texttemplate "text/template"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"reflect"
-	"slices"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/k3a/html2text"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"go.abhg.dev/goldmark/frontmatter"
 	"golang.org/x/net/html"
+	"html/template"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"reflect"
+	"regexp"
+	"slices"
+	"strconv"
+	"strings"
+	texttemplate "text/template"
+	"time"
 )
 
 // regexPatterns defines a list of regular expression patterns to identify dates in strings.
-var regexPatterns = []string{
-	`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`,
-	`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`,
-	`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`,
+var regexPatterns = []*regexp.Regexp{
+	regexp.MustCompile(`(?P<year>\d{4})\D+(?P<month>\d{1,2})\D+(?P<day>\d{1,2})`),
+	regexp.MustCompile(`(?P<day>\d{1,2})\D+(?P<month>\d{1,2})\D+(?P<year>\d{4})`),
+	regexp.MustCompile(`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`),
 }
 
 // RemoveDateFromPath attempts to remove date patterns from a given string.
 // It iterates through predefined regex patterns and replaces matching substrings with an empty string.
 // Finally, it trims any leading/trailing hyphens, underscores, or spaces.
 func RemoveDateFromPath(stringWithDate string) string {
-	for _, pattern := range regexPatterns {
-		r := regexp.MustCompile(pattern)
-		stringWithDate = r.ReplaceAllString(stringWithDate, "")
+	for _, regexPattern := range regexPatterns {
+		stringWithDate = regexPattern.ReplaceAllString(stringWithDate, "")
 	}
 	stringWithDate = strings.Trim(stringWithDate, "-_ ")
 	return stringWithDate
@@ -47,10 +45,9 @@ func RemoveDateFromPath(stringWithDate string) string {
 func DateTimeFromString(date string) time.Time {
 	m := make(map[string]int)
 	for _, pattern := range regexPatterns {
-		r := regexp.MustCompile(pattern)
-		matches := r.FindStringSubmatch(date)
+		matches := pattern.FindStringSubmatch(date)
 		if len(matches) > 0 {
-			for i, name := range r.SubexpNames()[1:] {
+			for i, name := range pattern.SubexpNames()[1:] {
 				integer, err := strconv.Atoi(matches[i+1])
 				if err != nil {
 					panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
