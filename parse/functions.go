@@ -234,7 +234,11 @@ func CopyHtmlResources(settings Settings, article *Article) error {
 	}
 
 	// Copy individual resources (images, scripts, etc.) linked in the HTML content.
-	for _, resourceOrigRelPath := range extractResources(article.HtmlContent) {
+	resourcePaths, err := extractResources(article.HtmlContent)
+	if err != nil {
+		return fmt.Errorf("failed to extract resources from '%s': %w", article.OriginalPath, err)
+	}
+	for _, resourceOrigRelPath := range resourcePaths {
 		resourceOrigRelPathLower := strings.ToLower(resourceOrigRelPath)
 		if strings.Contains(resourceOrigRelPathLower, "http") {
 			continue
@@ -621,14 +625,12 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 }
 
 // extractResources parses HTML content and extracts the values of "src" and "href" attributes
-// from "img", "script", and "link" tags, returning a list of resource paths.
-// Returns a slice of resource paths.
-func extractResources(htmlContent string) []string {
+// from "img", "script", and "link" tags, returning a list of resource paths and an error if parsing fails.
+func extractResources(htmlContent string) ([]string, error) {
 	var resources []string
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		fmt.Printf("Warning: Failed to parse HTML content for resource extraction: %v\n", err)
-		return resources // Return empty slice on error, avoid crashing
+		return nil, fmt.Errorf("failed to parse HTML content for resource extraction: %w", err)
 	}
 
 	var f func(*html.Node)
@@ -648,5 +650,5 @@ func extractResources(htmlContent string) []string {
 		}
 	}
 	f(doc)
-	return resources
+	return resources, nil
 }
