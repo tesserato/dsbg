@@ -41,21 +41,31 @@ func RemoveDateFromPath(stringWithDate string) string {
 
 // DateTimeFromString attempts to parse a date and time from a string using predefined regex patterns.
 // It extracts named capture groups (year, month, day, hour, min, sec) and constructs a time.Time value.
-// It panics if a matched group cannot be converted to an integer.
-func DateTimeFromString(date string) time.Time {
+// Returns an error if a matched group cannot be converted to an integer or if no date information is found.
+func DateTimeFromString(date string) (time.Time, error) {
 	m := make(map[string]int)
+	foundMatch := false
 	for _, pattern := range regexPatterns {
 		matches := pattern.FindStringSubmatch(date)
 		if len(matches) > 0 {
+			foundMatch = true
 			for i, name := range pattern.SubexpNames()[1:] {
+				if name == "" { // Skip unnamed capture groups
+					continue
+				}
 				integer, err := strconv.Atoi(matches[i+1])
 				if err != nil {
-					panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+					return time.Time{}, fmt.Errorf("failed to convert '%s' to integer in '%s': %w", matches[i+1], date, err)
 				}
 				m[name] = integer
 			}
 		}
 	}
+
+	if !foundMatch {
+		return time.Time{}, fmt.Errorf("no date information found in '%s'", date)
+	}
+
 	year := m["year"]
 	month := time.Month(m["month"])
 	day := m["day"]
@@ -63,11 +73,12 @@ func DateTimeFromString(date string) time.Time {
 	min := m["min"]
 	sec := m["sec"]
 	dateTime := time.Date(year, month, day, hour, min, sec, 0, time.UTC)
-	return dateTime
+	return dateTime, nil
 }
 
 // GetPaths retrieves all file paths within a directory and its subdirectories
 // that match the specified extensions.
+// Returns a slice of file paths and an error if the directory walk fails.
 func GetPaths(root string, extensions []string) ([]string, error) {
 	var files []string
 	extMap := make(map[string]bool) // Create a map for efficient extension lookup
@@ -115,10 +126,11 @@ func cleanString(url string) string {
 
 // CopyHtmlResources copies associated resources (like images, scripts) for an article,
 // determines the output path, and handles special cases for "PAGE" tagged articles.
-func CopyHtmlResources(settings Settings, article *Article) {
+// Returns an error if any file operations fail.
+func CopyHtmlResources(settings Settings, article *Article) error {
 	relativeInputPath, err := filepath.Rel(settings.InputDirectory, article.OriginalPath)
 	if err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		return fmt.Errorf("failed to get relative path for '%s': %w", article.OriginalPath, err)
 	}
 
 	// Optionally remove date from the article title based on settings.
@@ -159,7 +171,7 @@ func CopyHtmlResources(settings Settings, article *Article) {
 	outputDirectory := filepath.Dir(outputPath)
 	err = os.MkdirAll(outputDirectory, os.ModePerm)
 	if err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		return fmt.Errorf("failed to create output directory '%s': %w", outputDirectory, err)
 	}
 
 	originalDirectory := filepath.Dir(article.OriginalPath)
@@ -191,24 +203,24 @@ func CopyHtmlResources(settings Settings, article *Article) {
 
 			relativeOriginalPath, err := filepath.Rel(originalDirectory, originalPath)
 			if err != nil {
-				return fmt.Errorf("error getting relative path for %s: %w", originalPath, err) // Wrap error for better context
+				return fmt.Errorf("error getting relative path for '%s': %w", originalPath, err) // Wrap error for better context
 			}
 
 			destPath := filepath.Join(outputDirectory, relativeOriginalPath)
 			destFolder := filepath.Dir(destPath)
 			err = os.MkdirAll(filepath.FromSlash(destFolder), 0755)
 			if err != nil {
-				return fmt.Errorf("error creating directories for %s: %w", destPath, err) // Wrap error
+				return fmt.Errorf("error creating directories for '%s': %w", destPath, err) // Wrap error
 			}
 
 			file, err := os.ReadFile(originalPath)
 			if err != nil {
-				return fmt.Errorf("error reading file %s: %w", originalPath, err) // Wrap error
+				return fmt.Errorf("error reading file '%s': %w", originalPath, err) // Wrap error
 			}
 
 			err = os.WriteFile(destPath, file, 0644)
 			if err != nil {
-				return fmt.Errorf("error writing file %s: %w", destPath, err) // Wrap error
+				return fmt.Errorf("error writing file '%s': %w", destPath, err) // Wrap error
 			}
 
 			fmt.Printf("%s -> %s\n", originalPath, destPath)
@@ -217,7 +229,7 @@ func CopyHtmlResources(settings Settings, article *Article) {
 
 		err = filepath.WalkDir(originalDirectory, visit)
 		if err != nil {
-			panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+			return fmt.Errorf("error walking directory '%s': %w", originalDirectory, err)
 		}
 	}
 
@@ -233,33 +245,35 @@ func CopyHtmlResources(settings Settings, article *Article) {
 
 		input, err := os.ReadFile(resourceOrigPath)
 		if err != nil {
-			panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+			return fmt.Errorf("failed to read resource file '%s': %w", resourceOrigPath, err)
 		}
 
 		err = os.MkdirAll(filepath.Dir(filepath.FromSlash(resourceDestPath)), 0755)
 		if err != nil {
-			panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+			return fmt.Errorf("failed to create directory for resource '%s': %w", resourceDestPath, err)
 		}
 
 		err = os.WriteFile(resourceDestPath, input, 0644)
 		if err != nil {
-			panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+			return fmt.Errorf("failed to write resource file to '%s': %w", resourceDestPath, err)
 		}
 	}
 
 	// Set the relative link to the generated article.
 	LinkToSelf, err := filepath.Rel(settings.OutputDirectory, outputPath)
 	if err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		return fmt.Errorf("failed to get relative link from '%s' to '%s': %w", settings.OutputDirectory, outputPath, err)
 	}
 	article.LinkToSelf = filepath.ToSlash(LinkToSelf)
 	article.LinkToSave = filepath.ToSlash(outputPath)
 	// fmt.Printf(
 	// 	"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
 	// 	settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
+	return nil
 }
 
 // GenerateHtmlIndex creates an HTML index page listing all processed articles.
+// Returns an error if template parsing or execution fails, or if writing the output file fails.
 func GenerateHtmlIndex(articles []Article, settings Settings) error {
 	// Separate articles into pages and regular articles based on tags.
 	var allTags []string
@@ -284,7 +298,7 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 	}
 	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
 	if err != nil {
-		return fmt.Errorf("error parsing template: %w", err)
+		return fmt.Errorf("error parsing HTML index template: %w", err)
 	}
 
 	// Execute the template with article data.
@@ -296,20 +310,25 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		Settings    Settings
 	}{allTags, pageList, articleList, settings})
 	if err != nil {
-		return fmt.Errorf("error executing template: %w", err)
+		return fmt.Errorf("error executing HTML index template: %w", err)
 	}
 
 	// Write the generated HTML to the output file.
 	filePath := filepath.Join(settings.OutputDirectory, settings.IndexName)
-	return os.WriteFile(filePath, tp.Bytes(), 0644)
+	err = os.WriteFile(filePath, tp.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("error writing HTML index file to '%s': %w", filePath, err)
+	}
+	return nil
 }
 
 // GenerateRSS creates an RSS feed XML file from the processed articles.
+// Returns an error if template parsing or execution fails, or if writing the output file fails.
 func GenerateRSS(articles []Article, settings Settings) error {
 	// Parse the RSS template.
 	tmpl, err := texttemplate.New("rss.xml").Parse(rssTemplate)
 	if err != nil {
-		return fmt.Errorf("error parsing template: %w", err)
+		return fmt.Errorf("error parsing RSS template: %w", err)
 	}
 
 	// Execute the template with article data.
@@ -319,20 +338,25 @@ func GenerateRSS(articles []Article, settings Settings) error {
 		Settings Settings
 	}{articles, settings})
 	if err != nil {
-		return fmt.Errorf("error executing template: %w", err)
+		return fmt.Errorf("error executing RSS template: %w", err)
 	}
 
 	// Write the generated RSS feed to the output file.
 	filePath := filepath.Join(settings.OutputDirectory, "rss.xml")
-	return os.WriteFile(filePath, tp.Bytes(), 0644)
+	err = os.WriteFile(filePath, tp.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("error writing RSS file to '%s': %w", filePath, err)
+	}
+	return nil
 }
 
 // MarkdownFile parses a Markdown file, extracts frontmatter, and populates an Article struct.
+// Returns the parsed Article and an error if reading, parsing, or decoding fails.
 func MarkdownFile(path string) (Article, error) {
 	// Read the Markdown file content.
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Article{}, err
+		return Article{}, fmt.Errorf("failed to read Markdown file '%s': %w", path, err)
 	}
 
 	// Configure Goldmark Markdown parser with frontmatter support.
@@ -352,7 +376,7 @@ func MarkdownFile(path string) (Article, error) {
 	// Parse the Markdown content and render to HTML, storing frontmatter in the context.
 	var buf strings.Builder
 	if err := markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		return Article{}, fmt.Errorf("failed to convert Markdown to HTML for '%s': %w", path, err)
 	}
 	// content := buf.String()
 
@@ -362,8 +386,7 @@ func MarkdownFile(path string) (Article, error) {
 	if fm != nil {
 		var d map[string]any
 		if err := fm.Decode(&d); err != nil {
-			fmt.Printf("Article path: %s", path)
-			panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+			return Article{}, fmt.Errorf("failed to decode frontmatter in '%s': %w", path, err)
 		}
 		// Populate Article fields from frontmatter.
 		for name, value := range d {
@@ -379,15 +402,25 @@ func MarkdownFile(path string) (Article, error) {
 				article.Description = value.(string)
 			case "created":
 				if reflect.TypeOf(value).Kind() == reflect.String {
-					article.Created = DateTimeFromString(value.(string))
-				} else {
-					article.Created = value.(time.Time)
+					createdTime, err := DateTimeFromString(value.(string))
+					if err != nil {
+						fmt.Printf("Warning: Failed to parse 'created' date in '%s': %v\n", path, err)
+					} else {
+						article.Created = createdTime
+					}
+				} else if t, ok := value.(time.Time); ok {
+					article.Created = t
 				}
 			case "updated":
 				if reflect.TypeOf(value).Kind() == reflect.String {
-					article.Updated = DateTimeFromString(value.(string))
-				} else {
-					article.Updated = value.(time.Time)
+					updatedTime, err := DateTimeFromString(value.(string))
+					if err != nil {
+						fmt.Printf("Warning: Failed to parse 'updated' date in '%s': %v\n", path, err)
+					} else {
+						article.Updated = updatedTime
+					}
+				} else if t, ok := value.(time.Time); ok {
+					article.Updated = t
 				}
 			case "tags":
 				switch reflect.TypeOf(value).Kind() {
@@ -415,12 +448,14 @@ func MarkdownFile(path string) (Article, error) {
 	// Set Created and Updated to file dates if not provided in frontmatter.
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+		return Article{}, fmt.Errorf("failed to get file info for '%s': %w", path, err)
 	}
 	if article.Created.IsZero() {
-		article.Created = DateTimeFromString(path) // Try to extract date from filename
-		if article.Created.IsZero() {
+		createdFromFile, err := DateTimeFromString(path) // Try to extract date from filename
+		if err != nil {
 			article.Created = fileInfo.ModTime() // Use file modification time
+		} else {
+			article.Created = createdFromFile
 		}
 	}
 	if article.Updated.IsZero() {
@@ -432,30 +467,19 @@ func MarkdownFile(path string) (Article, error) {
 		article.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	}
 
-	// Extract resources from HTML (commented out).
-	// article.Files = extractResources(content) // Pass content here, not article.Content
-
-	// Determine if the article is a page (commented out).
-	// article.IsPage = contains(article.Tags, "PAGE")
-
-	// Set the article path (already done).
-	// article.OriginalPath = filepath.Dir(path)
-
-	// Set the HTML content (already done).
-	// article.HtmlContent = content
-
 	return article, nil
 }
 
 // FormatMarkdown applies an HTML template to the Markdown content of an article.
-func FormatMarkdown(article *Article, settings Settings) {
+// Returns an error if template parsing or execution fails.
+func FormatMarkdown(article *Article, settings Settings) error {
 	// Define template functions.
 	tmpl, err := template.New("markdown_template").Funcs(
 		template.FuncMap{
 			"stringsJoin":    strings.Join,
 			"slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		return fmt.Errorf("error parsing markdown article template: %w", err)
 	}
 
 	// Execute the template with article data and settings.
@@ -466,17 +490,19 @@ func FormatMarkdown(article *Article, settings Settings) {
 		Settings Settings
 	}{*article, template.HTML(article.HtmlContent), settings})
 	if err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		return fmt.Errorf("error executing markdown article template: %w", err)
 	}
 	article.HtmlContent = tp.String()
+	return nil
 }
 
 // HTMLFile parses an HTML file, extracts metadata from tags, and populates an Article struct.
+// Returns the parsed Article and an error if reading or parsing fails.
 func HTMLFile(path string) (Article, error) {
 	// Read the HTML file content.
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to read file %s: %w", path, err)
+		return Article{}, fmt.Errorf("failed to read HTML file '%s': %w", path, err)
 	}
 	htmlContent := string(data)
 	textContent := html2text.HTML2Text(htmlContent)
@@ -490,7 +516,7 @@ func HTMLFile(path string) (Article, error) {
 	// Parse the HTML content.
 	htmlTree, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to parse HTML: %w", err)
+		return Article{}, fmt.Errorf("failed to parse HTML content of '%s': %w", path, err)
 	}
 
 	// Get info from <title> tag.
@@ -532,9 +558,19 @@ func HTMLFile(path string) (Article, error) {
 				}
 				article.Tags = tagsArray
 			case "created":
-				article.Created = DateTimeFromString(val)
+				createdTime, err := DateTimeFromString(val)
+				if err != nil {
+					fmt.Printf("Warning: Failed to parse 'created' date from meta tag in '%s': %v\n", path, err)
+				} else {
+					article.Created = createdTime
+				}
 			case "updated":
-				article.Updated = DateTimeFromString(val)
+				updatedTime, err := DateTimeFromString(val)
+				if err != nil {
+					fmt.Printf("Warning: Failed to parse 'updated' date from meta tag in '%s': %v\n", path, err)
+				} else {
+					article.Updated = updatedTime
+				}
 			}
 		}
 	}
@@ -542,12 +578,14 @@ func HTMLFile(path string) (Article, error) {
 	// Set Created and Updated to file dates if not provided in meta tags.
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		return Article{}, fmt.Errorf("failed to get file info: %w", err)
+		return Article{}, fmt.Errorf("failed to get file info for '%s': %w", path, err)
 	}
 	if article.Created.IsZero() {
-		article.Created = DateTimeFromString(path) // Try to extract date from filename
-		if article.Created.IsZero() {
+		createdFromFile, err := DateTimeFromString(path) // Try to extract date from filename
+		if err != nil {
 			article.Created = fileInfo.ModTime() // Use file modification time
+		} else {
+			article.Created = createdFromFile
 		}
 	}
 	if article.Updated.IsZero() {
@@ -584,11 +622,13 @@ func findAllElements(n *html.Node, tag string) []*html.Node {
 
 // extractResources parses HTML content and extracts the values of "src" and "href" attributes
 // from "img", "script", and "link" tags, returning a list of resource paths.
+// Returns a slice of resource paths.
 func extractResources(htmlContent string) []string {
 	var resources []string
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
-		panic(err) // Potential Problem: Panicking here will crash the application. Consider returning an error.
+		fmt.Printf("Warning: Failed to parse HTML content for resource extraction: %v\n", err)
+		return resources // Return empty slice on error, avoid crashing
 	}
 
 	var f func(*html.Node)
