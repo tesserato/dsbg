@@ -45,10 +45,3 @@ type Article struct {
 	LinkToSelf   string
 	LinkToSave   string
 }
-
-// type Links struct {
-// 	ToSelf string
-// 	// ToCss  string
-// 	// ToJs   string
-// 	ToSave string
-// }
