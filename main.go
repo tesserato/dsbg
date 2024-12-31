@@ -55,7 +55,7 @@ func main() {
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page (e.g., analytics scripts)")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page")
 	showHelp := flag.Bool("help", false, "Show this help message and exit")
-	watch := flag.Bool("watch", false, "Watch for changes in the input directory and rebuild automatically")
+	watch := flag.Bool("watch", false, "Watch for changes in the input directory and rebuild automatically. Also creates a server to serve the website.")
 	createTemplate := flag.Bool("template", false, "Create a basic Markdown template file with frontmatter")
 
 	flag.Parse()
@@ -217,9 +217,9 @@ func startWatcher(settings parse.Settings) {
 	}
 
 	// Start the file server.
+    // time.Sleep(2 * time.Second)
 	go serve(settings)
-
-	log.Println("\nWatching for changes...\n") // TODO add current timestamp
+	log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -230,7 +230,7 @@ func startWatcher(settings parse.Settings) {
 			if event.Has(fsnotify.Write) {
 				log.Println("Changes detected. Rebuilding...")
 				buildWebsite(settings)
-				log.Println("\nWatching for changes...\n") // TODO add current timestamp
+                log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
