@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -59,12 +60,13 @@ func main() {
 
 	flag.Parse()
 
+    // Display help message and exit if the "help" flag is enabled.
 	if *showHelp {
 		flag.Usage()
 		return
 	}
 
-	// Handle the "template" flag to create a starter Markdown file.
+	// Create a basic Markdown template and exit if the "template" flag is enabled.
 	if *createTemplate {
 		if err := createMarkdownTemplate(settings); err != nil {
 			log.Fatalf("Error creating markdown template: %v", err)
@@ -178,9 +180,26 @@ func startWatcher(settings parse.Settings) {
 	defer watcher.Close()
 
 	// Add the input directory and custom asset paths to the watcher.
-	if err := watcher.Add(settings.InputDirectory); err != nil {
+    if err := watcher.Add(settings.InputDirectory); err != nil {
 		log.Fatal(err)
 	}
+    
+    err = filepath.WalkDir(settings.InputDirectory, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+            if err := watcher.Add(path); err != nil {
+                log.Fatal(err)
+            }
+		}
+		return nil
+	})
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
 	if settings.PathToCustomCss != "" {
 		if err := watcher.Add(settings.PathToCustomCss); err != nil {
 			log.Fatal(err)
@@ -200,7 +219,7 @@ func startWatcher(settings parse.Settings) {
 	// Start the file server.
 	go serve(settings)
 
-	log.Println("\nWatching for changes...\n")
+	log.Println("\nWatching for changes...\n") // TODO add current timestamp
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -211,7 +230,7 @@ func startWatcher(settings parse.Settings) {
 			if event.Has(fsnotify.Write) {
 				log.Println("Changes detected. Rebuilding...")
 				buildWebsite(settings)
-				log.Println("\nWatching for changes...\n")
+				log.Println("\nWatching for changes...\n") // TODO add current timestamp
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
@@ -224,7 +243,7 @@ func startWatcher(settings parse.Settings) {
 
 // serve starts a simple HTTP server to serve the generated website.
 func serve(settings parse.Settings) {
-	addr := ":666"
+	addr := ":666" // TODO: Allow the port to be specified.
 	fmt.Printf("Serving '%s' on http://localhost%s\n", settings.OutputDirectory, addr)
 	http.Handle("/", http.FileServer(http.Dir(settings.OutputDirectory)))
 	if err := http.ListenAndServe(addr, nil); err != nil {

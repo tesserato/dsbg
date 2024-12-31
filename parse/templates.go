@@ -109,7 +109,15 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 			<link>{{ buildArticleURL . $.Settings  }}</link>
 			<guid>{{ buildArticleURL . $.Settings  }}</guid>
 			<pubDate>{{ .Created | formatPubDate }}</pubDate>
-			<description>{{ .Description | htmlEscape }}{{ if .Description | eq "" }}{{ .TextContent | htmlEscape }}{{ end }}</description> {{/* Fallback to text content if no description */}}
+			<description>{{ .Description | htmlEscape }}</description>
+			<media:content 
+				xmlns:media="http://search.yahoo.com/mrss/" 
+				url="https://www.pudim.com.br/pudim.jpg" 
+				medium="image" 
+				type="image/jpeg" 
+				width="150" 
+				height="150"
+			/>
 		</item>
 		{{- end }}
 	</channel>

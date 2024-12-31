@@ -28,6 +28,17 @@ var regexPatterns = []*regexp.Regexp{
 	regexp.MustCompile(`(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})`),
 }
 
+// Configure Goldmark Markdown parser with frontmatter support.
+var markdown = goldmark.New(
+	goldmark.WithParserOptions(
+		parser.WithAttribute(),
+		parser.WithAutoHeadingID(),
+	),
+	goldmark.WithExtensions(
+		&frontmatter.Extender{},
+	),
+)
+
 // RemoveDateFromPath attempts to remove date patterns from a given string.
 // It iterates through predefined regex patterns and replaces matching substrings with an empty string.
 // Finally, it trims any leading/trailing hyphens, underscores, or spaces.
@@ -233,6 +244,22 @@ func CopyHtmlResources(settings Settings, article *Article) error {
 		}
 	}
 
+	// Copy the cover image if it exists.
+	if article.CoverImagePath != "" {
+		coverImageOrigPath := filepath.Join(originalDirectory, article.CoverImagePath)
+		coverImageDestPath := filepath.Join(settings.OutputDirectory, article.CoverImagePath)
+		fmt.Printf("  Copying %s to %s\n", coverImageOrigPath, coverImageDestPath)
+		file, err := os.ReadFile(coverImageOrigPath)
+		if err != nil {
+			return fmt.Errorf("error reading file '%s': %w", coverImageOrigPath, err)
+		}
+
+		err = os.WriteFile(coverImageDestPath, file, 0644)
+		if err != nil {
+			return fmt.Errorf("error writing file '%s': %w", coverImageDestPath, err)
+		}
+	}
+
 	// Copy individual resources (images, scripts, etc.) linked in the HTML content.
 	resourcePaths, err := extractResources(article.HtmlContent)
 	if err != nil {
@@ -362,8 +389,8 @@ func GenerateRSS(articles []Article, settings Settings) error {
 	// Execute the template with article data and settings.
 	var tp bytes.Buffer
 	err = tmpl.Execute(&tp, struct {
-		Articles []Article
-		Settings Settings
+		Articles  []Article
+		Settings  Settings
 		BuildDate string // Add a build date for the feed.
 	}{articles, settings, time.Now().Format(time.RFC1123Z)})
 	if err != nil {
@@ -378,6 +405,7 @@ func GenerateRSS(articles []Article, settings Settings) error {
 	}
 	return nil
 }
+
 // MarkdownFile parses a Markdown file, extracts frontmatter, and populates an Article struct.
 // Returns the parsed Article and an error if reading, parsing, or decoding fails.
 func MarkdownFile(path string) (Article, error) {
@@ -386,17 +414,6 @@ func MarkdownFile(path string) (Article, error) {
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to read Markdown file '%s': %w", path, err)
 	}
-
-	// Configure Goldmark Markdown parser with frontmatter support.
-	markdown := goldmark.New(
-		goldmark.WithParserOptions(
-			parser.WithAttribute(),
-			parser.WithAutoHeadingID(),
-		),
-		goldmark.WithExtensions(
-			&frontmatter.Extender{},
-		),
-	)
 
 	// Create a context to store frontmatter.
 	context := parser.NewContext()
@@ -450,6 +467,8 @@ func MarkdownFile(path string) (Article, error) {
 				} else if t, ok := value.(time.Time); ok {
 					article.Updated = t
 				}
+			case "CoverImagePath":
+				article.CoverImagePath = value.(string)
 			case "tags":
 				switch reflect.TypeOf(value).Kind() {
 
