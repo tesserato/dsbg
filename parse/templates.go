@@ -85,6 +85,9 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                     <h4 class="date">♰ {{.Updated.Format $dateFormat}}</h4>
                 </div>
             </div>
+			{{if .CoverImagePath}}
+				<img src="{{.CoverImagePath}}" alt="{{.Title}}">
+			{{end}}
             <p class="description">{{.Description}}</p>
         </div>
     {{end}}

@@ -467,7 +467,7 @@ func MarkdownFile(path string) (Article, error) {
 				} else if t, ok := value.(time.Time); ok {
 					article.Updated = t
 				}
-			case "CoverImagePath":
+			case "coverimagepath":
 				article.CoverImagePath = value.(string)
 			case "tags":
 				switch reflect.TypeOf(value).Kind() {
