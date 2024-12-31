@@ -97,6 +97,10 @@ img {
     align-self: center;
 }
 
+.detail img {
+    max-height: 20rem;
+}
+
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
