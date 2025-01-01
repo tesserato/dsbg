@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="53.956284mm"
+   width="55.535862mm"
    height="20.556723mm"
-   viewBox="0 0 53.956284 20.556723"
+   viewBox="0 0 55.535863 20.556723"
    version="1.1"
    id="svg1"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
@@ -28,8 +28,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.9477379"
-     inkscape:cx="24.130556"
-     inkscape:cy="73.161793"
+     inkscape:cx="31.831798"
+     inkscape:cy="26.954345"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
@@ -39,8 +39,8 @@
     <inkscape:grid
        id="grid1"
        units="mm"
-       originx="-87.529174"
-       originy="-74.349993"
+       originx="-85.949593"
+       originy="-74.349991"
        spacingx="0.99999998"
        spacingy="1"
        empcolor="#0099e5"
@@ -89,7 +89,7 @@
       <path
          id="mask-powermask-path-effect39_box"
          style="fill:#ffffff;fill-opacity:1"
-         d="M 86.529174,73.349992 H 142.48546 V 95.906715 H 86.529174 Z" />
+         d="M 84.949594,73.349992 H 142.48546 V 95.906715 H 84.949594 Z" />
       <g
          inkscape:groupmode="layer"
          id="g39"
@@ -139,7 +139,7 @@
      inkscape:label="base"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-87.529174,-74.349992)"
+     transform="translate(-85.949594,-74.349992)"
      style="display:inline"
      mask="url(#mask-powermask-path-effect39)"
      inkscape:path-effect="#path-effect39">
@@ -190,15 +190,15 @@
          y="72.957161">EAD SIMPLE</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:9.01634px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.83977;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       x="89.067665"
-       y="91.873543"
+       style="font-size:9.14737px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.88104;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       x="86.190308"
+       y="93.208649"
        id="text4-2"
-       transform="scale(0.97866328,1.0218019)"><tspan
+       transform="scale(0.99288521,1.0071658)"><tspan
          sodipodi:role="line"
          id="tspan4-2"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.83977;stroke-opacity:1"
-         x="89.067665"
-         y="91.873543">Blog Generator</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.88104;stroke-opacity:1"
+         x="86.190308"
+         y="93.208649">Blog Generator</tspan></text>
   </g>
 </svg>
