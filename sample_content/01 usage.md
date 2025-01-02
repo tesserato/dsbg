@@ -1,34 +1,44 @@
 ---
-title: My First Blog Post
-description: This is an example of my first blog post.
+title: 01 Getting Started with DSBG
+description: A comprehensive guide to using the Dead Simple Blog Generator.
 created: 2024-07-04
 updated: 2024-07-05 10:30:00
-tags: [example, first-post]
-coverImagePath: logo.webp
+tags: [guide, tutorial, example]
+coverImagePath: 01_dsbg_logo.webp
 ---
 
-# Welcome to Dead Simple Blog Generator
+# Welcome to the Dead Simple Blog Generator!
 
+This post will guide you through the basics of using DSBG and demonstrate its key features.
 
-## Features
+## Core Features
 
-- Simplicity: This tool is all about being dead simple to use.
-- Markdown Support: Write your content in Markdown for easy formatting.
-- HTML Support: Also supports basic HTML for pages and mixing content.
-- Tagging: Automatically creates filters on the index pages.
-- Themes: Supports basic theming.
-- RSS Feed: Generates an RSS feed.
-- Search: Simple client side searching.
+DSBG is designed to be straightforward and easy to use. Here are some of its main capabilities:
 
-# Example Markdown Content
+*   **Markdown and HTML Support:** Write your content using Markdown for quick formatting or use standard HTML for more advanced customization. Mix them freely!
+*   **Frontmatter:** Use YAML frontmatter (like the metadata at the top of this file) to define titles, descriptions, dates, tags, and cover images.
+*   **Tag Filtering:** DSBG automatically creates filter buttons based on your tags, making it easy to categorize and browse content on your index page.
+*   **Theming:** Comes with basic default themes and the option to use a custom CSS file for full control over styling.
+*   **RSS Feed:**  DSBG generates a valid RSS feed (`rss.xml`) so your readers can subscribe using their favorite reader.
+*   **Search:**  Uses a simple client-side search, allowing users to quickly find relevant content.
 
-Here's a list:
+## Markdown Content Examples
 
-- Item 1
-- Item 2
-- Item 3
+Here's a mix of common Markdown elements to show you how they look:
 
-And some `code`:
+### Lists
+
+- An unordered list
+    - Nested list item
+- Another list item
+
+1.  An ordered list
+2.  Second item
+    1.  Nested ordered list
+
+### Code
+
+You can include code blocks with syntax highlighting:
 
 ```go
 package main
@@ -36,35 +46,32 @@ package main
 import "fmt"
 
 func main() {
-    fmt.Println("Hello, World!")
+    fmt.Println("Hello, DSBG!")
 }
 ```
 
-You can include images too:
+### Images
 
-![Butterfly](01_butterfly.webp)
+Images are automatically copied to the output directory:
 
-Here's some **bold** and *italic* text.
+![A Butterfly](01_butterfly.webp)
 
-Check this [link](https://example.com).
+### Text Formatting
 
-> A block quote.
+Here's some **bold** and *italic* text, and some `inline code`.
 
-More text here.
+### Links and Quotes
 
-Here's a paragraph
+Check out this [example link](https://example.com).
 
-And an unordered list
+> This is a block quote. Useful for citing resources.
 
-* list item 1
-* list item 2
-* list item 3
+### More Text
 
-And an ordered list
+Here is a normal paragraph, with a few sentences. DSBG will render this correctly. It should provide an example of normal usage.
 
-1. one
-2. two
-3. three
-content_copy
-download
-Use code with caution.
+## Conclusion
+
+This post should give you a good overview of the features that DSBG offers and how to use them. Feel free to experiment with this content and check the generated HTML.
+
+If you find any bugs, or have a feature you would like to see implemented, create an issue or a pull request.

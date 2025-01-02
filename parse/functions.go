@@ -618,6 +618,8 @@ func HTMLFile(path string) (Article, error) {
 				} else {
 					article.Updated = updatedTime
 				}
+			case "coverimagepath":
+				article.CoverImagePath = val
 			}
 		}
 	}
