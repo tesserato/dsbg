@@ -162,7 +162,11 @@ func CopyHtmlResources(settings Settings, article *Article) error {
 		}
 		if len(pathTags) > 1 {
 			pathTags = pathTags[:len(pathTags)-1]
-			article.Tags = append(article.Tags, pathTags...)
+			for _, tag := range pathTags {
+				if !slices.Contains(article.Tags, tag) {
+					article.Tags = append(article.Tags, tag)
+				}
+			}
 		}
 	}
 
@@ -249,15 +253,19 @@ func CopyHtmlResources(settings Settings, article *Article) error {
 		coverImageOrigPath := filepath.Join(originalDirectory, article.CoverImagePath)
 		coverImageDestPath := filepath.Join(settings.OutputDirectory, article.CoverImagePath)
 		fmt.Printf("  Copying %s to %s\n", coverImageOrigPath, coverImageDestPath)
-		file, err := os.ReadFile(coverImageOrigPath)
-		if err != nil {
-			return fmt.Errorf("error reading file '%s': %w", coverImageOrigPath, err)
+
+		if !(slices.Contains(article.Tags, "PAGE")) {
+			file, err := os.ReadFile(coverImageOrigPath)
+			if err != nil {
+				return fmt.Errorf("error reading file '%s': %w", coverImageOrigPath, err)
+			}
+
+			err = os.WriteFile(coverImageDestPath, file, 0644)
+			if err != nil {
+				return fmt.Errorf("error writing file '%s': %w", coverImageDestPath, err)
+			}
 		}
 
-		err = os.WriteFile(coverImageDestPath, file, 0644)
-		if err != nil {
-			return fmt.Errorf("error writing file '%s': %w", coverImageDestPath, err)
-		}
 	}
 
 	// Copy individual resources (images, scripts, etc.) linked in the HTML content.
@@ -582,13 +590,11 @@ func HTMLFile(path string) (Article, error) {
 		key := ""
 		val := ""
 		for _, attr := range metaTag.Attr {
-			attrKey := strings.ToLower(attr.Key)
-			attrKey = strings.Trim(attrKey, " ")
-			switch attrKey {
+			switch strings.Trim(strings.ToLower(attr.Key), " ") {
 			case "name":
-				key = attr.Val
+				key = strings.Trim(strings.ToLower(attr.Val), " ")
 			case "content":
-				val = attr.Val
+				val = strings.Trim(attr.Val, " ")
 			}
 		}
 		// Populate Article fields based on meta tag content.
