@@ -1,8 +1,8 @@
-# Dead Simple Blog Generator (DSBG)
-
-## Description
-
 DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog or documentation site with minimal configuration.
+
+# Getting Started
+
+Download the DSBG executable from [https://github.com/abhinavkumar/dsbg](https://github.com/abhinavkumar/dsbg)
 
 **Key Features:**
 
