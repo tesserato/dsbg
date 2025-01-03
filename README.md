@@ -1,8 +1,50 @@
 DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog or documentation site with minimal configuration.
 
-# Getting Started
+# Installation
 
-Download the DSBG executable from [https://github.com/abhinavkumar/dsbg](https://github.com/abhinavkumar/dsbg)
+If you have Go installed run `go install github.com/tesserato/dsbg@latest`. Alternatively, you can download the appropriate binary from the [releases page](https://github.com/tesserato/dsbg/releases) and optionally add it to your PATH.
+
+Then run `dsbg -h` to see the help message and make sure everything is set up correctly.
+
+# Usage
+
+Here are a few examples to get you started:
+
+## Create a Markdown Template
+
+```bash
+dsbg -template -title "My Awesome Post" -description "A sample template"
+```
+This command generates a markdown file named with the current date (YYYY MM DD) in the current directory, ready to be filled with content. If you don't provide a title, the date will be the name of the generated file.
+
+## Build a Blog with a Predefined Theme and Watch Mode
+
+```bash
+dsbg -title "My Awesome Blog" -description "My blog description" -watch -style dark
+```
+
+This command generates a blog with the "dark" theme and watches for changes in the content folder, rebuilding and serving the site on each change.
+
+## Build a Blog with Custom CSS
+
+```bash
+dsbg -title "My Awesome Blog" -description "My blog description" -watch -css-path assets/style-colorful.css
+```
+
+This command creates a blog that is watched for changes, while using a custom CSS for styling.
+
+## Including Custom HTML Elements
+
+```bash
+dsbg -title "My Awesome Blog" -description "My blog description" -watch -elements-top elements-top.html -elements-bottom elements-bottom.html
+```
+
+This command adds the contents of `elements-top.html` at the top of each page (useful for things like analytics tracking) and `elements-bottom.html` at the bottom of each page (useful for comments section or footers).
+
+<!-- ### Example of a PAGE Tag
+For stand-alone pages or custom directories to copy, you can add the tag `PAGE` to the markdown or HTML file. Then, the program will copy the directory and all its contents to the output folder. -->
+
+
 
 **Key Features:**
 
@@ -20,8 +62,6 @@ Download the DSBG executable from [https://github.com/abhinavkumar/dsbg](https:/
 
 
 ## Command-Line Arguments
-
-DSBG uses a range of command-line flags to customize its behavior. Here's a breakdown of each option:
 
 *   `-title <string>`:  The title of your blog or website. (Default: `Blog`)
 *   `-base-url <string>`:  The base URL for your website (e.g., `https://example.com`). Required for generating a correct RSS feed. (Default: none)
@@ -44,43 +84,6 @@ DSBG uses a range of command-line flags to customize its behavior. Here's a brea
 *   `-watch`:  Enable watch mode, automatically rebuild the site on changes, and start a local server. (Default: `false`)
 *   `-template`:  Create a basic Markdown template file with frontmatter in the current directory. (Default: `false`)
 
-## Example Usage
-
-Here are a few examples to get you started:
-
-### Create a Markdown Template
-
-```bash
-./dsbg.exe -template -title "My Awesome Post" -description "A sample template"
-```
-This command generates a markdown file named with the current date (YYYY MM DD) in the current directory, ready to be filled with content. If you dont provide a title, the date will be the name of the generated file.
-
-### Build a Blog with a Predefined Theme and Watch Mode
-
-```bash
-./dsbg.exe -title "My Awesome Blog" -description "My blog description" -watch -style dark
-```
-
-This command generates a blog with the "dark" theme and watches for changes in the content folder, rebuilding and serving the site on each change.
-
-### Build a Blog with Custom CSS
-
-```bash
-./dsbg.exe -title "My Awesome Blog" -description "My blog description" -watch -css-path assets/style-colorful.css
-```
-
-This command creates a blog that is watched for changes, while using a custom CSS for styling.
-
-### Including Custom HTML Elements
-
-```bash
-./dsbg.exe -title "My Awesome Blog" -description "My blog description" -watch -elements-top elements-top.html -elements-bottom elements-bottom.html
-```
-
-This command adds the contents of `elements-top.html` at the top of each page (useful for things like analytics tracking) and `elements-bottom.html` at the bottom of each page (useful for comments section or footers).
-
-### Example of a PAGE Tag
-For stand-alone pages or custom directories to copy, you can add the tag `PAGE` to the markdown or HTML file. Then, the program will copy the directory and all its contents to the output folder.
 
 ### Considerations
 
