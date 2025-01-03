@@ -1,4 +1,4 @@
-module dsbg
+module github.com/tesserato/dsbg
 
 go 1.23.0
 

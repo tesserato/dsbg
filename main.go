@@ -16,7 +16,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"dsbg/parse"
+	"github.com/tesserato/dsbg/parse"
 )
 
 //go:embed assets

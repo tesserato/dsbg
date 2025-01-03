@@ -5,13 +5,13 @@
 		<link></link>
 		<description>Welcome to the DSBG (Dead Simple Blog Generator) blog</description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Fri, 03 Jan 2025 15:22:15 +0000</lastBuildDate>
+		<lastBuildDate>Fri, 03 Jan 2025 19:52:01 +0000</lastBuildDate>
 		<atom:link href="/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>HTML page with custom CSS example</title>
 			<link>/htmlpageexample/customcss/index.html</link>
 			<guid>/htmlpageexample/customcss/index.html</guid>
-			<pubDate>Fri, 03 Jan 2025 15:19:26 +0000</pubDate>
+			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>An example html page with custom CSS</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
@@ -26,7 +26,7 @@
 			<title>Markdown page example</title>
 			<link>/markdown-page-example/index.html</link>
 			<guid>/markdown-page-example/index.html</guid>
-			<pubDate>Fri, 03 Jan 2025 15:19:26 +0000</pubDate>
+			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>This is a markdown page example</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
@@ -41,7 +41,7 @@
 			<title>HTML post with custom CSS example</title>
 			<link>/02htmlpostexample/index.html</link>
 			<guid>/02htmlpostexample/index.html</guid>
-			<pubDate>Fri, 03 Jan 2025 15:19:26 +0000</pubDate>
+			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>An example html page with custom CSS</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
