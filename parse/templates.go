@@ -88,8 +88,8 @@ var htmlArticleTemplate = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Dead Simple Blog Generator (dsbg)">
 	<meta name="keywords" content="{{stringsJoin .Art.Tags ", "}}">
-    <link rel="stylesheet" href="{{genCssRelativeLink .Art.LinkToSelf}}">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{genRelativeLink .Art.LinkToSelf "style.css"}}">
+    <link rel="icon" type="image/x-icon" href="{{genRelativeLink .Art.LinkToSelf "favicon.ico"}}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>

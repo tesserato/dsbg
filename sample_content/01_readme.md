@@ -55,7 +55,7 @@ For stand-alone pages or custom directories to copy, you can add the tag `PAGE` 
 
 
 
-**Key Features:**
+# Features:
 
 *   **Markdown & HTML Support:** Write content using Markdown or basic HTML. Mix and match as needed.
 *   **Frontmatter:** Use YAML frontmatter in Markdown files to define metadata like title, description, dates, tags, and cover images.
@@ -70,7 +70,7 @@ For stand-alone pages or custom directories to copy, you can add the tag `PAGE` 
 *   **Open Links in New Tabs:** Option to open external article links in a new browser tab for a smoother user experience.
 
 
-## Command-Line Arguments
+<!-- # Command-Line Arguments
 
 *   `-title <string>`:  The title of your blog or website. (Default: `Blog`)
 *   `-base-url <string>`:  The base URL for your website (e.g., `https://example.com`). Required for generating a correct RSS feed. (Default: none)
@@ -91,16 +91,16 @@ For stand-alone pages or custom directories to copy, you can add the tag `PAGE` 
 *   `-elements-bottom <string>`:  The path to an HTML file with elements to include at the bottom of each generated page (e.g., comments section, footer). (Default: none)
 *   `-help`: Display this help message and exit. (Default: `false`)
 *   `-watch`:  Enable watch mode, automatically rebuild the site on changes, and start a local server. (Default: `false`)
-*   `-template`:  Create a basic Markdown template file with frontmatter in the current directory. (Default: `false`)
+*   `-template`:  Create a basic Markdown template file with frontmatter in the current directory. (Default: `false`) -->
 
 
-### Considerations
+# Caveats
 
 *  The output directory (`public` by default) is reset every time the program is run.
 *  no whitespace in link to image; 
 *  pages with additional content in its on folder
 
-## Contributing
+# Contributing
 
 Your contributions are welcome! Feel free to submit pull requests or create issues for any bugs or new features you'd like to see.
 

@@ -522,7 +522,7 @@ func MarkdownFile(path string) (Article, error) {
 	return article, nil
 }
 
-func genCssRelativeLink(linkToSelf string) string {
+func genRelativeLink(linkToSelf string, name string) string {
 	linkToSelf = strings.ToLower(linkToSelf)
 	linkToSelf = strings.ReplaceAll(linkToSelf, "http://", "")
 	linkToSelf = strings.ReplaceAll(linkToSelf, "https://", "")
@@ -544,7 +544,7 @@ func genCssRelativeLink(linkToSelf string) string {
 	// Create the ".." string
 	upDir := strings.Repeat("../", len(parts)-1)
 	// Combine ".." with "style.css"
-	return upDir + "style.css"
+	return upDir + name
 }
 
 // FormatMarkdown applies an HTML template to the Markdown content of an article.
@@ -553,9 +553,9 @@ func FormatMarkdown(article *Article, settings Settings) error {
 	// Define template functions.
 	tmpl, err := template.New("markdown_template").Funcs(
 		template.FuncMap{
-			"genCssRelativeLink": genCssRelativeLink,
-			"stringsJoin":        strings.Join,
-			"slicesContains":     slices.Contains[[]string]}).Parse(htmlArticleTemplate)
+			"genRelativeLink": genRelativeLink,
+			"stringsJoin":     strings.Join,
+			"slicesContains":  slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		return fmt.Errorf("error parsing markdown article template: %w", err)
 	}

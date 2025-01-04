@@ -7,7 +7,7 @@
     <meta name="generator" content="Dead Simple Blog Generator (dsbg)">
 	<meta name="keywords" content="guide, tutorial, example">
     <link rel="stylesheet" href="../style.css">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -18,7 +18,7 @@
 
 <body>
     <header>
-		<a href="https://tesserato.github.io/dsbg"> &#9665; Dead Simple Blog Generator </a>
+		<a href="https://tesserato.github.io/dsbg" target="_blank"> &#9665; Dead Simple Blog Generator </a>
         <h1>01 Getting Started with DSBG</h1>
         <h2>A comprehensive guide to using the Dead Simple Blog Generator.</h2>
     </header>
@@ -47,7 +47,7 @@
 <p>This command adds the contents of <code>elements-top.html</code> at the top of each page (useful for things like analytics tracking) and <code>elements-bottom.html</code> at the bottom of each page (useful for comments section or footers).</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
-<p><strong>Key Features:</strong></p>
+<h1 id="features">Features:</h1>
 <ul>
 <li><strong>Markdown &amp; HTML Support:</strong> Write content using Markdown or basic HTML. Mix and match as needed.</li>
 <li><strong>Frontmatter:</strong> Use YAML frontmatter in Markdown files to define metadata like title, description, dates, tags, and cover images.</li>
@@ -61,36 +61,15 @@
 <li><strong>&quot;PAGE&quot; Tag:</strong> Special tag to designate pages by copying all the folder contents to the public folder.</li>
 <li><strong>Open Links in New Tabs:</strong> Option to open external article links in a new browser tab for a smoother user experience.</li>
 </ul>
-<h2 id="command-line-arguments">Command-Line Arguments</h2>
-<ul>
-<li><code>-title &lt;string&gt;</code>:  The title of your blog or website. (Default: <code>Blog</code>)</li>
-<li><code>-base-url &lt;string&gt;</code>:  The base URL for your website (e.g., <code>https://example.com</code>). Required for generating a correct RSS feed. (Default: none)</li>
-<li><code>-description &lt;string&gt;</code>: A brief description of your blog or website. (Default: <code>This is my blog</code>)</li>
-<li><code>-input-path &lt;string&gt;</code>: The path to the directory containing your source content files (Markdown and HTML). (Default: <code>content</code>)</li>
-<li><code>-output-path &lt;string&gt;</code>: The path to the directory where the generated website files will be saved. (Default: <code>public</code>)</li>
-<li><code>-date-format &lt;string&gt;</code>: The format for displaying dates on the website using Go's time formatting syntax (e.g.  <code>2006-01-02</code> , <code>02/01/2006</code>). (Default: <code>2006 01 02</code>)</li>
-<li><code>-index-name &lt;string&gt;</code>: The filename for your main index page. (Default: <code>index.html</code>)</li>
-<li><code>-css-path &lt;string&gt;</code>: The path to a custom CSS file to override default styles. (Default: none)</li>
-<li><code>-js-path &lt;string&gt;</code>: The path to a custom JavaScript file to add functionality to your site. (Default: none)</li>
-<li><code>-favicon-path &lt;string&gt;</code>: The path to a custom favicon file (e.g., <code>.ico</code>) for your site. (Default: none)</li>
-<li><code>-ignore-tags-from-paths</code>: Disable extracting tags from directory names. (Default: <code>false</code>)</li>
-<li><code>-keep-date-in-paths</code>: Do not remove date patterns from the generated file paths. (Default: <code>false</code>)</li>
-<li><code>-keep-date-in-titles</code>: Do not remove date patterns from article titles. (Default: <code>false</code>)</li>
-<li><code>-open-in-new-tab</code>: Open external article links in a new browser tab. (Default: <code>false</code>)</li>
-<li><code>-style &lt;string&gt;</code>: Choose a pre-defined theme: <code>default</code>, <code>dark</code>, or <code>colorful</code>. (Default: <code>default</code>)</li>
-<li><code>-elements-top &lt;string&gt;</code>:  The path to an HTML file with elements to include at the top of each generated page (e.g., analytics scripts, header). (Default: none)</li>
-<li><code>-elements-bottom &lt;string&gt;</code>:  The path to an HTML file with elements to include at the bottom of each generated page (e.g., comments section, footer). (Default: none)</li>
-<li><code>-help</code>: Display this help message and exit. (Default: <code>false</code>)</li>
-<li><code>-watch</code>:  Enable watch mode, automatically rebuild the site on changes, and start a local server. (Default: <code>false</code>)</li>
-<li><code>-template</code>:  Create a basic Markdown template file with frontmatter in the current directory. (Default: <code>false</code>)</li>
-</ul>
-<h3 id="considerations">Considerations</h3>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h1 id="caveats">Caveats</h1>
 <ul>
 <li>The output directory (<code>public</code> by default) is reset every time the program is run.</li>
 <li>no whitespace in link to image;</li>
 <li>pages with additional content in its on folder</li>
 </ul>
-<h2 id="contributing">Contributing</h2>
+<h1 id="contributing">Contributing</h1>
 <p>Your contributions are welcome! Feel free to submit pull requests or create issues for any bugs or new features you'd like to see.</p>
 
     </div>
