@@ -153,7 +153,7 @@ func createMarkdownTemplate(settings parse.Settings) error {
 	}
 
 	templatePath := filepath.Join(".", filename) // Default to current directory
-	if isFlagPassed("output-dir") {
+	if isFlagPassed("output-path") {
 		templatePath = filepath.Join(settings.OutputDirectory, filename)
 	}
 

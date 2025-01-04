@@ -9,8 +9,12 @@ go build .
 
 Remove-Item "docs/*" -Recurse -Force
 
+copy README.md sample_content/01_readme.md
+
 magick -density 376 -background none "logo.svg" "sample_content/01_dsbg_logo.webp"
 magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque black -blur 0x1  -crop 167x167+0+0  "assets/favicon.ico"
+
+./dsbg.exe -template -title "My Awesome Post" -description "A sample template" -output-path "sample_content"
 
 start chrome http://localhost:666/index.html
 
