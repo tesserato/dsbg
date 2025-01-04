@@ -100,7 +100,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 
 <body>
     <header>
-		<a href="/"> &#9665; {{.Settings.Title}} </a>
+		<a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}> &#9665; {{.Settings.Title}} </a>
         <h1>{{.Art.Title}}</h1>
         <h2>{{.Art.Description}}</h2>
     </header>
@@ -137,7 +137,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     	<ul id="search-results"></ul>
 		<nav>
 		{{range .PageList}}
-			<a href="{{.LinkToSelf}}"  {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>{{.Title}}</a>
+			<a href="{{.LinkToSelf}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>{{.Title}}</a>
 		{{end}}
 		</nav>
 		<h2>{{.Settings.Description}}</h2>
