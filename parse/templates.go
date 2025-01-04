@@ -189,14 +189,16 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 			<guid>{{ buildArticleURL . $.Settings  }}</guid>
 			<pubDate>{{ .Created | formatPubDate }}</pubDate>
 			<description>{{ .Description | htmlEscape }}</description>
+			{{- if .CoverImagePath }}
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
+				url="{{ .CoverImagePath }}" 
 				medium="image" 
 				type="image/jpeg" 
 				width="150" 
 				height="150"
 			/>
+			{{- end }}
 		</item>
 		{{- end }}
 	</channel>

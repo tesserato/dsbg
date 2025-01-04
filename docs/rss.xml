@@ -5,7 +5,7 @@
 		<link></link>
 		<description>Welcome to the DSBG (Dead Simple Blog Generator) blog</description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sat, 04 Jan 2025 13:48:46 +0000</lastBuildDate>
+		<lastBuildDate>Sat, 04 Jan 2025 17:16:26 +0000</lastBuildDate>
 		<atom:link href="/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>My Awesome Post</title>
@@ -13,14 +13,6 @@
 			<guid>/2025-01-04-My-Awesome-Post/index.html</guid>
 			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
 			<description>A sample template</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
-				height="150"
-			/>
 		</item>
 		<item>
 			<title>HTML page with custom CSS example</title>
@@ -28,14 +20,6 @@
 			<guid>/htmlpageexample/customcss/index.html</guid>
 			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>An example html page with custom CSS</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
-				height="150"
-			/>
 		</item>
 		<item>
 			<title>Markdown page example</title>
@@ -43,14 +27,6 @@
 			<guid>/markdown-page-example/index.html</guid>
 			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>This is a markdown page example</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
-				height="150"
-			/>
 		</item>
 		<item>
 			<title>HTML post with custom CSS example</title>
@@ -60,7 +36,7 @@
 			<description>An example html page with custom CSS</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
+				url="02_cover_image.jpg" 
 				medium="image" 
 				type="image/jpeg" 
 				width="150" 
@@ -75,7 +51,7 @@
 			<description>A comprehensive guide to using the Dead Simple Blog Generator.</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
+				url="01_dsbg_logo.webp" 
 				medium="image" 
 				type="image/jpeg" 
 				width="150" 
@@ -88,14 +64,6 @@
 			<guid>/0319940710pathdates/index.html</guid>
 			<pubDate>Sun, 10 Jul 1994 00:00:00 +0000</pubDate>
 			<description>Demonstrating how DSBG gets dates from the path.</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://www.pudim.com.br/pudim.jpg" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
-				height="150"
-			/>
 		</item>
 	</channel>
 </rss>
