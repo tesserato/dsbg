@@ -33,6 +33,14 @@ func isFlagPassed(name string) bool {
 	return found
 }
 
+func noFlagsPassed() bool {
+	found := false
+	flag.Visit(func(f *flag.Flag) {
+		found = true
+	})
+	return !found
+}
+
 func main() {
 	var settings parse.Settings
 
@@ -60,10 +68,21 @@ func main() {
 
 	flag.Parse()
 
-    // Display help message and exit if the "help" flag is enabled.
+	// Display help message and exit if the "help" flag is enabled.
 	if *showHelp {
 		flag.Usage()
 		return
+	}
+
+	// Check if the input directory exists.
+	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
+		// Display help message and exit if no flags are provided.
+		if noFlagsPassed() {
+			flag.Usage()
+			return
+		} else {
+			log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
+		}
 	}
 
 	// Create a basic Markdown template and exit if the "template" flag is enabled.
@@ -95,11 +114,6 @@ func main() {
 		settings.BaseUrl = "http://localhost:666"
 	} else {
 		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/")
-	}
-
-	// Check if the input directory exists.
-	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
-		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
 	}
 
 	// Create the output directory if it doesn't exist.
@@ -186,25 +200,25 @@ func startWatcher(settings parse.Settings) {
 	defer watcher.Close()
 
 	// Add the input directory and custom asset paths to the watcher.
-    if err := watcher.Add(settings.InputDirectory); err != nil {
+	if err := watcher.Add(settings.InputDirectory); err != nil {
 		log.Fatal(err)
 	}
-    
-    err = filepath.WalkDir(settings.InputDirectory, func(path string, d fs.DirEntry, err error) error {
+
+	err = filepath.WalkDir(settings.InputDirectory, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if d.IsDir() {
-            if err := watcher.Add(path); err != nil {
-                log.Fatal(err)
-            }
+			if err := watcher.Add(path); err != nil {
+				log.Fatal(err)
+			}
 		}
 		return nil
 	})
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if settings.PathToCustomCss != "" {
 		if err := watcher.Add(settings.PathToCustomCss); err != nil {
@@ -223,7 +237,7 @@ func startWatcher(settings parse.Settings) {
 	}
 
 	// Start the file server.
-    // time.Sleep(2 * time.Second)
+	// time.Sleep(2 * time.Second)
 	go serve(settings)
 	log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
 	for {
@@ -236,7 +250,7 @@ func startWatcher(settings parse.Settings) {
 			if event.Has(fsnotify.Write) {
 				log.Println("Changes detected. Rebuilding...")
 				buildWebsite(settings)
-                log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
+				log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
