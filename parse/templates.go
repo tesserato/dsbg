@@ -86,9 +86,9 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 	{{.Settings.AdditionalElementsTop}}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="ZBSCM">
+    <meta name="generator" content="Dead Simple Blog Generator (dsbg)">
 	<meta name="keywords" content="{{stringsJoin .Art.Tags ", "}}">
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="{{genCssRelativeLink .Art.LinkToSelf}}">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">

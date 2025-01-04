@@ -305,9 +305,6 @@ func CopyHtmlResources(settings Settings, article *Article) error {
 	}
 	article.LinkToSelf = filepath.ToSlash(LinkToSelf)
 	article.LinkToSave = filepath.ToSlash(outputPath)
-	// fmt.Printf(
-	// 	"InputDirectory: %s\noriginalArticlePath: %s\nrelativeInputPath: %s\noutputDirectory: %s\noutputPath: %s\nLinkToSelf: %s\n\n",
-	// 	settings.InputDirectory, article.OriginalPath, relativeInputPath, outputDirectory, article.LinkToSave, article.LinkToSelf)
 	return nil
 }
 
@@ -525,14 +522,40 @@ func MarkdownFile(path string) (Article, error) {
 	return article, nil
 }
 
+func genCssRelativeLink(linkToSelf string) string {
+	linkToSelf = strings.ToLower(linkToSelf)
+	linkToSelf = strings.ReplaceAll(linkToSelf, "http://", "")
+	linkToSelf = strings.ReplaceAll(linkToSelf, "https://", "")
+	linkToSelf = strings.ReplaceAll(linkToSelf, "\\", "/")
+	// Split the path by the OS specific separator
+
+	parts := strings.Split(linkToSelf, "/")
+	// // Handle files on the root directory
+	// if len(parts) <= 1 {
+	// 	return "style.css"
+	// }
+
+	// // Calculate the number of ".." needed
+	// upDirCount := len(parts) - 1
+	// if parts[len(parts)-1] == "index.html" {
+	// 	upDirCount = len(parts) - 2
+	// }
+
+	// Create the ".." string
+	upDir := strings.Repeat("../", len(parts)-1)
+	// Combine ".." with "style.css"
+	return upDir + "style.css"
+}
+
 // FormatMarkdown applies an HTML template to the Markdown content of an article.
 // Returns an error if template parsing or execution fails.
 func FormatMarkdown(article *Article, settings Settings) error {
 	// Define template functions.
 	tmpl, err := template.New("markdown_template").Funcs(
 		template.FuncMap{
-			"stringsJoin":    strings.Join,
-			"slicesContains": slices.Contains[[]string]}).Parse(htmlArticleTemplate)
+			"genCssRelativeLink": genCssRelativeLink,
+			"stringsJoin":        strings.Join,
+			"slicesContains":     slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		return fmt.Errorf("error parsing markdown article template: %w", err)
 	}
