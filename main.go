@@ -91,6 +91,12 @@ func main() {
 		settings.AdditionalElemensBottom = template.HTML(content)
 	}
 
+	if settings.BaseUrl == "" {
+		settings.BaseUrl = "http://localhost:666"
+	} else {
+		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/")
+	}
+
 	// Check if the input directory exists.
 	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
 		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)

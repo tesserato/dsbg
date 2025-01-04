@@ -192,7 +192,7 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 			{{- if .CoverImagePath }}
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="{{ .CoverImagePath }}" 
+				url="{{ $.Settings.BaseUrl}}/{{ .CoverImagePath }}" 
 				medium="image" 
 				type="image/jpeg" 
 				width="150" 

@@ -2,41 +2,41 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Dead Simple Blog Generator</title>
-		<link></link>
+		<link>https://tesserato.github.io/dsbg</link>
 		<description>Welcome to the DSBG (Dead Simple Blog Generator) blog</description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sat, 04 Jan 2025 17:16:26 +0000</lastBuildDate>
-		<atom:link href="/rss.xml" rel="self" type="application/rss+xml" />
+		<lastBuildDate>Sat, 04 Jan 2025 18:38:23 +0000</lastBuildDate>
+		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>My Awesome Post</title>
-			<link>/2025-01-04-My-Awesome-Post/index.html</link>
-			<guid>/2025-01-04-My-Awesome-Post/index.html</guid>
+			<link>https://tesserato.github.io/dsbg/2025-01-04-My-Awesome-Post/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/2025-01-04-My-Awesome-Post/index.html</guid>
 			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
 			<description>A sample template</description>
 		</item>
 		<item>
 			<title>HTML page with custom CSS example</title>
-			<link>/htmlpageexample/customcss/index.html</link>
-			<guid>/htmlpageexample/customcss/index.html</guid>
+			<link>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</guid>
 			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>An example html page with custom CSS</description>
 		</item>
 		<item>
 			<title>Markdown page example</title>
-			<link>/markdown-page-example/index.html</link>
-			<guid>/markdown-page-example/index.html</guid>
+			<link>https://tesserato.github.io/dsbg/markdown-page-example/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/markdown-page-example/index.html</guid>
 			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>This is a markdown page example</description>
 		</item>
 		<item>
 			<title>HTML post with custom CSS example</title>
-			<link>/02htmlpostexample/index.html</link>
-			<guid>/02htmlpostexample/index.html</guid>
+			<link>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</guid>
 			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
 			<description>An example html page with custom CSS</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="02_cover_image.jpg" 
+				url="https://tesserato.github.io/dsbg/02_cover_image.jpg" 
 				medium="image" 
 				type="image/jpeg" 
 				width="150" 
@@ -45,13 +45,13 @@
 		</item>
 		<item>
 			<title>01 Getting Started with DSBG</title>
-			<link>/01readme/index.html</link>
-			<guid>/01readme/index.html</guid>
+			<link>https://tesserato.github.io/dsbg/01readme/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/01readme/index.html</guid>
 			<pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
 			<description>A comprehensive guide to using the Dead Simple Blog Generator.</description>
 			<media:content 
 				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="01_dsbg_logo.webp" 
+				url="https://tesserato.github.io/dsbg/01_dsbg_logo.webp" 
 				medium="image" 
 				type="image/jpeg" 
 				width="150" 
@@ -60,8 +60,8 @@
 		</item>
 		<item>
 			<title>Using Dates from Paths</title>
-			<link>/0319940710pathdates/index.html</link>
-			<guid>/0319940710pathdates/index.html</guid>
+			<link>https://tesserato.github.io/dsbg/0319940710pathdates/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/0319940710pathdates/index.html</guid>
 			<pubDate>Sun, 10 Jul 1994 00:00:00 +0000</pubDate>
 			<description>Demonstrating how DSBG gets dates from the path.</description>
 		</item>
