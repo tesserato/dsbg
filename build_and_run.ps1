@@ -1,15 +1,26 @@
 $exec_name = "dsbg.exe"
+$front_matter = "---
+title: 01 Getting Started with DSBG
+description: A comprehensive guide to using the Dead Simple Blog Generator.
+created: 2024-07-04
+updated: 2024-07-05 10:30:00
+tags: [guide, tutorial, example]
+coverImagePath: 01_dsbg_logo.webp
+---"
 
 if (Test-Path $exec_name) {
     Remove-Item $exec_name
 }
 
 # go build -ldflags="-s -w" .
+go mod tidy
 go build .
 
 Remove-Item "docs/*" -Recurse -Force
 
-copy README.md sample_content/01_readme.md
+$content = Get-Content README.md -Encoding UTF8 -Raw
+$content = $front_matter + "`n`n" + $content
+Set-Content sample_content/01_readme.md $content
 
 magick -density 376 -background none "logo.svg" "sample_content/01_dsbg_logo.webp"
 magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque black -blur 0x1  -crop 167x167+0+0  "assets/favicon.ico"

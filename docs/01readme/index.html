@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="ZBSCM">
+	<meta name="keywords" content="guide, tutorial, example">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <title>01 Getting Started with DSBG</title>
+</head>
+
+<body>
+    <header>
+		<a href="/"> &#9665; Dead Simple Blog Generator </a>
+        <h1>01 Getting Started with DSBG</h1>
+        <h2>A comprehensive guide to using the Dead Simple Blog Generator.</h2>
+    </header>
+    <div class="detail">
+        <p>DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog or documentation site with minimal configuration.</p>
+<h1 id="installation">Installation</h1>
+<p>If you have Go installed run <code>go install github.com/tesserato/dsbg@latest</code>. Alternatively, you can download the appropriate binary from the <a href="https://github.com/tesserato/dsbg/releases">releases page</a> and optionally add it to your PATH.</p>
+<p>Then run <code>dsbg -h</code> to see the help message and make sure everything is set up correctly.</p>
+<h1 id="usage">Usage</h1>
+<p>Here are a few examples to get you started:</p>
+<h2 id="create-a-markdown-template">Create a Markdown Template</h2>
+<pre><code class="language-bash">dsbg -template -title &quot;My Awesome Post&quot; -description &quot;A sample template&quot;
+</code></pre>
+<p>This command generates a markdown file named with the current date (YYYY MM DD) in the current directory, ready to be filled with content. If you don't provide a title, the date will be the name of the generated file.</p>
+<h2 id="build-a-blog-with-a-predefined-theme-and-watch-mode">Build a Blog with a Predefined Theme and Watch Mode</h2>
+<pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -style dark
+</code></pre>
+<p>This command generates a blog with the &quot;dark&quot; theme and watches for changes in the content folder, rebuilding and serving the site on each change.</p>
+<h2 id="build-a-blog-with-custom-css">Build a Blog with Custom CSS</h2>
+<pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -css-path assets/style-colorful.css
+</code></pre>
+<p>This command creates a blog that is watched for changes, while using a custom CSS for styling.</p>
+<h2 id="including-custom-html-elements">Including Custom HTML Elements</h2>
+<pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -elements-top elements-top.html -elements-bottom elements-bottom.html
+</code></pre>
+<p>This command adds the contents of <code>elements-top.html</code> at the top of each page (useful for things like analytics tracking) and <code>elements-bottom.html</code> at the bottom of each page (useful for comments section or footers).</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Markdown &amp; HTML Support:</strong> Write content using Markdown or basic HTML. Mix and match as needed.</li>
+<li><strong>Frontmatter:</strong> Use YAML frontmatter in Markdown files to define metadata like title, description, dates, tags, and cover images.</li>
+<li><strong>Tag Filtering:</strong> Automatically generates tag-based filters on the main index page for easy content navigation.</li>
+<li><strong>Theming:</strong> Offers pre-defined themes (<code>default</code>, <code>dark</code>, <code>colorful</code>) and the option to use a custom CSS file.</li>
+<li><strong>RSS Feed Generation:</strong> Automatically creates an RSS feed (<code>rss.xml</code>) for your blog, making it easy for readers to subscribe.</li>
+<li><strong>Client-Side Search:</strong>  Includes a simple client-side search functionality powered by Fuse.js, allowing users to find content easily.</li>
+<li><strong>Resource Handling:</strong> Automatically copies images, scripts, and other linked resources from your content files to the output directory.</li>
+<li><strong>Automatic Date Handling:</strong> Extracts and displays date information from frontmatter, filenames, and file metadata.</li>
+<li><strong>Watch Mode:</strong>  Monitors your content directory for changes and automatically rebuilds the site. Includes a built-in local server for easy preview.</li>
+<li><strong>&quot;PAGE&quot; Tag:</strong> Special tag to designate pages by copying all the folder contents to the public folder.</li>
+<li><strong>Open Links in New Tabs:</strong> Option to open external article links in a new browser tab for a smoother user experience.</li>
+</ul>
+<h2 id="command-line-arguments">Command-Line Arguments</h2>
+<ul>
+<li><code>-title &lt;string&gt;</code>:  The title of your blog or website. (Default: <code>Blog</code>)</li>
+<li><code>-base-url &lt;string&gt;</code>:  The base URL for your website (e.g., <code>https://example.com</code>). Required for generating a correct RSS feed. (Default: none)</li>
+<li><code>-description &lt;string&gt;</code>: A brief description of your blog or website. (Default: <code>This is my blog</code>)</li>
+<li><code>-input-path &lt;string&gt;</code>: The path to the directory containing your source content files (Markdown and HTML). (Default: <code>content</code>)</li>
+<li><code>-output-path &lt;string&gt;</code>: The path to the directory where the generated website files will be saved. (Default: <code>public</code>)</li>
+<li><code>-date-format &lt;string&gt;</code>: The format for displaying dates on the website using Go's time formatting syntax (e.g.  <code>2006-01-02</code> , <code>02/01/2006</code>). (Default: <code>2006 01 02</code>)</li>
+<li><code>-index-name &lt;string&gt;</code>: The filename for your main index page. (Default: <code>index.html</code>)</li>
+<li><code>-css-path &lt;string&gt;</code>: The path to a custom CSS file to override default styles. (Default: none)</li>
+<li><code>-js-path &lt;string&gt;</code>: The path to a custom JavaScript file to add functionality to your site. (Default: none)</li>
+<li><code>-favicon-path &lt;string&gt;</code>: The path to a custom favicon file (e.g., <code>.ico</code>) for your site. (Default: none)</li>
+<li><code>-ignore-tags-from-paths</code>: Disable extracting tags from directory names. (Default: <code>false</code>)</li>
+<li><code>-keep-date-in-paths</code>: Do not remove date patterns from the generated file paths. (Default: <code>false</code>)</li>
+<li><code>-keep-date-in-titles</code>: Do not remove date patterns from article titles. (Default: <code>false</code>)</li>
+<li><code>-open-in-new-tab</code>: Open external article links in a new browser tab. (Default: <code>false</code>)</li>
+<li><code>-style &lt;string&gt;</code>: Choose a pre-defined theme: <code>default</code>, <code>dark</code>, or <code>colorful</code>. (Default: <code>default</code>)</li>
+<li><code>-elements-top &lt;string&gt;</code>:  The path to an HTML file with elements to include at the top of each generated page (e.g., analytics scripts, header). (Default: none)</li>
+<li><code>-elements-bottom &lt;string&gt;</code>:  The path to an HTML file with elements to include at the bottom of each generated page (e.g., comments section, footer). (Default: none)</li>
+<li><code>-help</code>: Display this help message and exit. (Default: <code>false</code>)</li>
+<li><code>-watch</code>:  Enable watch mode, automatically rebuild the site on changes, and start a local server. (Default: <code>false</code>)</li>
+<li><code>-template</code>:  Create a basic Markdown template file with frontmatter in the current directory. (Default: <code>false</code>)</li>
+</ul>
+<h3 id="considerations">Considerations</h3>
+<ul>
+<li>The output directory (<code>public</code> by default) is reset every time the program is run.</li>
+<li>no whitespace in link to image;</li>
+<li>pages with additional content in its on folder</li>
+</ul>
+<h2 id="contributing">Contributing</h2>
+<p>Your contributions are welcome! Feel free to submit pull requests or create issues for any bugs or new features you'd like to see.</p>
+
+    </div>
+    <div class="giscus"></div>
+	
+</body>
+</html>
