@@ -8,6 +8,7 @@ updated: {{.CurrentDate}}
 coverImagePath: 
 tags:
 ---
+
 # Markdown Content Examples
 
 Here's a mix of common Markdown elements to show you how they look:
@@ -25,9 +26,9 @@ Here's a mix of common Markdown elements to show you how they look:
 ## Code
 
 You can include code blocks with syntax highlighting:
-` +
 
-"```go" + `
+## Go example:
+` + "```go" + `
 package main
 
 import "fmt"
@@ -35,6 +36,31 @@ import "fmt"
 func main() {
     fmt.Println("Hello, DSBG!")
 }
+` + "```" + `
+
+## Rust example:
+` + "```rust" + `
+fn main() {
+    println!("Hello, DSBG!");
+}
+` + "```" + `
+
+## Python example:
+` + "```python" + `
+def main():
+    print("Hello, DSBG!")
+
+if __name__ == "__main__":
+    main()
+` + "```" + `
+
+## JavaScript example:
+` + "```javascript" + `
+function main() {
+  console.log("Hello, DSBG!");
+}
+
+main();
 ` + "```" + `
 
 ## Images
@@ -45,7 +71,7 @@ Images are automatically copied to the output directory:
 
 ## Text Formatting
 
-Here's some **bold** and *italic* text, and some` + " `inline code`" + `.
+Here's some **bold** and *italic* text, and some ` + "`inline code`" + `.
 
 ## Links and Quotes
 
