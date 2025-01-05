@@ -101,6 +101,7 @@ img {
 
 .detail img {
     max-height: 20rem;
+    padding-bottom: 2rem;
 }
 
 .detail {

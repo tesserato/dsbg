@@ -1,7 +1,7 @@
 $exec_name = "dsbg.exe"
 $front_matter = "---
 title: 01 Getting Started with DSBG
-description: A comprehensive guide to using the Dead Simple Blog Generator.
+description: How to install and use Dead Simple Blog Generator.
 created: 2024-07-04
 updated: 2024-07-05 10:30:00
 tags: [guide, tutorial, example]
@@ -27,9 +27,17 @@ magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque bla
 
 ./dsbg.exe -template -title "My Awesome Post" -description "A sample template" -output-path "sample_content"
 
+$description=@'
+Welcome to the Dead Simple Blog Generator blog.
+
+This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)
+
+[![Release Status](https://img.shields.io/github/release/tesserato/dsbg)](https://github.com/tesserato/dsbg/releases)
+
+'@
+
 start chrome http://localhost:666/index.html
 
 ./dsbg.exe -title "Dead Simple Blog Generator" `
-    -description "Welcome to the DSBG (Dead Simple Blog Generator) blog. 
-    This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)" `
+    -description "$description" `
     -watch -open-in-new-tab -css-path "assets/style.css" -input-path "sample_content" -output-path "docs" -base-url "https://tesserato.github.io/dsbg/"

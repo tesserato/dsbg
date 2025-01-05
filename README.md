@@ -1,13 +1,14 @@
-# DSBG (Dead Simple Blog Generator)
+<!-- # DSBG (Dead Simple Blog Generator) -->
 
-[![Go Version](https://img.shields.io/github/go-mod/go-version/tesserato/dsbg)](https://go.dev)
-[![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
-[![Release Status](https://img.shields.io/github/release/tesserato/dsbg)](https://github.com/tesserato/dsbg/releases)
+<!-- [![Go Version](https://img.shields.io/github/go-mod/go-version/tesserato/dsbg)](https://go.dev) -->
+
+<!-- [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE) -->
+
 <!-- [![Build Status](https://github.com/tesserato/dsbg/actions/workflows/go.yml/badge.svg)](https://github.com/tesserato/dsbg/actions/workflows/go.yml) -->
 
 DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a simple website with minimal configuration.
 
-## Installation
+# Installation
 
 To get started with DSBG, you'll first need to install it on your system. If you have Go installed, you can use the following command in your terminal:
 
@@ -27,11 +28,11 @@ dsbg -h
 
 This command will print the help message, displaying all available options and flags.
 
-## Usage
+# Usage
 
 Here are some examples to help you get started with DSBG:
 
-### Quick Test Blog
+## Quick Test Blog
 
 To quickly create a test blog and see DSBG in action, run:
 
@@ -41,7 +42,7 @@ dsbg -title "My First Blog" -description "A simple test blog"
 
 This command will generate a basic website with the title "My First Blog" and the description "A simple test blog".
 
-### Creating a Markdown Template
+## Creating a Markdown Template
 
 To create a new Markdown file with a pre-filled frontmatter template, run:
 
@@ -50,7 +51,7 @@ dsbg -template -title "My Awesome Post" -description "A sample template"
 ```
 This command generates a Markdown file named with the current date (YYYYMMDD) in the current directory. You can use this as a starting point to fill with content. If no title is given, the file will be named with the date.
 
-### Building a Blog with a Theme and Watch Mode
+## Building a Blog with a Theme and Watch Mode
 
 To build a blog using a predefined theme (dark) and enable watch mode (which automatically rebuilds the site on changes) use:
 
@@ -60,7 +61,7 @@ dsbg -title "My Awesome Blog" -description "My blog description" -watch -style d
 
 This command generates a blog with the "dark" theme and watches for changes in the content folder, rebuilding the website on each change. A local server will also start, to serve the blog on your browser.
 
-### Building a Blog with Custom CSS
+## Building a Blog with Custom CSS
 
 To use a custom CSS file to style your blog use:
 
@@ -70,7 +71,7 @@ dsbg -title "My Awesome Blog" -description "My blog description" -watch -css-pat
 
 This command creates a blog that is watched for changes, while using a custom CSS file for styling. Make sure that the path given with `-css-path` is the correct path to your CSS file.
 
-### Including Custom HTML Elements
+## Including Custom HTML Elements
 
 To include custom HTML elements (like analytics code, headers, or footers) in your blog use:
 
@@ -80,11 +81,11 @@ dsbg -title "My Awesome Blog" -description "My blog description" -watch -element
 
 This command adds the contents of `elements-top.html` at the top of each generated page, and the content of `elements-bottom.html` at the bottom of each generated page. The files given to these flags must be basic HTML files.
 
-### Special "PAGE" Tag Usage
+## Special "PAGE" Tag Usage
 
 For stand-alone pages or custom directories you want to copy, add the tag `PAGE` to your Markdown or HTML file's frontmatter, under the tags field. Then, the program will copy the directory and all its contents to the output folder. This is especially useful for HTML pages that have their own custom CSS and images, or for special documentation pages.
 
-## Features
+# Features
 
 Here's a breakdown of the core features of DSBG:
 
@@ -100,7 +101,7 @@ Here's a breakdown of the core features of DSBG:
 *   **"PAGE" Tag:** Use the `PAGE` tag in the frontmatter of a file to designate entire folders for copying into the public directory, which is useful for adding custom pages or resources.
 *   **Open Links in New Tabs:** Choose to open external links in new browser tabs, providing a smoother user experience for your readers.
 
-## Command-Line Arguments
+# Command-Line Arguments
 
 The following flags are available when using the `dsbg` command-line tool:
 
@@ -127,13 +128,13 @@ The following flags are available when using the `dsbg` command-line tool:
 | `-watch`                  | Enable watch mode, automatically rebuild the site on changes, and start a local server.                       | `false`           |
 | `-template`              | Create a basic Markdown template file with frontmatter in the current directory.                             | `false`           |
 
-## Caveats
+# Caveats
 
 *   The output directory (`public` by default) is completely reset (deleted and re-created) every time the program is run. Any files you have in this folder will be removed, so make sure to not store any important files there. This means that any custom JavaScript, CSS, or other files that are not in your input directory will be lost when you rebuild the blog.
 *   Links to images or other resources must not have any whitespace characters.
 *   If a HTML page has additional content in its own folder, then you must use the "PAGE" tag, to tell DSBG to copy the folder and all its contents to the output folder.
 *   If DSBG cannot parse a file, it will show a warning and move on. If a required resource is missing, it will print a warning, and the resource will be missing on the generated website.
 
-## Contributing
+# Contributing
 
 Contributions are welcome! If you find a bug, have a feature request, or would like to improve the documentation, feel free to submit a pull request or create an issue on [GitHub](https://github.com/tesserato/dsbg).
