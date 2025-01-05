@@ -29,4 +29,7 @@ magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque bla
 
 start chrome http://localhost:666/index.html
 
-./dsbg.exe -title "Dead Simple Blog Generator" -description "Welcome to the DSBG (Dead Simple Blog Generator) blog" -watch -open-in-new-tab -css-path "assets/style.css" -input-path "sample_content" -output-path "docs" -base-url "https://tesserato.github.io/dsbg/"
+./dsbg.exe -title "Dead Simple Blog Generator" `
+    -description "Welcome to the DSBG (Dead Simple Blog Generator) blog. 
+    This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)" `
+    -watch -open-in-new-tab -css-path "assets/style.css" -input-path "sample_content" -output-path "docs" -base-url "https://tesserato.github.io/dsbg/"

@@ -15,6 +15,8 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/parser"
 
 	"github.com/tesserato/dsbg/parse"
 )
@@ -43,11 +45,12 @@ func noFlagsPassed() bool {
 
 func main() {
 	var settings parse.Settings
+	var description string
 
 	// Define command-line flags with descriptions.
 	flag.StringVar(&settings.Title, "title", "Blog", "The title of the blog")
 	flag.StringVar(&settings.BaseUrl, "base-url", "", "The base URL of the blog (e.g., https://example.com)")
-	flag.StringVar(&settings.Description, "description", "This is my blog", "A short description of the blog")
+	flag.StringVar(&description, "description", "This is my blog", "A short description of the blog. Can be in Markdown format.")
 	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory containing source files (Markdown or HTML)")
 	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where generated website files will be saved")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates")
@@ -92,6 +95,19 @@ func main() {
 		}
 		return
 	}
+
+	// Convert Markdown description to HTML and store it in settings.
+	var markdown = goldmark.New(
+		goldmark.WithParserOptions(
+			parser.WithAttribute(),
+			parser.WithAutoHeadingID(),
+		),
+	)
+	var buf strings.Builder
+	if err := markdown.Convert([]byte(description), &buf); err != nil {
+		log.Fatalf("failed to convert description to HTML: %v", err)
+	}
+	settings.Description = template.HTML(buf.String())
 
 	// Read content of files specified by flags and store them in settings.
 	if *pathToAdditionalElementsTop != "" {
@@ -164,7 +180,7 @@ func createMarkdownTemplate(settings parse.Settings) error {
 
 	data := struct {
 		Title       string
-		Description string
+		Description template.HTML
 		CurrentDate string
 	}{
 		Title:       settings.Title,

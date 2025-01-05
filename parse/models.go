@@ -15,7 +15,7 @@ const (
 
 type Settings struct {
 	Title                     string
-	Description               string
+	Description               template.HTML
 	InputDirectory            string
 	OutputDirectory           string
 	DateFormat                string
