@@ -1,6 +1,14 @@
+/*
+    -------------------------------------------
+    GLOBAL VARIABLES & BOX-SIZING
+    -------------------------------------------
+*/
 :root {
+    /* Fonts */
     --header-font: "Georgia";
     --body-font: "Garamond";
+
+    /* Colors */
     --background: #eaeaea;
     --text: #555555;
     --card: #ededed;
@@ -9,9 +17,15 @@
 }
 
 * {
-    box-sizing: border-box;
+    box-sizing: border-box; /* Use border-box for easier sizing */
 }
 
+
+/*
+    -------------------------------------------
+    TAG FILTER BUTTONS (Show All / Hide All)
+    -------------------------------------------
+*/
 #hide_all_btn,
 #show_all_btn.off {
     border-radius: 50%;
@@ -36,31 +50,42 @@
     text-shadow: 0 0 0.4rem var(--text);
 }
 
+
+/*
+    -------------------------------------------
+    BASIC HTML STYLES
+    -------------------------------------------
+*/
 html {
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Center content horizontally */
     font-family: var(--body-font);
     background-color: var(--background);
     color: var(--text);
 }
 
 html * {
-    transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out; /* Smooth transition for all elements */
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased; /* Improve font rendering on webkit browsers */
+    -moz-osx-font-smoothing: grayscale; /* Improve font rendering on macOS */
     max-width: 90%;
-    /* font-size: 1.2rem; */
     padding: 1rem;
-    margin: 0 auto;
+    margin: 0 auto; /* Center the body content and set margin */
     line-height: 1.5;
 }
 
+
+/*
+    -------------------------------------------
+    NAVIGATION
+    -------------------------------------------
+*/
 nav {
     display: flex;
     align-items: center;
@@ -70,7 +95,7 @@ nav {
     color: var(--text);
     gap: 0.7rem;
     margin-bottom: .7rem;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow nav items to wrap on smaller screens */
 }
 
 nav a {
@@ -93,6 +118,11 @@ nav a:hover {
     box-shadow: none;
 }
 
+/*
+    -------------------------------------------
+    IMAGES
+    -------------------------------------------
+*/
 img {
     max-width: 100%;
     height: auto;
@@ -104,6 +134,12 @@ img {
     padding-bottom: 2rem;
 }
 
+
+/*
+    -------------------------------------------
+    ARTICLE DETAIL BOX
+    -------------------------------------------
+*/
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
@@ -135,6 +171,12 @@ details summary {
     margin: 0;
 }
 
+
+/*
+    -------------------------------------------
+    BUTTONS
+    -------------------------------------------
+*/
 button {
     width: fit-content;
     border: none;
@@ -167,6 +209,12 @@ button:hover {
         -.0rem -.0rem .1rem 0 var(--card) inset;
 }
 
+
+/*
+    -------------------------------------------
+    HEADER STYLES
+    -------------------------------------------
+*/
 header {
     display: flex;
     flex-direction: column;
@@ -203,6 +251,11 @@ header a {
     text-align: left;
 }
 
+/*
+    -------------------------------------------
+    TYPOGRAPHY
+    -------------------------------------------
+*/
 h1,
 h2,
 h3,
@@ -231,7 +284,6 @@ p {
 }
 
 a {
-    /* font-size: .96rem; */
     text-decoration: none;
     font-weight: 100;
     color: var(--link);
@@ -268,6 +320,12 @@ h5 {
     font-family: var(--header-font);
 }
 
+
+/*
+    -------------------------------------------
+    ARTICLE INFO / METADATA
+    -------------------------------------------
+*/
 .info {
     display: flex;
     flex-direction: column;
@@ -281,6 +339,7 @@ h5 {
     flex-grow: 10;
 }
 
+
 .date {
     padding: 0;
     margin: 0;
@@ -290,6 +349,11 @@ h5 {
     width: max-content;
 }
 
+/*
+    -------------------------------------------
+    LIST STYLES
+    -------------------------------------------
+*/
 /* Unordered list styles */
 ul {
     margin-left: 1.5rem; /* Initial indentation */
@@ -331,19 +395,23 @@ li {
   margin-bottom: .5rem; /* Consistent bottom margin for list items */
 }
 
-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-    height: auto;
-}
 
+/*
+    -------------------------------------------
+    INPUTS
+    -------------------------------------------
+*/
 input[type=checkbox] {
     accent-color: var(--link);
     filter: saturate(1.5);
 }
 
+
+/*
+    -------------------------------------------
+    ASIDE ELEMENT
+    -------------------------------------------
+*/
 aside {
     margin: 0 0 0 1rem;
     padding: 0;
@@ -360,6 +428,12 @@ aside img:hover {
     filter: opacity(25%);
 }
 
+
+/*
+    -------------------------------------------
+    TAGS CONTAINER & FILTER
+    -------------------------------------------
+*/
 #buttons,
 .tags {
     display: flex;
@@ -372,6 +446,12 @@ aside img:hover {
     flex-wrap: wrap;
 }
 
+
+/*
+    -------------------------------------------
+    FOOTER
+    -------------------------------------------
+*/
 footer {
     display: flex;
     justify-content: center;
@@ -379,7 +459,11 @@ footer {
     width: 100%;
 }
 
-
+/*
+    -------------------------------------------
+   SEARCH STYLES
+    -------------------------------------------
+*/
 #search-input {
     width: 100%;
     padding: 0.5rem;

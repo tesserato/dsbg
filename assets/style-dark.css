@@ -1,6 +1,14 @@
+/*
+    -------------------------------------------
+    GLOBAL VARIABLES & BOX-SIZING
+    -------------------------------------------
+*/
 :root {
+    /* Fonts */
     --header-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --body-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+    /* Colors (DARK THEME) */
     --background: #303030;
     --text: #bfbfbf;
     --card: #3c3c3e;
@@ -9,10 +17,16 @@
 }
 
 * {
-    box-sizing: border-box;
+    box-sizing: border-box; /* Use border-box for easier sizing */
 }
 
-#hide_all_btn, #show_all_btn.off {
+/*
+    -------------------------------------------
+    TAG FILTER BUTTONS (Show All / Hide All)
+    -------------------------------------------
+*/
+#hide_all_btn,
+#show_all_btn.off {
     border-radius: 50%;
     color: transparent;
     box-shadow:
@@ -20,7 +34,8 @@
         -.0rem -.0rem .1rem 0 var(--card);
 }
 
-#show_all_btn, #hide_all_btn.off {
+#show_all_btn,
+#hide_all_btn.off {
     border-radius: 50%;
     color: transparent;
     box-shadow:
@@ -28,36 +43,46 @@
         -.0rem -.0rem .1rem 0 var(--card);
 }
 
-#hide_all_btn:hover, #show_all_btn:hover {
+#hide_all_btn:hover,
+#show_all_btn:hover {
     color: var(--text);
     text-shadow: 0 0 0.4rem var(--text);
 }
 
+/*
+    -------------------------------------------
+    BASIC HTML STYLES
+    -------------------------------------------
+*/
 html {
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Center content horizontally */
     font-family: var(--body-font);
     background-color: var(--background);
     color: var(--text);
 }
 
 html * {
-    transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out; /* Smooth transition for all elements */
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased; /* Improve font rendering on webkit browsers */
+    -moz-osx-font-smoothing: grayscale; /* Improve font rendering on macOS */
     max-width: 90%;
-    font-size: 1rem;
     padding: 1rem;
-    margin: 0 auto;
+    margin: 0 auto; /* Center the body content and set margin */
     line-height: 1.5;
 }
 
+/*
+    -------------------------------------------
+    NAVIGATION
+    -------------------------------------------
+*/
 nav {
     display: flex;
     align-items: center;
@@ -67,7 +92,7 @@ nav {
     color: var(--text);
     gap: 0.7rem;
     margin-bottom: .7rem;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow nav items to wrap on smaller screens */
 }
 
 nav a {
@@ -83,7 +108,6 @@ nav a {
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--shadow),
         -.0rem -.0rem .1rem 0 var(--text);
-
 }
 
 nav a:hover {
@@ -91,12 +115,27 @@ nav a:hover {
     box-shadow: none;
 }
 
+/*
+    -------------------------------------------
+    IMAGES
+    -------------------------------------------
+*/
 img {
     max-width: 100%;
     height: auto;
     align-self: center;
 }
 
+.detail img {
+    max-height: 20rem;
+    padding-bottom: 2rem;
+}
+
+/*
+    -------------------------------------------
+    ARTICLE DETAIL BOX
+    -------------------------------------------
+*/
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
@@ -128,6 +167,11 @@ details summary {
     margin: 0;
 }
 
+/*
+    -------------------------------------------
+    BUTTONS
+    -------------------------------------------
+*/
 button {
     width: fit-content;
     border: none;
@@ -143,7 +187,6 @@ button {
         -.0rem -.0rem .1rem 0 var(--card);
 }
 
-
 button:hover {
     box-shadow: none;
 }
@@ -152,7 +195,6 @@ button:hover {
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--shadow) inset,
         -.0rem -.0rem .1rem 0 var(--card) inset;
-
 }
 
 .off:hover {
@@ -162,6 +204,11 @@ button:hover {
         -.0rem -.0rem .1rem 0 var(--card) inset;
 }
 
+/*
+    -------------------------------------------
+    HEADER STYLES
+    -------------------------------------------
+*/
 header {
     display: flex;
     flex-direction: column;
@@ -173,7 +220,7 @@ header {
 header h1 {
     margin: 0 0 1rem;
     padding: 0;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     font-family: var(--header-font);
     text-transform: uppercase;
@@ -198,19 +245,32 @@ header a {
     text-align: left;
 }
 
-h1, h2, h3, h4, h5, p, a {
+/*
+    -------------------------------------------
+    TYPOGRAPHY
+    -------------------------------------------
+*/
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+a {
     text-align: justify;
     text-justify: inter-word;
     margin: 0.5rem 0;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     letter-spacing: 0.05em;
     margin-bottom: 1.2em;
 }
 
 p {
-    font-size: 1rem;
+    font-size: 1.2rem;
     text-indent: 1.5rem;
     line-height: 140%;
     font-family: var(--body-font);
@@ -218,7 +278,6 @@ p {
 }
 
 a {
-    font-size: .96rem;
     text-decoration: none;
     font-weight: 100;
     color: var(--link);
@@ -229,7 +288,6 @@ a:hover {
     color: var(--card);
     text-shadow: 0.07rem 0.07rem 0.13rem var(--shadow);
 }
-
 
 h1 {
     font-size: 1.3rem;
@@ -256,13 +314,18 @@ h5 {
     font-family: var(--header-font);
 }
 
+/*
+    -------------------------------------------
+    ARTICLE INFO / METADATA
+    -------------------------------------------
+*/
 .info {
     display: flex;
     flex-direction: column;
     row-gap: 0.2rem;
     align-items: end;
     justify-content: space-between;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--text);
     opacity: 0.8;
     width: min-content;
@@ -278,24 +341,67 @@ h5 {
     width: max-content;
 }
 
+/*
+    -------------------------------------------
+    LIST STYLES
+    -------------------------------------------
+*/
+/* Unordered list styles */
 ul {
-    margin: 0;
-    padding: 0;
+    margin-left: 1.5rem; /* Initial indentation */
+    padding-left: 0; /* Remove default padding */
+    list-style-type: disc; /* Use bullets for all levels, but sublists will have smaller size.*/
+    margin-bottom: 1rem;
 }
 
-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-    height: auto;
+ul ul {
+    margin-left: 2rem; /* Increased indentation for nested ul */
+    list-style-type: circle;
 }
 
+ul ul ul{
+     margin-left: 2.5rem; /* Increased indentation for nested ul */
+     list-style-type: square;
+}
+
+/* Ordered list styles */
+ol {
+    margin-left: 1.5rem; /* Initial indentation */
+    padding-left: 0; /* Remove default padding */
+    list-style-type: decimal;
+    margin-bottom: 1rem; /* Add some bottom margin for spacing */
+    
+}
+
+ol ol {
+    margin-left: 2rem; /* Increased indentation for nested ol */
+    list-style-type: upper-roman;  
+}
+
+ol ol ol{
+    margin-left: 2.5rem; /* Increased indentation for nested ol */
+    list-style-type: decimal;
+}
+
+li {
+  margin-bottom: .5rem; /* Consistent bottom margin for list items */
+}
+
+/*
+    -------------------------------------------
+    INPUTS
+    -------------------------------------------
+*/
 input[type=checkbox] {
     accent-color: var(--link);
     filter: saturate(1.5);
 }
 
+/*
+    -------------------------------------------
+    ASIDE ELEMENT
+    -------------------------------------------
+*/
 aside {
     margin: 0 0 0 1rem;
     padding: 0;
@@ -312,6 +418,11 @@ aside img:hover {
     filter: opacity(25%);
 }
 
+/*
+    -------------------------------------------
+    TAGS CONTAINER & FILTER
+    -------------------------------------------
+*/
 #buttons,
 .tags {
     display: flex;
@@ -325,14 +436,23 @@ aside img:hover {
 }
 
 
+/*
+    -------------------------------------------
+    FOOTER
+    -------------------------------------------
+*/
 footer {
-    height: 200px;
-    /* Or adjust as needed */
-    background-color: var(--link);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
 }
 
-
+/*
+    -------------------------------------------
+   SEARCH STYLES
+    -------------------------------------------
+*/
 #search-input {
     width: 100%;
     padding: 0.5rem;
