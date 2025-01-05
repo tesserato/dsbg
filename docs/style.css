@@ -372,9 +372,9 @@ aside img:hover {
 }
 
 footer {
-    height: 200px;
-    /* Or adjust as needed */
-    background-color: var(--link);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
 }
 

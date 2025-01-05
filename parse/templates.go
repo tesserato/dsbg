@@ -104,11 +104,18 @@ var htmlArticleTemplate = `<!DOCTYPE html>
         <h1>{{.Art.Title}}</h1>
         <h2>{{.Art.Description}}</h2>
     </header>
+
     <div class="detail">
         {{.Ctt}}
     </div>
+
     <div class="giscus"></div>
+
 	{{.Settings.AdditionalElemensBottom}}
+
+	<footer>
+		<a href="https://tesserato.github.io/dsbg/" target="_blank">Created with Dead Simple Blog Generator</a>
+	</footer>
 </body>
 </html>
 `
@@ -169,6 +176,10 @@ var htmlIndexTemplate = `<!DOCTYPE html>
     {{end}}
     <script src="script.js" async defer></script>
     {{.Settings.AdditionalElemensBottom}}
+
+	<footer>
+		<a href="https://tesserato.github.io/dsbg/" target="_blank">Created with Dead Simple Blog Generator</a>
+	</footer>
 </body>
 </html>
 `
