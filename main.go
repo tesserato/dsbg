@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/parser"
+	// "github.com/yuin/goldmark"
+	// "github.com/yuin/goldmark/parser"
 
 	"github.com/tesserato/dsbg/parse"
 )
@@ -97,14 +97,14 @@ func main() {
 	}
 
 	// Convert Markdown description to HTML and store it in settings.
-	var markdown = goldmark.New(
-		goldmark.WithParserOptions(
-			parser.WithAttribute(),
-			parser.WithAutoHeadingID(),
-		),
-	)
+	// var markdown = goldmark.New(
+	// 	goldmark.WithParserOptions(
+	// 		parser.WithAttribute(),
+	// 		parser.WithAutoHeadingID(),
+	// 	),
+	// )
 	var buf strings.Builder
-	if err := markdown.Convert([]byte(description), &buf); err != nil {
+	if err := parse.Markdown.Convert([]byte(description), &buf); err != nil {
 		log.Fatalf("failed to convert description to HTML: %v", err)
 	}
 	settings.Description = template.HTML(buf.String())

@@ -23,54 +23,188 @@
         <h2>A comprehensive guide to using the Dead Simple Blog Generator.</h2>
     </header>
     <div class="detail">
-        <p>DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog or documentation site with minimal configuration.</p>
-<h1 id="installation">Installation</h1>
-<p>If you have Go installed run <code>go install github.com/tesserato/dsbg@latest</code>. Alternatively, you can download the appropriate binary from the <a href="https://github.com/tesserato/dsbg/releases">releases page</a> and optionally add it to your PATH.</p>
-<p>Then run <code>dsbg -h</code> to see the help message and make sure everything is set up correctly.</p>
-<h1 id="usage">Usage</h1>
-<p>Here are a few examples to get you started:</p>
-<h2 id="create-a-markdown-template">Create a Markdown Template</h2>
+        <h1 id="dsbg-dead-simple-blog-generator">DSBG (Dead Simple Blog Generator)</h1>
+<p><a href="https://go.dev"><img src="https://img.shields.io/github/go-mod/go-version/tesserato/dsbg" alt="Go Version"></a>
+<a href="https://github.com/tesserato/dsbg/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tesserato/dsbg" alt="License"></a>
+<a href="https://github.com/tesserato/dsbg/releases"><img src="https://img.shields.io/github/release/tesserato/dsbg" alt="Release Status"></a></p>
+<!-- raw HTML omitted -->
+<p>DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a simple website with minimal configuration.</p>
+<h2 id="installation">Installation</h2>
+<p>To get started with DSBG, you'll first need to install it on your system. If you have Go installed, you can use the following command in your terminal:</p>
+<pre><code class="language-bash">go install github.com/tesserato/dsbg@latest
+</code></pre>
+<p>This command will download and install the latest version of DSBG.</p>
+<p>Alternatively, you can download a pre-built binary for your operating system from the <a href="https://github.com/tesserato/dsbg/releases">releases page</a> and add it to your system's PATH. This will allow you to run the <code>dsbg</code> command from any directory.</p>
+<p>After installation, verify that DSBG is working correctly by running the help command:</p>
+<pre><code class="language-bash">dsbg -h
+</code></pre>
+<p>This command will print the help message, displaying all available options and flags.</p>
+<h2 id="usage">Usage</h2>
+<p>Here are some examples to help you get started with DSBG:</p>
+<h3 id="quick-test-blog">Quick Test Blog</h3>
+<p>To quickly create a test blog and see DSBG in action, run:</p>
+<pre><code class="language-bash">dsbg -title &quot;My First Blog&quot; -description &quot;A simple test blog&quot;
+</code></pre>
+<p>This command will generate a basic website with the title &quot;My First Blog&quot; and the description &quot;A simple test blog&quot;.</p>
+<h3 id="creating-a-markdown-template">Creating a Markdown Template</h3>
+<p>To create a new Markdown file with a pre-filled frontmatter template, run:</p>
 <pre><code class="language-bash">dsbg -template -title &quot;My Awesome Post&quot; -description &quot;A sample template&quot;
 </code></pre>
-<p>This command generates a markdown file named with the current date (YYYY MM DD) in the current directory, ready to be filled with content. If you don't provide a title, the date will be the name of the generated file.</p>
-<h2 id="build-a-blog-with-a-predefined-theme-and-watch-mode">Build a Blog with a Predefined Theme and Watch Mode</h2>
+<p>This command generates a Markdown file named with the current date (YYYYMMDD) in the current directory. You can use this as a starting point to fill with content. If no title is given, the file will be named with the date.</p>
+<h3 id="building-a-blog-with-a-theme-and-watch-mode">Building a Blog with a Theme and Watch Mode</h3>
+<p>To build a blog using a predefined theme (dark) and enable watch mode (which automatically rebuilds the site on changes) use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -style dark
 </code></pre>
-<p>This command generates a blog with the &quot;dark&quot; theme and watches for changes in the content folder, rebuilding and serving the site on each change.</p>
-<h2 id="build-a-blog-with-custom-css">Build a Blog with Custom CSS</h2>
+<p>This command generates a blog with the &quot;dark&quot; theme and watches for changes in the content folder, rebuilding the website on each change. A local server will also start, to serve the blog on your browser.</p>
+<h3 id="building-a-blog-with-custom-css">Building a Blog with Custom CSS</h3>
+<p>To use a custom CSS file to style your blog use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -css-path assets/style-colorful.css
 </code></pre>
-<p>This command creates a blog that is watched for changes, while using a custom CSS for styling.</p>
-<h2 id="including-custom-html-elements">Including Custom HTML Elements</h2>
+<p>This command creates a blog that is watched for changes, while using a custom CSS file for styling. Make sure that the path given with <code>-css-path</code> is the correct path to your CSS file.</p>
+<h3 id="including-custom-html-elements">Including Custom HTML Elements</h3>
+<p>To include custom HTML elements (like analytics code, headers, or footers) in your blog use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -elements-top elements-top.html -elements-bottom elements-bottom.html
 </code></pre>
-<p>This command adds the contents of <code>elements-top.html</code> at the top of each page (useful for things like analytics tracking) and <code>elements-bottom.html</code> at the bottom of each page (useful for comments section or footers).</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<h1 id="features">Features:</h1>
+<p>This command adds the contents of <code>elements-top.html</code> at the top of each generated page, and the content of <code>elements-bottom.html</code> at the bottom of each generated page. The files given to these flags must be basic HTML files.</p>
+<h3 id="special-page-tag-usage">Special &quot;PAGE&quot; Tag Usage</h3>
+<p>For stand-alone pages or custom directories you want to copy, add the tag <code>PAGE</code> to your Markdown or HTML file's frontmatter, under the tags field. Then, the program will copy the directory and all its contents to the output folder. This is especially useful for HTML pages that have their own custom CSS and images, or for special documentation pages.</p>
+<h2 id="features">Features</h2>
+<p>Here's a breakdown of the core features of DSBG:</p>
 <ul>
-<li><strong>Markdown &amp; HTML Support:</strong> Write content using Markdown or basic HTML. Mix and match as needed.</li>
-<li><strong>Frontmatter:</strong> Use YAML frontmatter in Markdown files to define metadata like title, description, dates, tags, and cover images.</li>
-<li><strong>Tag Filtering:</strong> Automatically generates tag-based filters on the main index page for easy content navigation.</li>
-<li><strong>Theming:</strong> Offers pre-defined themes (<code>default</code>, <code>dark</code>, <code>colorful</code>) and the option to use a custom CSS file.</li>
-<li><strong>RSS Feed Generation:</strong> Automatically creates an RSS feed (<code>rss.xml</code>) for your blog, making it easy for readers to subscribe.</li>
-<li><strong>Client-Side Search:</strong>  Includes a simple client-side search functionality powered by Fuse.js, allowing users to find content easily.</li>
-<li><strong>Resource Handling:</strong> Automatically copies images, scripts, and other linked resources from your content files to the output directory.</li>
-<li><strong>Automatic Date Handling:</strong> Extracts and displays date information from frontmatter, filenames, and file metadata.</li>
-<li><strong>Watch Mode:</strong>  Monitors your content directory for changes and automatically rebuilds the site. Includes a built-in local server for easy preview.</li>
-<li><strong>&quot;PAGE&quot; Tag:</strong> Special tag to designate pages by copying all the folder contents to the public folder.</li>
-<li><strong>Open Links in New Tabs:</strong> Option to open external article links in a new browser tab for a smoother user experience.</li>
+<li><strong>Markdown &amp; HTML Support:</strong>  Write your content using Markdown for ease of use or basic HTML for more complex layouts. Mix and match these formats freely within the same site.</li>
+<li><strong>Frontmatter:</strong> Use YAML frontmatter in Markdown files to define metadata like the article's <code>title</code>, <code>description</code>, <code>created</code> and <code>updated</code> dates, <code>tags</code> for categorization, and <code>coverImagePath</code> to add a cover to each post.</li>
+<li><strong>Tag Filtering:</strong>  DSBG automatically generates tag-based filters on the main index page for easy navigation, allowing your visitors to find related content quickly.</li>
+<li><strong>Theming:</strong>  Choose between pre-defined themes (<code>default</code>, <code>dark</code>, <code>colorful</code>) or use your own custom CSS file to style your website the way you want.</li>
+<li><strong>RSS Feed Generation:</strong> DSBG automatically generates an RSS feed (<code>rss.xml</code>) for your blog, allowing your readers to subscribe to your content updates.</li>
+<li><strong>Client-Side Search:</strong> A simple client-side search powered by Fuse.js is included, enabling users to easily search for content within your website.</li>
+<li><strong>Resource Handling:</strong> DSBG automatically identifies and copies resources (images, scripts, etc.) linked in your Markdown or HTML content to the output directory.</li>
+<li><strong>Automatic Date Handling:</strong> DSBG extracts and displays date information from frontmatter fields, filenames, or file metadata, ensuring your content displays with accurate dates.</li>
+<li><strong>Watch Mode:</strong> When enabled, DSBG monitors your content directory for changes and automatically rebuilds the website and starts a local server, allowing for a smooth writing experience.</li>
+<li><strong>&quot;PAGE&quot; Tag:</strong> Use the <code>PAGE</code> tag in the frontmatter of a file to designate entire folders for copying into the public directory, which is useful for adding custom pages or resources.</li>
+<li><strong>Open Links in New Tabs:</strong> Choose to open external links in new browser tabs, providing a smoother user experience for your readers.</li>
 </ul>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<h1 id="caveats">Caveats</h1>
+<h2 id="command-line-arguments">Command-Line Arguments</h2>
+<p>The following flags are available when using the <code>dsbg</code> command-line tool:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-title</code></td>
+<td>The title of your blog or website.</td>
+<td><code>Blog</code></td>
+</tr>
+<tr>
+<td><code>-base-url</code></td>
+<td>The base URL for your website (e.g., <code>https://example.com</code>). Required for generating a correct RSS feed.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>-description</code></td>
+<td>A brief description of your blog or website. Can be in Markdown format.</td>
+<td><code>This is my blog</code></td>
+</tr>
+<tr>
+<td><code>-input-path</code></td>
+<td>The path to the directory containing your source content files (Markdown and HTML).</td>
+<td><code>content</code></td>
+</tr>
+<tr>
+<td><code>-output-path</code></td>
+<td>The path to the directory where the generated website files will be saved.</td>
+<td><code>public</code></td>
+</tr>
+<tr>
+<td><code>-date-format</code></td>
+<td>The format for displaying dates on the website using Go's time formatting syntax (e.g., <code>2006-01-02</code>).</td>
+<td><code>2006 01 02</code></td>
+</tr>
+<tr>
+<td><code>-index-name</code></td>
+<td>The filename for your main index page.</td>
+<td><code>index.html</code></td>
+</tr>
+<tr>
+<td><code>-css-path</code></td>
+<td>The path to a custom CSS file to override default styles.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>-js-path</code></td>
+<td>The path to a custom JavaScript file to add functionality to your site.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>-favicon-path</code></td>
+<td>The path to a custom favicon file (e.g., <code>.ico</code>) for your site.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>-ignore-tags-from-paths</code></td>
+<td>Disable extracting tags from directory names.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>-keep-date-in-paths</code></td>
+<td>Do not remove date patterns from the generated file paths.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>-keep-date-in-titles</code></td>
+<td>Do not remove date patterns from article titles.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>-open-in-new-tab</code></td>
+<td>Open external article links in a new browser tab.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>-style</code></td>
+<td>Choose a pre-defined theme: <code>default</code>, <code>dark</code>, or <code>colorful</code>.</td>
+<td><code>default</code></td>
+</tr>
+<tr>
+<td><code>-elements-top</code></td>
+<td>The path to an HTML file with elements to include at the top of each generated page (e.g., analytics scripts).</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>-elements-bottom</code></td>
+<td>The path to an HTML file with elements to include at the bottom of each generated page.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>-help</code></td>
+<td>Display this help message and exit.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>-watch</code></td>
+<td>Enable watch mode, automatically rebuild the site on changes, and start a local server.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>-template</code></td>
+<td>Create a basic Markdown template file with frontmatter in the current directory.</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="caveats">Caveats</h2>
 <ul>
-<li>The output directory (<code>public</code> by default) is reset every time the program is run.</li>
-<li>no whitespace in link to image;</li>
-<li>pages with additional content in its on folder</li>
+<li>The output directory (<code>public</code> by default) is completely reset (deleted and re-created) every time the program is run. Any files you have in this folder will be removed, so make sure to not store any important files there. This means that any custom JavaScript, CSS, or other files that are not in your input directory will be lost when you rebuild the blog.</li>
+<li>Links to images or other resources must not have any whitespace characters.</li>
+<li>If a HTML page has additional content in its own folder, then you must use the &quot;PAGE&quot; tag, to tell DSBG to copy the folder and all its contents to the output folder.</li>
+<li>If DSBG cannot parse a file, it will show a warning and move on. If a required resource is missing, it will print a warning, and the resource will be missing on the generated website.</li>
 </ul>
-<h1 id="contributing">Contributing</h1>
-<p>Your contributions are welcome! Feel free to submit pull requests or create issues for any bugs or new features you'd like to see.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Contributions are welcome! If you find a bug, have a feature request, or would like to improve the documentation, feel free to submit a pull request or create an issue on <a href="https://github.com/tesserato/dsbg">GitHub</a>.</p>
 
     </div>
     <div class="giscus"></div>

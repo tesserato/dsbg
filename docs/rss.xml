@@ -7,7 +7,7 @@
 This is a sample blog created with DSBG from the source at <a href="https://github.com/tesserato/dsbg">github.com/tesserato/dsbg</a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sun, 05 Jan 2025 00:28:54 +0000</lastBuildDate>
+		<lastBuildDate>Sun, 05 Jan 2025 01:11:59 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>My Awesome Post</title>

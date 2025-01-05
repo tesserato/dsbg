@@ -6,3 +6,4 @@ DRAFT.md
 dsbg.exe
 # Added by goreleaser init:
 dist/
+gen_codebase.ps1

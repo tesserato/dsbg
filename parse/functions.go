@@ -3,11 +3,6 @@ package parse
 import (
 	"bytes"
 	"fmt"
-	"github.com/k3a/html2text"
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/parser"
-	"go.abhg.dev/goldmark/frontmatter"
-	"golang.org/x/net/html"
 	"html/template"
 	"io/fs"
 	"os"
@@ -19,6 +14,13 @@ import (
 	"strings"
 	texttemplate "text/template"
 	"time"
+
+	"github.com/k3a/html2text"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
+	"go.abhg.dev/goldmark/frontmatter"
+	"golang.org/x/net/html"
 )
 
 // regexPatterns defines a list of regular expression patterns to identify dates in strings.
@@ -29,13 +31,19 @@ var regexPatterns = []*regexp.Regexp{
 }
 
 // Configure Goldmark Markdown parser with frontmatter support.
-var markdown = goldmark.New(
+var Markdown = goldmark.New(
 	goldmark.WithParserOptions(
 		parser.WithAttribute(),
 		parser.WithAutoHeadingID(),
 	),
 	goldmark.WithExtensions(
 		&frontmatter.Extender{},
+	),
+	goldmark.WithExtensions(
+		extension.Table,
+		extension.Strikethrough,
+		extension.Linkify,
+		extension.TaskList,
 	),
 )
 
@@ -425,7 +433,7 @@ func MarkdownFile(path string) (Article, error) {
 
 	// Parse the Markdown content and render to HTML, storing frontmatter in the context.
 	var buf strings.Builder
-	if err := markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
+	if err := Markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
 		return Article{}, fmt.Errorf("failed to convert Markdown to HTML for '%s': %w", path, err)
 	}
 	// content := buf.String()
