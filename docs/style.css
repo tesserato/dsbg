@@ -5,21 +5,21 @@
 */
 :root {
     /* Fonts */
-    --header-font: 'Georgia', 'Times New Roman', Times, serif;
-    --body-font: 'Raleway', sans-serif;
+    --header-font: "Georgia";
+    --body-font: "Garamond";
 
-    /* Colors (COLORFUL THEME) */
-    --background: #ffffff;
-    --text: #000000;
-    --card: #50d459a7;
-    --button: #e65b5b;
-    --link: #15598a;
-    --shadow: rgba(98, 0, 0, 0.777);
+    /* Colors */
+    --background: #eaeaea;
+    --text: #555555;
+    --card: #ededed;
+    --link: #c92626;
+    --shadow: rgba(0, 0, 0, 0.25);
 }
 
 * {
     box-sizing: border-box; /* Use border-box for easier sizing */
 }
+
 
 /*
     -------------------------------------------
@@ -50,6 +50,7 @@
     text-shadow: 0 0 0.4rem var(--text);
 }
 
+
 /*
     -------------------------------------------
     BASIC HTML STYLES
@@ -79,6 +80,7 @@ body {
     line-height: 1.5;
 }
 
+
 /*
     -------------------------------------------
     NAVIGATION
@@ -102,7 +104,7 @@ nav a {
     margin: 0rem;
     text-decoration: none;
     color: var(--background);
-    background-color: var(--card);
+    background-color: var(--text);
     border-radius: 0.15em;
     filter: opacity(100%);
     text-shadow: none;
@@ -131,6 +133,7 @@ img {
     max-height: 20rem;
     padding-bottom: 2rem;
 }
+
 
 /*
     -------------------------------------------
@@ -168,6 +171,7 @@ details summary {
     margin: 0;
 }
 
+
 /*
     -------------------------------------------
     BUTTONS
@@ -182,7 +186,7 @@ button {
     font-size: .9rem;
     font-family: var(--body-font);
     color: var(--text);
-    background-color: var(--button);
+    background-color: var(--card);
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--shadow),
         -.0rem -.0rem .1rem 0 var(--card);
@@ -204,6 +208,7 @@ button:hover {
         0.1rem 0.1rem .3rem 0 var(--shadow) inset,
         -.0rem -.0rem .1rem 0 var(--card) inset;
 }
+
 
 /*
     -------------------------------------------
@@ -315,6 +320,7 @@ h5 {
     font-family: var(--header-font);
 }
 
+
 /*
     -------------------------------------------
     ARTICLE INFO / METADATA
@@ -332,6 +338,7 @@ h5 {
     width: min-content;
     flex-grow: 10;
 }
+
 
 .date {
     padding: 0;
@@ -388,6 +395,7 @@ li {
   margin-bottom: .5rem; /* Consistent bottom margin for list items */
 }
 
+
 /*
     -------------------------------------------
     INPUTS
@@ -397,6 +405,7 @@ input[type=checkbox] {
     accent-color: var(--link);
     filter: saturate(1.5);
 }
+
 
 /*
     -------------------------------------------
@@ -419,6 +428,7 @@ aside img:hover {
     filter: opacity(25%);
 }
 
+
 /*
     -------------------------------------------
     TAGS CONTAINER & FILTER
@@ -435,6 +445,7 @@ aside img:hover {
     padding: 0;
     flex-wrap: wrap;
 }
+
 
 /*
     -------------------------------------------

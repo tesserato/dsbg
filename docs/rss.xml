@@ -8,7 +8,7 @@
 <p><a href="https://github.com/tesserato/dsbg/releases"><img src="https://img.shields.io/github/release/tesserato/dsbg" alt="Release Status"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sun, 05 Jan 2025 15:35:30 +0000</lastBuildDate>
+		<lastBuildDate>Sun, 05 Jan 2025 16:47:44 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>My Awesome Post</title>
