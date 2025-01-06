@@ -147,7 +147,9 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 			<a href="{{.LinkToSelf}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>{{.Title}}</a>
 		{{end}}
 		</nav>
-		<h2>{{.Settings.Description}}</h2>
+		<div class="description">
+			{{.Settings.Description}}
+		</div>
 		<div id="buttons"></div>
         <aside></aside>
     </header>
