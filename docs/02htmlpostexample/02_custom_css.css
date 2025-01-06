@@ -1,19 +1,61 @@
+/*
+    -------------------------------------------
+    GLOBAL VARIABLES & BOX-SIZING
+    -------------------------------------------
+*/
 :root {
-    --header-font: 'Georgia', 'Times New Roman', Times, serif;
-    --body-font: 'Raleway', sans-serif;
-    --background: #fdfdfd;
-    --text: #333;
-    --card: #fff;
-    --button: #e65b5b;
-    --link: #15598a;
-    --shadow: rgba(0, 0, 0, 0.15);
+    /* Fonts */
+    --header-font: 'Lora', serif; /* Serif font for headings */
+    --body-font: 'Merriweather', serif; /* Serif font for body text */
+
+    /* Colors (Minimal Theme - Medium-like) */
+    --background: #fcfcfc; /* Light gray background */
+    --text: #2e2e2e; /* Dark gray text */
+    --card: #ffffff; /* White card background */
+    --link: #007bff; /* Medium Blue for links */
+    --shadow: rgba(0, 0, 0, 0.1); /* Subtle shadow */
+	--button: #f0f0f0;
 }
 
 * {
     box-sizing: border-box;
 }
 
+/*
+    -------------------------------------------
+    TAG FILTER BUTTONS (Show All / Hide All)
+    -------------------------------------------
+*/
+#hide_all_btn,
+#show_all_btn.off {
+    border-radius: 50%;
+    color: transparent;
+    box-shadow:
+        0.2rem 0.2rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--card);
+}
 
+#show_all_btn,
+#hide_all_btn.off {
+    border-radius: 50%;
+    color: transparent;
+    box-shadow:
+        0.3rem 0.3rem .3rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--card);
+}
+
+#hide_all_btn:hover,
+#show_all_btn:hover {
+    color: var(--text);
+    text-shadow: 0 0 0.4rem var(--text);
+}
+
+
+/*
+    -------------------------------------------
+    BASIC HTML STYLES
+    -------------------------------------------
+*/
 html {
     margin: 0;
     padding: 0;
@@ -32,13 +74,17 @@ html * {
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    max-width: 850px;
-    font-size: 1rem;
+    max-width: 90%;
     padding: 1rem;
     margin: 0 auto;
-    line-height: 1.5;
+    line-height: 1.7; /* Increased line height for better readability */
 }
 
+/*
+    -------------------------------------------
+    NAVIGATION
+    -------------------------------------------
+*/
 nav {
     display: flex;
     align-items: center;
@@ -56,35 +102,49 @@ nav a {
     padding: 0.1rem 0.3rem;
     margin: 0rem;
     text-decoration: none;
-    color: var(--background);
-    background-color: var(--text);
+    color: var(--text);
+    background-color: var(--button);
     border-radius: 0.15em;
     filter: opacity(100%);
     text-shadow: none;
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--shadow),
-        -.0rem -.0rem .1rem 0 var(--text);
-
+	box-shadow:
+        0.1rem 0.1rem .2rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--background);
 }
 
 nav a:hover {
-    background-color: var(--link);
-    box-shadow: none;
+    background-color: var(--background);
+	color: var(--text);
+	box-shadow: none;
 }
 
+/*
+    -------------------------------------------
+    IMAGES
+    -------------------------------------------
+*/
 img {
     max-width: 100%;
     height: auto;
     align-self: center;
 }
 
+.detail img {
+    max-height: 20rem;
+    padding-bottom: 2rem;
+}
 
+/*
+    -------------------------------------------
+    ARTICLE DETAIL BOX
+    -------------------------------------------
+*/
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
     padding: 1.5rem;
     margin: 0 0 1rem;
-    border: 1px solid #eee;
+    border: none;
     box-shadow:
         .1rem .1rem .3rem 0 var(--shadow);
     color: var(--text);
@@ -109,6 +169,11 @@ details summary {
     margin: 0;
 }
 
+/*
+    -------------------------------------------
+    BUTTONS
+    -------------------------------------------
+*/
 button {
     width: fit-content;
     border: none;
@@ -119,28 +184,34 @@ button {
     font-family: var(--body-font);
     color: var(--text);
     background-color: var(--button);
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--shadow);
+	box-shadow:
+        0.1rem 0.1rem .2rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--background);
 }
-
 
 button:hover {
     box-shadow: none;
+	background-color: var(--background);
 }
 
 .off {
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--shadow) inset;
-
+	box-shadow:
+        0.1rem 0.1rem .2rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--background) inset;
 }
 
 .off:hover {
     opacity: 30%;
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--shadow) inset;
+	box-shadow:
+        0.1rem 0.1rem .2rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--background) inset;
 }
 
-
+/*
+    -------------------------------------------
+    HEADER STYLES
+    -------------------------------------------
+*/
 header {
     display: flex;
     flex-direction: column;
@@ -152,11 +223,11 @@ header {
 header h1 {
     margin: 0 0 1rem;
     padding: 0;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: 700;
     font-family: var(--header-font);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    text-transform: none; /* Remove uppercase text */
+    letter-spacing: 0.02em;
     margin-bottom: 0.5rem;
     text-align: center;
 }
@@ -164,7 +235,7 @@ header h1 {
 header h2 {
     margin: 0 0 1rem;
     padding: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 400;
     font-family: var(--header-font);
     opacity: 70%;
@@ -177,43 +248,55 @@ header a {
     text-align: left;
 }
 
-h1, h2, h3, h4, h5, p, a {
+/*
+    -------------------------------------------
+    TYPOGRAPHY
+    -------------------------------------------
+*/
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+a {
     text-align: justify;
     text-justify: inter-word;
     margin: 0.5rem 0;
 }
 
-h1, h2, h3 {
-    letter-spacing: 0.05em;
+h1,
+h2,
+h3 {
+    letter-spacing: 0.02em;
     margin-bottom: 1.2em;
 }
 
 p {
-    font-size: 1rem;
+    font-size: 1.1rem; /* slightly bigger font-size*/
     text-indent: 1.5rem;
-    line-height: 140%;
+    line-height: 160%; /* Increased line-height for better readability*/
     font-family: var(--body-font);
     margin-bottom: 1rem;
 }
 
+
 a {
-    font-size: .96rem;
     text-decoration: none;
-    font-weight: 100;
+    font-weight: 500;
     color: var(--link);
-    text-shadow: 0.07rem 0.07rem 0.13rem var(--shadow);
+	text-shadow: none;
 }
 
 a:hover {
-    color: var(--button);
-    text-shadow: 0.07rem 0.07rem 0.13rem var(--shadow);
+	text-decoration: underline;
+    color: var(--link);
+	text-shadow: none;
 }
 
-
 h1 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-family: var(--header-font);
-    margin-bottom: 1em;
 }
 
 h2 {
@@ -236,13 +319,18 @@ h5 {
     font-family: var(--header-font);
 }
 
+/*
+    -------------------------------------------
+    ARTICLE INFO / METADATA
+    -------------------------------------------
+*/
 .info {
     display: flex;
     flex-direction: column;
     row-gap: 0.2rem;
     align-items: end;
     justify-content: space-between;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--text);
     opacity: 0.8;
     width: min-content;
@@ -258,48 +346,67 @@ h5 {
     width: max-content;
 }
 
+/*
+    -------------------------------------------
+    LIST STYLES
+    -------------------------------------------
+*/
+/* Unordered list styles */
 ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: disc;
-    margin-left: 2rem;
+    margin-left: 1.5rem; /* Initial indentation */
+    padding-left: 0; /* Remove default padding */
+    list-style-type: disc; /* Use bullets for all levels, but sublists will have smaller size.*/
+    margin-bottom: 1rem;
 }
 
-li{
-    margin-bottom: .5em;
+ul ul {
+    margin-left: 2rem; /* Increased indentation for nested ul */
+    list-style-type: circle;
 }
 
-
-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-    height: auto;
-    margin: 1rem 0;
+ul ul ul{
+     margin-left: 2.5rem; /* Increased indentation for nested ul */
+     list-style-type: square;
 }
 
-
-code {
-    background-color: #eee;
-    padding: .2rem .5rem;
-    border-radius: .2rem;
+/* Ordered list styles */
+ol {
+    margin-left: 1.5rem; /* Initial indentation */
+    padding-left: 0; /* Remove default padding */
+    list-style-type: decimal;
+    margin-bottom: 1rem; /* Add some bottom margin for spacing */
+    
 }
 
-pre {
-    background-color: #eee;
-    padding: 1rem;
-    border-radius: .2rem;
-    overflow-x: auto; /* Make it scrollable on small screens */
-    white-space: pre-wrap; /* Allow wrapping of long lines */
+ol ol {
+    margin-left: 2rem; /* Increased indentation for nested ol */
+    list-style-type: upper-roman;  
 }
 
+ol ol ol{
+    margin-left: 2.5rem; /* Increased indentation for nested ol */
+    list-style-type: decimal;
+}
 
+li {
+  margin-bottom: .5rem; /* Consistent bottom margin for list items */
+}
+
+/*
+    -------------------------------------------
+    INPUTS
+    -------------------------------------------
+*/
 input[type=checkbox] {
     accent-color: var(--link);
     filter: saturate(1.5);
 }
 
+/*
+    -------------------------------------------
+    ASIDE ELEMENT
+    -------------------------------------------
+*/
 aside {
     margin: 0 0 0 1rem;
     padding: 0;
@@ -316,6 +423,11 @@ aside img:hover {
     filter: opacity(25%);
 }
 
+/*
+    -------------------------------------------
+    TAGS CONTAINER & FILTER
+    -------------------------------------------
+*/
 #buttons,
 .tags {
     display: flex;
@@ -328,15 +440,23 @@ aside img:hover {
     flex-wrap: wrap;
 }
 
-
+/*
+    -------------------------------------------
+    FOOTER
+    -------------------------------------------
+*/
 footer {
-    height: 200px;
-    /* Or adjust as needed */
-    background-color: var(--link);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
 }
 
-
+/*
+    -------------------------------------------
+   SEARCH STYLES
+    -------------------------------------------
+*/
 #search-input {
     width: 100%;
     padding: 0.5rem;
@@ -347,15 +467,15 @@ footer {
     font-size: 1rem;
     color: var(--text-color);
     background-color: var(--card-background-color);
-    box-shadow:
-        0.1rem 0.1rem .3rem 0 var(--shadow) inset,
+	box-shadow:
+        0.1rem 0.1rem .2rem 0 var(--shadow) inset,
         -.0rem -.0rem .1rem 0 var(--background) inset;
 }
 
 #search-input:focus {
     border-radius: 0.15rem;
     box-shadow:
-        0.1rem 0.1rem .5rem 0 var(--shadow),
+        0.1rem 0.1rem .3rem 0 var(--shadow),
         -.0rem -.0rem .2rem 0 var(--background);
 }
 
@@ -368,8 +488,8 @@ footer {
     border: none;
     border-radius: 0.25rem;
     background-color: var(--card-background-color);
-    box-shadow:
-        0.1rem 0.1rem .5rem 0 var(--shadow),
+	box-shadow:
+        0.1rem 0.1rem .3rem 0 var(--shadow),
         -.0rem -.0rem .2rem 0 var(--background);
 }
 
@@ -385,13 +505,5 @@ footer {
 
 #search-results li a:hover {
     color: var(--text);
-}
-
-blockquote {
-    background: #f0f0f0;
-    padding: 1em 2em;
-    margin: 1em 0;
-    border-left: .2em solid var(--link);
-    border-radius: .2em;
-    font-style: italic;
+	text-decoration: underline;
 }

@@ -1,8 +1,8 @@
 ---
 title: 01 Getting Started with DSBG
 description: How to install and use Dead Simple Blog Generator.
-created: 2024-07-04
-updated: 2024-07-05 10:30:00
+created: 2025 01 04
+updated: 2025 01 04
 tags: [guide, tutorial, example]
 coverImagePath: 01_dsbg_logo.webp
 ---
