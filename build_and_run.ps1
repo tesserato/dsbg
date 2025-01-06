@@ -30,10 +30,27 @@ magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque bla
 $description=@'
 Welcome to the Dead Simple Blog Generator blog.
 
+A new static site generator that's truly simple. Built with Go for speed & efficiency.
+
+Easy installation: Download a [pre-built binary](https://github.com/tesserato/dsbg/releases) or use `go install github.com/tesserato/dsbg@latest`,
+
+Support for Markdown & HTML source files, 
+
+Tag generation and filtering, 
+
+Client-side fuzzy search,
+
+RSS feed generation,
+
+Watch mode with automatic re-rendering,
+
+3 different themes, with the ability to add your own via custom CSS.
+
+Easy analytics, comments, and more.
+
 This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)
 
 [![Release Status](https://img.shields.io/github/release/tesserato/dsbg)](https://github.com/tesserato/dsbg/releases)
-
 '@
 
 start chrome http://localhost:666/index.html
