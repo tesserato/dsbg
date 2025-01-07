@@ -133,6 +133,7 @@ img {
 .detail img {
     max-height: 20rem;
     padding-bottom: 2rem;
+    align-self: center;
 }
 
 
@@ -144,7 +145,7 @@ img {
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
-    padding: 1.5rem;
+    padding: 1.0rem;
     margin: 0 0 1rem;
     border: none;
     box-shadow:
@@ -168,8 +169,9 @@ details summary {
 }
 
 .description {
-    padding: 0;
-    margin: 0;
+    padding: 0 0 1rem;
+    margin: 0 0 1rem;
+    word-break: break-all;
 }
 
 

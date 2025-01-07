@@ -61,4 +61,5 @@ start chrome http://localhost:666/index.html
     -input-path "sample_content" `
     -output-path "docs" `
     -base-url "https://tesserato.github.io/dsbg/" `
-    --elements-top "analytics.html"
+    -elements-top "analytics.html" `
+    -style "default"

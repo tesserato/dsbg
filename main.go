@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
+	"github.com/tesserato/dsbg/parse"
 	"html/template"
 	"io/fs"
 	"log"
@@ -12,13 +14,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 	texttemplate "text/template"
-	"github.com/fsnotify/fsnotify"
-	// "github.com/yuin/goldmark"
-	// "github.com/yuin/goldmark/parser"
-
-	"github.com/tesserato/dsbg/parse"
+	"time"
 )
 
 //go:embed assets
@@ -252,8 +249,6 @@ func startWatcher(settings parse.Settings) {
 		}
 	}
 
-	// Start the file server.
-	// time.Sleep(2 * time.Second)
 	go serve(settings)
 	log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
 	for {
