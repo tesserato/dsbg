@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
+	texttemplate "text/template"
 	"github.com/fsnotify/fsnotify"
 	// "github.com/yuin/goldmark"
 	// "github.com/yuin/goldmark/parser"
@@ -310,6 +310,63 @@ func cleanContent(s string) []string {
 	return strings.Fields(s)
 }
 
+// applyCSSTemplate loads the css template, parses it, and executes it with the selected theme.
+func applyCSSTemplate(themeData parse.Theme, outputDirectory string) error {
+	tmpl, err := texttemplate.ParseFS(assets, "assets/style-template.css")
+	if err != nil {
+		return fmt.Errorf("error parsing style template: %w", err)
+	}
+
+	var output strings.Builder
+	err = tmpl.Execute(&output, themeData)
+	if err != nil {
+		return fmt.Errorf("error executing style template: %w", err)
+	}
+
+	pathToSave := filepath.Join(outputDirectory, "style.css")
+	if err := os.WriteFile(pathToSave, []byte(output.String()), 0644); err != nil {
+		return fmt.Errorf("error saving processed css file: %w", err)
+	}
+	return nil
+}
+
+// getThemeData creates a theme struct with the appropiate settings
+func getThemeData(style parse.Style) parse.Theme {
+	switch style {
+	case parse.Dark:
+		return parse.Theme{
+			HeaderFont: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+			BodyFont:   "'Helvetica Neue', Helvetica, Arial, sans-serif",
+			Background: "#303030",
+			Text:       "#bfbfbf",
+			Card:       "#3c3c3e",
+			Link:       "#ff4b4b",
+			Shadow:     "rgba(0, 0, 0, 0.777)",
+		}
+	case parse.Colorful:
+		return parse.Theme{
+			HeaderFont: "'Georgia', 'Times New Roman', Times, serif",
+			BodyFont:   "'Raleway', sans-serif",
+			Background: "#ffffff",
+			Text:       "#000000",
+			Card:       "#50d459a7",
+			Button:     "#e65b5b",
+			Link:       "#15598a",
+			Shadow:     "rgba(98, 0, 0, 0.777)",
+		}
+	default: // Default
+		return parse.Theme{
+			HeaderFont: "\"Georgia\"",
+			BodyFont:   "\"Garamond\"",
+			Background: "#eaeaea",
+			Text:       "#555555",
+			Card:       "#ededed",
+			Link:       "#c92626",
+			Shadow:     "rgba(0, 0, 0, 0.25)",
+		}
+	}
+}
+
 // buildWebsite orchestrates the process of generating the website from the content files.
 func buildWebsite(settings parse.Settings) {
 	// Clear the output directory.
@@ -370,16 +427,8 @@ func buildWebsite(settings parse.Settings) {
 
 	// Handle CSS (custom or default).
 	if settings.PathToCustomCss == "" {
-		var styleAsset string
-		switch settings.Style {
-		case parse.Dark:
-			styleAsset = "style-dark.css"
-		case parse.Colorful:
-			styleAsset = "style-colorful.css"
-		default:
-			styleAsset = "style.css"
-		}
-		saveAsset(styleAsset, "style.css", settings.OutputDirectory)
+		theme := getThemeData(settings.Style)
+		applyCSSTemplate(theme, settings.OutputDirectory)
 	} else {
 		if err := copyFile(settings.PathToCustomCss, filepath.Join(settings.OutputDirectory, "style.css")); err != nil {
 			log.Fatalf("Error handling custom CSS: %v", err)

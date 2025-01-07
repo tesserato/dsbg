@@ -5,15 +5,18 @@
 */
 :root {
     /* Fonts */
-    --header-font: "Georgia";
-    --body-font: "Garamond";
+    --header-font: {{.HeaderFont}};
+    --body-font: {{.BodyFont}};
 
     /* Colors */
-    --background: #eaeaea;
-    --text: #555555;
-    --card: #ededed;
-    --link: #c92626;
-    --shadow: rgba(0, 0, 0, 0.25);
+    --background: {{.Background}};
+    --text: {{.Text}};
+    --card: {{.Card}};
+    --link: {{.Link}};
+    --shadow: {{.Shadow}};
+    {{if .Button}}
+    --button: {{.Button}};
+    {{end}}
 }
 
 * {

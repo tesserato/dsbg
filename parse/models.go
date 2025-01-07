@@ -46,3 +46,14 @@ type Article struct {
 	LinkToSelf     string
 	LinkToSave     string
 }
+
+type Theme struct {
+	HeaderFont   string
+	BodyFont     string
+	Background   string
+	Text         string
+	Card         string
+	Link         string
+	Shadow       string
+	Button       string
+}

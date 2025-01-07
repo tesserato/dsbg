@@ -5,19 +5,37 @@
 		<link>https://tesserato.github.io/dsbg</link>
 		<description><p>Welcome to the Dead Simple Blog Generator blog.</p>
 <p>A new static site generator that's truly simple. Built with Go for speed &amp; efficiency.</p>
+<ul>
+<li>
 <p>Easy installation: Download a <a href="https://github.com/tesserato/dsbg/releases">pre-built binary</a> or use <code>go install github.com/tesserato/dsbg@latest</code>,</p>
+</li>
+<li>
 <p>Support for Markdown &amp; HTML source files,</p>
+</li>
+<li>
 <p>Tag generation and filtering,</p>
+</li>
+<li>
 <p>Client-side fuzzy search,</p>
+</li>
+<li>
 <p>RSS feed generation,</p>
+</li>
+<li>
 <p>Watch mode with automatic re-rendering,</p>
+</li>
+<li>
 <p>3 different themes, with the ability to add your own via custom CSS.</p>
+</li>
+<li>
 <p>Easy analytics, comments, and more.</p>
+</li>
+</ul>
 <p>This is a sample blog created with DSBG from the source at <a href="https://github.com/tesserato/dsbg">github.com/tesserato/dsbg</a></p>
 <p><a href="https://github.com/tesserato/dsbg/releases"><img src="https://img.shields.io/github/release/tesserato/dsbg" alt="Release Status"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Mon, 06 Jan 2025 18:51:08 +0000</lastBuildDate>
+		<lastBuildDate>Tue, 07 Jan 2025 07:55:30 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>HTML post with custom CSS example</title>
