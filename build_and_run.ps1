@@ -57,9 +57,12 @@ start chrome http://localhost:666/index.html
 
 ./dsbg.exe -title "Dead Simple Blog Generator" `
     -description "$description" `
-    -watch -open-in-new-tab  `
+    -watch `
+    -open-in-new-tab `
     -input-path "sample_content" `
     -output-path "docs" `
     -base-url "https://tesserato.github.io/dsbg/" `
     -elements-top "analytics.html" `
-    -style "default"
+    -style "default" `
+    -x-handle "tesserato"
+    

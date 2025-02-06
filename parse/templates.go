@@ -153,11 +153,11 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 		<div id="buttons"></div>
         <aside></aside>
     </header>
-	{{ $dateFormat := .Settings.DateFormat}}
+	{{ $Settings := .Settings}}
     {{range .ArticleList}}
         <div class="detail">
             <div class="headline">
-                <a href="{{.LinkToSelf}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>
+                <a href="{{.LinkToSelf}}" {{if $Settings.OpenInNewTab}}target="_blank"{{end}}>
                     <h2>{{.Title}}</h2>
                 </a>
                 <div class="info">
@@ -166,8 +166,18 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                             <button class="on">{{.}}</button>
                         {{end}}
                     </div>
-                    <h4 class="date">⋆ {{.Created.Format $dateFormat}}</h4>
-                    <h4 class="date">♰ {{.Updated.Format $dateFormat}}</h4>
+                    <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
+                    <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>
+
+					{{if $Settings.XHandle}}
+					{{ $hashtags := "" }}
+					{{ range $index, $tag := .Tags }}
+						{{ if $index }},{{ end }}{{ $hashtags = printf "%s%s" $hashtags $tag }}
+					{{ end }}
+					<a href="https://twitter.com/intent/tweet?url={{.LinkToSelf | urlquery}}&text={{printf .Description | urlquery}}&hashtags={{$hashtags | urlquery}}&via={{$Settings.XHandle | urlquery}}" target="_blank" rel="noopener noreferrer" class="x-share-button" title="Share this post on X">
+						X
+					</a>
+					{{end}}
                 </div>
             </div>
 			{{if .CoverImagePath}}

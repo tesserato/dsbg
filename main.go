@@ -59,6 +59,7 @@ func main() {
 	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns from generated file paths")
 	flag.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns from article titles")
 	flag.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open article links in a new browser tab")
+	flag.StringVar(&settings.XHandle, "x-handle", "", "X handle for X.com")
 	styleString := flag.String("style", "default", "Predefined style to use (default, dark, colorful)")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page (e.g., analytics scripts)")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page")
