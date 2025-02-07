@@ -32,6 +32,8 @@ type Settings struct {
 	OpenInNewTab              bool
 	BaseUrl                   string
 	XHandle                   string
+	BlueSkyHandle             string
+	ThreadsHandle             string
 }
 
 type Article struct {

@@ -73,5 +73,8 @@ start chrome http://localhost:666/index.html
     -base-url "https://tesserato.github.io/dsbg/" `
     -elements-top "analytics.html" `
     -style "default" `
-    -x-handle "tesserato"
+    -x-handle "tesserato" `
+    -bluesky-handle "tesserato.bsky.social" `
+    -threads-handle "tesserato.threads.net"
+    
     
