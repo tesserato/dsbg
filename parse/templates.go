@@ -168,13 +168,16 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                     </div>
                     <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
                     <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>
-
 					{{if $Settings.XHandle}}
 					{{ $hashtags := "" }}
 					{{ range $index, $tag := .Tags }}
-						{{ if $index }},{{ end }}{{ $hashtags = printf "%s%s" $hashtags $tag }}
+					 	{{ $tagNoSpace := replaceAll $tag " " "" }}
+						{{if $hashtags}}
+							{{ $tagNoSpace = printf ",%s" $tagNoSpace }}
+						{{end}}
+						{{ $hashtags = printf "%s%s" $hashtags $tagNoSpace }}
 					{{ end }}
-					<a href="https://twitter.com/intent/tweet?url={{.LinkToSelf | urlquery}}&text={{printf .Description | urlquery}}&hashtags={{$hashtags | urlquery}}&via={{$Settings.XHandle | urlquery}}" target="_blank" rel="noopener noreferrer" class="x-share-button" title="Share this post on X">
+					<a href="https://twitter.com/intent/tweet?url={{$Settings.BaseUrl  | urlquery}}/{{.LinkToSelf | urlquery}}&text={{printf .Description | urlquery}}&hashtags={{$hashtags | urlquery}}&via={{$Settings.XHandle | urlquery}}" target="_blank" rel="noopener noreferrer" class="x-share-button" title="Share this post on X">
 						X
 					</a>
 					{{end}}

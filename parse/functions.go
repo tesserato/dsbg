@@ -339,6 +339,7 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		},
 		"stringsJoin":    strings.Join,
 		"slicesContains": slices.Contains[[]string],
+		"replaceAll":     strings.ReplaceAll,
 	}
 	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
 	if err != nil {
