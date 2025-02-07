@@ -33,9 +33,11 @@
 </ul>
 <p>This is a sample blog created with DSBG from the source at <a href="https://github.com/tesserato/dsbg">github.com/tesserato/dsbg</a></p>
 <p><a href="https://github.com/tesserato/dsbg/releases"><img src="https://img.shields.io/github/release/tesserato/dsbg" alt="Release Status"></a></p>
+<p><a href="https://github.com/tesserato/dsbg/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tesserato/dsbg" alt="License"></a></p>
+<p><a href="https://github.com/tesserato/dsbg/actions/workflows/go.yml"><img src="https://github.com/tesserato/dsbg/actions/workflows/go.yml/badge.svg" alt="Build Status"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Tue, 07 Jan 2025 08:42:21 +0000</lastBuildDate>
+		<lastBuildDate>Fri, 07 Feb 2025 17:29:42 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>HTML post with custom CSS example</title>

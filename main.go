@@ -95,12 +95,6 @@ func main() {
 	}
 
 	// Convert Markdown description to HTML and store it in settings.
-	// var markdown = goldmark.New(
-	// 	goldmark.WithParserOptions(
-	// 		parser.WithAttribute(),
-	// 		parser.WithAutoHeadingID(),
-	// 	),
-	// )
 	var buf strings.Builder
 	if err := parse.Markdown.Convert([]byte(description), &buf); err != nil {
 		log.Fatalf("failed to convert description to HTML: %v", err)
