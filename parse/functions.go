@@ -3,8 +3,10 @@ package parse
 import (
 	"bytes"
 	"fmt"
+	// "hash"
 	"html/template"
 	"io/fs"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -339,7 +341,8 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		},
 		"stringsJoin":    strings.Join,
 		"slicesContains": slices.Contains[[]string],
-		"replaceAll":     strings.ReplaceAll,
+		// "replaceAll":     strings.ReplaceAll,
+		"gen_share_url": gen_share_url,
 	}
 	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
 	if err != nil {
@@ -734,4 +737,32 @@ func extractResources(htmlContent string) ([]string, error) {
 	}
 	f(doc)
 	return resources, nil
+}
+
+func gen_share_url(article Article, settings Settings, service string) string {
+	var hashtags []string
+	for _, tag := range article.Tags {
+		hashtags = append(hashtags, strings.ReplaceAll(tag, " ", ""))
+	}
+	var blueskyHashTags []string
+	for _, tag := range hashtags {
+		blueskyHashTags = append(blueskyHashTags, fmt.Sprintf("#%s", tag))
+	}
+	switch service {
+	case "x":
+		return fmt.Sprintf("https://twitter.com/intent/tweet?url=%s/%s&text=%s&hashtags=%s",
+			settings.BaseUrl, article.LinkToSelf, url.QueryEscape(article.Description), strings.Join(hashtags, ","))
+	case "bluesky":
+		text := fmt.Sprintf("%s\n%s\n%s/%s", article.Description, strings.Join(blueskyHashTags, " "), settings.BaseUrl, article.LinkToSelf)
+		return fmt.Sprintf("https://bsky.app/intent/compose?text=%s", url.QueryEscape(text))
+	case "threads":
+		text := fmt.Sprintf("%s\n%s\n%s/%s", article.Description, strings.Join(blueskyHashTags, " "), settings.BaseUrl, article.LinkToSelf)
+		return fmt.Sprintf("https://www.threads.net/intent/post?text=%s", url.QueryEscape(text))
+	case "facebook":
+		return fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(article.LinkToSelf))
+	case "linkedin":
+		return fmt.Sprintf("https://www.linkedin.com/shareArticle?url=%s", url.QueryEscape(article.LinkToSelf))
+	default:
+		return ""
+	}
 }

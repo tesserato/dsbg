@@ -36,7 +36,7 @@
 <p><a href="https://github.com/tesserato/dsbg/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tesserato/dsbg" alt="License"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Fri, 07 Feb 2025 18:03:54 +0000</lastBuildDate>
+		<lastBuildDate>Sat, 08 Feb 2025 16:10:33 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>HTML post with custom CSS example</title>
@@ -44,12 +44,12 @@
 			<guid>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</guid>
 			<pubDate>Mon, 06 Jan 2025 02:17:44 +0000</pubDate>
 			<description>An example html page with custom CSS</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://tesserato.github.io/dsbg/02_cover_image.jpg" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
+			<media:content
+				xmlns:media="http://search.yahoo.com/mrss/"
+				url="https://tesserato.github.io/dsbg/02_cover_image.jpg"
+				medium="image"
+				type="image/jpeg"
+				width="150"
 				height="150"
 			/>
 		</item>
@@ -59,12 +59,12 @@
 			<guid>https://tesserato.github.io/dsbg/01readme/index.html</guid>
 			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
 			<description>How to install and use Dead Simple Blog Generator.</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://tesserato.github.io/dsbg/01_dsbg_logo.webp" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
+			<media:content
+				xmlns:media="http://search.yahoo.com/mrss/"
+				url="https://tesserato.github.io/dsbg/01_dsbg_logo.webp"
+				medium="image"
+				type="image/jpeg"
+				width="150"
 				height="150"
 			/>
 		</item>
@@ -74,12 +74,12 @@
 			<guid>https://tesserato.github.io/dsbg/04themes/index.html</guid>
 			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
 			<description>Screenshots of the available themes</description>
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="https://tesserato.github.io/dsbg/04_colorful.png" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
+			<media:content
+				xmlns:media="http://search.yahoo.com/mrss/"
+				url="https://tesserato.github.io/dsbg/04_colorful.png"
+				medium="image"
+				type="image/jpeg"
+				width="150"
 				height="150"
 			/>
 		</item>
