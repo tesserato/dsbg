@@ -74,7 +74,8 @@ start chrome http://localhost:666/index.html
     -elements-top "analytics.html" `
     -style "default" `
     -x-handle "tesserato" `
-    -bluesky-handle "tesserato.bsky.social" `
-    -threads-handle "tesserato.threads.net"
+    -bluesky-handle "tesserato" `
+    -threads-handle "tesserato" `
+    -mastodon-handle "tesserato"
     
     

@@ -168,14 +168,14 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                     </div>
                     <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
                     <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>
-					{{if $Settings.XHandle}}
-						<a href={{gen_share_url . $Settings "x"}} target="_blank" rel="noopener noreferrer" class="x-share-button" title="Share this post on X">
-							X
-						</a>
-					{{end}}
 					{{if $Settings.BlueSkyHandle}}
 						<a href={{gen_share_url . $Settings "bluesky"}} target="_blank" rel="noopener noreferrer" class="bsky-share-button" title="Share this post on Bluesky">
 							BSKY
+						</a>
+					{{end}}
+					{{if $Settings.MastodonHandle}}
+						<a href={{gen_share_url . $Settings "mastodon"}} target="_blank" rel="noopener noreferrer" class="mastodon-share-button" title="Share this post on Mastodon">
+							MASTODON
 						</a>
 					{{end}}
 					{{if $Settings.ThreadsHandle}}
@@ -183,7 +183,12 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 							THREADS
 						</a>
 					{{end}}
-                </div>
+					{{if $Settings.XHandle}}
+						<a href={{gen_share_url . $Settings "x"}} target="_blank" rel="noopener noreferrer" class="x-share-button" title="Share this post on X">
+							X
+						</a>
+					{{end}}               
+				</div>
             </div>
 			{{if .CoverImagePath}}
 				<img src="{{.CoverImagePath}}" alt="{{.Title}}">

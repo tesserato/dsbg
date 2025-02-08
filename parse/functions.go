@@ -758,10 +758,14 @@ func gen_share_url(article Article, settings Settings, service string) string {
 	case "threads":
 		text := fmt.Sprintf("%s\n%s\n%s/%s", article.Description, strings.Join(blueskyHashTags, " "), settings.BaseUrl, article.LinkToSelf)
 		return fmt.Sprintf("https://www.threads.net/intent/post?text=%s", url.QueryEscape(text))
-	case "facebook":
-		return fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(article.LinkToSelf))
-	case "linkedin":
-		return fmt.Sprintf("https://www.linkedin.com/shareArticle?url=%s", url.QueryEscape(article.LinkToSelf))
+	case "mastodon":
+		text := fmt.Sprintf("%s\n%s\n%s/%s", article.Description, strings.Join(blueskyHashTags, " "), settings.BaseUrl, article.LinkToSelf)
+		return fmt.Sprintf("https://mastodon.social/?text=%s", url.QueryEscape(text))
+
+	// case "facebook":
+	// 	return fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(article.LinkToSelf))
+	// case "linkedin":
+	// 	return fmt.Sprintf("https://www.linkedin.com/shareArticle?url=%s", url.QueryEscape(article.LinkToSelf))
 	default:
 		return ""
 	}

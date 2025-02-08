@@ -62,6 +62,7 @@ func main() {
 	flag.StringVar(&settings.XHandle, "x-handle", "", "The handle to use for sharing on X.com")
 	flag.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app")
 	flag.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net")
+	flag.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social")
 	styleString := flag.String("style", "default", "Predefined style to use (default, dark, colorful)")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page (e.g., analytics scripts)")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page")
