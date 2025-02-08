@@ -28,6 +28,9 @@
 <p>3 different themes, with the ability to add your own via custom CSS.</p>
 </li>
 <li>
+<p>Share buttons</p>
+</li>
+<li>
 <p>Easy analytics, comments, and more.</p>
 </li>
 </ul>
@@ -36,8 +39,23 @@
 <p><a href="https://github.com/tesserato/dsbg/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tesserato/dsbg" alt="License"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sat, 08 Feb 2025 19:51:25 +0000</lastBuildDate>
+		<lastBuildDate>Sat, 08 Feb 2025 21:51:27 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
+		<item>
+			<title>Version 0.0.5 - Share Buttons</title>
+			<link>https://tesserato.github.io/dsbg/05v005/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/05v005/index.html</guid>
+			<pubDate>Sat, 08 Feb 2025 00:00:00 +0000</pubDate>
+			<description>Version 0.0.5 of DSBG is out with support for share buttons</description>
+			<media:content
+				xmlns:media="http://search.yahoo.com/mrss/"
+				url="https://tesserato.github.io/dsbg/05_share_buttons.png"
+				medium="image"
+				type="image/jpeg"
+				width="150"
+				height="150"
+			/>
+		</item>
 		<item>
 			<title>HTML post with custom CSS example</title>
 			<link>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</link>
