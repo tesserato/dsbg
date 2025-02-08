@@ -64,7 +64,8 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 
 start chrome http://localhost:666/index.html
 
-./dsbg.exe -title "Dead Simple Blog Generator" `
+./dsbg.exe `
+    -title "Dead Simple Blog Generator" `
     -description "$description" `
     -watch `
     -open-in-new-tab `

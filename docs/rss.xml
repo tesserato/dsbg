@@ -36,7 +36,7 @@
 <p><a href="https://github.com/tesserato/dsbg/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tesserato/dsbg" alt="License"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sat, 08 Feb 2025 16:10:33 +0000</lastBuildDate>
+		<lastBuildDate>Sat, 08 Feb 2025 19:21:56 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>HTML post with custom CSS example</title>

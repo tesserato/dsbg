@@ -167,33 +167,39 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                         {{end}}
                     </div>
                     <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
-                    <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>
+                    <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>             
+				</div>
+            </div>
+			<div class="content">
+				<div class="imagendescription">
+					{{if .CoverImagePath}}
+						<img src="{{.CoverImagePath}}" alt="{{.Title}}">
+					{{end}}
+					<p class="description">{{.Description}}</p>
+				</div>
+				<div class="sharebuttons">
 					{{if $Settings.BlueSkyHandle}}
-						<a href={{gen_share_url . $Settings "bluesky"}} target="_blank" rel="noopener noreferrer" class="bsky-share-button" title="Share this post on Bluesky">
-							BSKY
+						<a href={{gen_share_url . $Settings "bluesky"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on Bluesky">
+							<img src="bluesky.svg" alt="Bluesky Logo">
 						</a>
 					{{end}}
 					{{if $Settings.MastodonHandle}}
-						<a href={{gen_share_url . $Settings "mastodon"}} target="_blank" rel="noopener noreferrer" class="mastodon-share-button" title="Share this post on Mastodon">
-							MASTODON
+						<a href={{gen_share_url . $Settings "mastodon"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on Mastodon">
+							<img src="mastodon.svg" alt="Mastodon Logo">
 						</a>
 					{{end}}
 					{{if $Settings.ThreadsHandle}}
-						<a href={{gen_share_url . $Settings "threads"}} target="_blank" rel="noopener noreferrer" class="threads-share-button" title="Share this post on Threads">
-							THREADS
+						<a href={{gen_share_url . $Settings "threads"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on Threads">
+							<img src="threads.svg" alt="Threads Logo">
 						</a>
 					{{end}}
 					{{if $Settings.XHandle}}
-						<a href={{gen_share_url . $Settings "x"}} target="_blank" rel="noopener noreferrer" class="x-share-button" title="Share this post on X">
-							X
+						<a href={{gen_share_url . $Settings "x"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on X">
+							<img src="x.svg" alt="X Logo">
 						</a>
-					{{end}}               
+					{{end}}  
 				</div>
             </div>
-			{{if .CoverImagePath}}
-				<img src="{{.CoverImagePath}}" alt="{{.Title}}">
-			{{end}}
-            <p class="description">{{.Description}}</p>
         </div>
     {{end}}
     <script src="script.js" async defer></script>

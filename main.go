@@ -448,6 +448,10 @@ func buildWebsite(settings parse.Settings) {
 
 	// Save static assets.
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
+	saveAsset("bluesky.svg", "bluesky.svg", settings.OutputDirectory)
+	saveAsset("mastodon.svg", "mastodon.svg", settings.OutputDirectory)
+	saveAsset("threads.svg", "threads.svg", settings.OutputDirectory)
+	saveAsset("x.svg", "x.svg", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
