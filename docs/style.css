@@ -183,7 +183,6 @@ details summary {
 }
 
 .description {
-    /* padding: 0 0 1rem; */
     margin: 0 0 1rem;
     word-break: break-all;
 }
@@ -201,7 +200,6 @@ details summary {
     justify-content: space-evenly;
     margin-left: auto;
 }
-
 
 /*
     -------------------------------------------

@@ -48,6 +48,8 @@ A new static site generator that's truly simple. Built with Go for speed & effic
 
 - 3 different themes, with the ability to add your own via custom CSS.
 
+- Share buttons
+
 - Easy analytics, comments, and more.
 
 This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)
