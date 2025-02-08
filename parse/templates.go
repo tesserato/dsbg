@@ -5,7 +5,7 @@ title: {{.Title}}
 description: {{.Description}}
 created: {{.CurrentDate}}
 updated: {{.CurrentDate}}
-coverImagePath: 
+coverImagePath:
 tags:
 ---
 
@@ -153,11 +153,11 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 		<div id="buttons"></div>
         <aside></aside>
     </header>
-	{{ $dateFormat := .Settings.DateFormat}}
+	{{ $Settings := .Settings}}
     {{range .ArticleList}}
         <div class="detail">
             <div class="headline">
-                <a href="{{.LinkToSelf}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}>
+                <a href="{{.LinkToSelf}}" {{if $Settings.OpenInNewTab}}target="_blank"{{end}}>
                     <h2>{{.Title}}</h2>
                 </a>
                 <div class="info">
@@ -166,14 +166,40 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                             <button class="on">{{.}}</button>
                         {{end}}
                     </div>
-                    <h4 class="date">⋆ {{.Created.Format $dateFormat}}</h4>
-                    <h4 class="date">♰ {{.Updated.Format $dateFormat}}</h4>
-                </div>
+                    <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
+                    <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>             
+				</div>
             </div>
-			{{if .CoverImagePath}}
-				<img src="{{.CoverImagePath}}" alt="{{.Title}}">
-			{{end}}
-            <p class="description">{{.Description}}</p>
+			<div class="content">
+				<div class="imagendescription">
+					{{if .CoverImagePath}}
+						<img src="{{.CoverImagePath}}" alt="{{.Title}}">
+					{{end}}
+					<p class="description">{{.Description}}</p>
+				</div>
+				<div class="sharebuttons">
+					{{if $Settings.BlueSkyHandle}}
+						<a href={{gen_share_url . $Settings "bluesky"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on Bluesky">
+							<img src="bluesky.svg" alt="Bluesky Logo">
+						</a>
+					{{end}}
+					{{if $Settings.MastodonHandle}}
+						<a href={{gen_share_url . $Settings "mastodon"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on Mastodon">
+							<img src="mastodon.svg" alt="Mastodon Logo">
+						</a>
+					{{end}}
+					{{if $Settings.ThreadsHandle}}
+						<a href={{gen_share_url . $Settings "threads"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on Threads">
+							<img src="threads.svg" alt="Threads Logo">
+						</a>
+					{{end}}
+					{{if $Settings.XHandle}}
+						<a href={{gen_share_url . $Settings "x"}} target="_blank" rel="noopener noreferrer" class="share" title="Share this post on X">
+							<img src="x.svg" alt="X Logo">
+						</a>
+					{{end}}  
+				</div>
+            </div>
         </div>
     {{end}}
     <script src="script.js" async defer></script>
@@ -203,12 +229,12 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 			<pubDate>{{ .Created | formatPubDate }}</pubDate>
 			<description>{{ .Description | htmlEscape }}</description>
 			{{- if .CoverImagePath }}
-			<media:content 
-				xmlns:media="http://search.yahoo.com/mrss/" 
-				url="{{ $.Settings.BaseUrl}}/{{ .CoverImagePath }}" 
-				medium="image" 
-				type="image/jpeg" 
-				width="150" 
+			<media:content
+				xmlns:media="http://search.yahoo.com/mrss/"
+				url="{{ $.Settings.BaseUrl}}/{{ .CoverImagePath }}"
+				medium="image"
+				type="image/jpeg"
+				width="150"
 				height="150"
 			/>
 			{{- end }}

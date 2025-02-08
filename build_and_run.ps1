@@ -13,6 +13,8 @@ if (Test-Path $exec_name) {
 }
 
 # go build -ldflags="-s -w" .
+go get -u
+go get -u ./...
 go mod tidy
 go build .
 
@@ -46,20 +48,37 @@ A new static site generator that's truly simple. Built with Go for speed & effic
 
 - 3 different themes, with the ability to add your own via custom CSS.
 
+- Share buttons
+
 - Easy analytics, comments, and more.
 
 This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)
 
 [![Release Status](https://img.shields.io/github/release/tesserato/dsbg)](https://github.com/tesserato/dsbg/releases)
+
+[![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
+
 '@
+
+# [![Build Status](https://github.com/tesserato/dsbg/actions/workflows/go.yml/badge.svg)](https://github.com/tesserato/dsbg/actions/workflows/go.yml)
+
+# [![Go Version](https://img.shields.io/github/go-mod/go-version/tesserato/dsbg)](https://go.dev/)
 
 start chrome http://localhost:666/index.html
 
-./dsbg.exe -title "Dead Simple Blog Generator" `
+./dsbg.exe `
+    -title "Dead Simple Blog Generator" `
     -description "$description" `
-    -watch -open-in-new-tab  `
+    -watch `
+    -open-in-new-tab `
     -input-path "sample_content" `
     -output-path "docs" `
     -base-url "https://tesserato.github.io/dsbg/" `
     -elements-top "analytics.html" `
-    -style "default"
+    -style "default" `
+    -x-handle "tesserato" `
+    -bluesky-handle "tesserato" `
+    -threads-handle "tesserato" `
+    -mastodon-handle "tesserato"
+    
+    

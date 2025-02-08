@@ -7,12 +7,6 @@ tags: [guide, tutorial, example]
 coverImagePath: 01_dsbg_logo.webp
 ---
 
-<!-- [![Go Version](https://img.shields.io/github/go-mod/go-version/tesserato/dsbg)](https://go.dev) -->
-
-<!-- [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE) -->
-
-<!-- [![Build Status](https://github.com/tesserato/dsbg/actions/workflows/go.yml/badge.svg)](https://github.com/tesserato/dsbg/actions/workflows/go.yml) -->
-
 DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and / or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a simple website with minimal configuration.
 
 

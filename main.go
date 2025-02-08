@@ -59,6 +59,10 @@ func main() {
 	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns from generated file paths")
 	flag.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns from article titles")
 	flag.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open article links in a new browser tab")
+	flag.StringVar(&settings.XHandle, "x-handle", "", "The handle to use for sharing on X.com")
+	flag.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app")
+	flag.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net")
+	flag.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social")
 	styleString := flag.String("style", "default", "Predefined style to use (default, dark, colorful)")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page (e.g., analytics scripts)")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page")
@@ -94,12 +98,6 @@ func main() {
 	}
 
 	// Convert Markdown description to HTML and store it in settings.
-	// var markdown = goldmark.New(
-	// 	goldmark.WithParserOptions(
-	// 		parser.WithAttribute(),
-	// 		parser.WithAutoHeadingID(),
-	// 	),
-	// )
 	var buf strings.Builder
 	if err := parse.Markdown.Convert([]byte(description), &buf); err != nil {
 		log.Fatalf("failed to convert description to HTML: %v", err)
@@ -450,6 +448,10 @@ func buildWebsite(settings parse.Settings) {
 
 	// Save static assets.
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
+	saveAsset("bluesky.svg", "bluesky.svg", settings.OutputDirectory)
+	saveAsset("mastodon.svg", "mastodon.svg", settings.OutputDirectory)
+	saveAsset("threads.svg", "threads.svg", settings.OutputDirectory)
+	saveAsset("x.svg", "x.svg", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }

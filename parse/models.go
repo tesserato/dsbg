@@ -31,6 +31,10 @@ type Settings struct {
 	DoNotRemoveDateFromTitles bool
 	OpenInNewTab              bool
 	BaseUrl                   string
+	XHandle                   string
+	BlueSkyHandle             string
+	ThreadsHandle             string
+	MastodonHandle            string
 }
 
 type Article struct {
@@ -48,12 +52,12 @@ type Article struct {
 }
 
 type Theme struct {
-	HeaderFont   string
-	BodyFont     string
-	Background   string
-	Text         string
-	Card         string
-	Link         string
-	Shadow       string
-	Button       string
+	HeaderFont string
+	BodyFont   string
+	Background string
+	Text       string
+	Card       string
+	Link       string
+	Shadow     string
+	Button     string
 }
