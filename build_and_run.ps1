@@ -79,6 +79,7 @@ start chrome http://localhost:666/index.html
     -x-handle "tesserato" `
     -bluesky-handle "tesserato" `
     -threads-handle "tesserato" `
-    -mastodon-handle "tesserato"
+    -mastodon-handle "tesserato" `
+    -sort "date-updated"
     
     

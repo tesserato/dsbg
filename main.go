@@ -23,7 +23,7 @@ import (
 //go:embed assets
 var assets embed.FS
 
-// isFlagPassed checks if a specific flag was provided when running the program.
+// isFlagPassed checks if a specific command-line flag was provided when running the program.
 func isFlagPassed(name string) bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
@@ -34,6 +34,7 @@ func isFlagPassed(name string) bool {
 	return found
 }
 
+// noFlagsPassed checks if any command-line flags were provided when running the program.
 func noFlagsPassed() bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
@@ -47,31 +48,31 @@ func main() {
 	var description string
 
 	// Define command-line flags with descriptions.
-	flag.StringVar(&settings.Title, "title", "Blog", "The title of the blog")
-	flag.StringVar(&settings.BaseUrl, "base-url", "", "The base URL of the blog (e.g., https://example.com)")
-	flag.StringVar(&description, "description", "This is my blog", "A short description of the blog. Can be in Markdown format.")
-	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory containing source files (Markdown or HTML)")
-	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where generated website files will be saved")
-	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates")
-	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Filename for the main index page")
-	flag.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a custom CSS file")
-	flag.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a custom JavaScript file")
-	flag.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a custom favicon file (e.g., .ico)")
-	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Disable extracting tags from directory names")
-	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns from generated file paths")
-	flag.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns from article titles")
-	flag.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open article links in a new browser tab")
-	flag.StringVar(&settings.XHandle, "x-handle", "", "The handle to use for sharing on X.com")
-	flag.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app")
-	flag.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net")
-	flag.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social")
-	flag.StringVar(&settings.Sort, "sort", "date", "How to sort articles: date (default) or title")
-	styleString := flag.String("style", "default", "Predefined style to use (default, dark, colorful)")
-	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page (e.g., analytics scripts)")
-	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page")
-	showHelp := flag.Bool("help", false, "Show this help message and exit")
-	watch := flag.Bool("watch", false, "Watch for changes in the input directory and rebuild automatically. Also creates a server to serve the website.")
-	createTemplate := flag.Bool("template", false, "Create a basic Markdown template file with frontmatter")
+	flag.StringVar(&settings.Title, "title", "Blog", "The title of the blog, used in the header and page titles.")
+	flag.StringVar(&settings.BaseUrl, "base-url", "", "The base URL of the blog (e.g., https://example.com), used for generating absolute URLs in the RSS feed and sitemap.")
+	flag.StringVar(&description, "description", "This is my blog", "A short description of the blog, used in meta tags and the index page. Supports Markdown formatting.")
+	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory containing source content files (Markdown or HTML).")
+	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the generated website files will be saved.")
+	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
+	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Filename for the main index page. Defaults to 'index.html'.")
+	flag.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a custom CSS file to override the default styles. If not provided, a default style or a predefined style (using '-style') will be used.")
+	flag.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a custom JavaScript file to include in the website. If not provided, default scripts will be used.")
+	flag.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a custom favicon file (e.g., .ico, .png) to use for the website. If not provided, a default favicon will be used.")
+	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Disable extracting tags from directory names. By default, directory names are used as tags.")
+	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns (YYYY-MM-DD) from generated file paths. By default, dates are removed from paths for cleaner URLs.")
+	flag.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns (YYYY-MM-DD) from article titles. By default, dates are removed from titles.")
+	flag.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open article links in a new browser tab using 'target=\"_blank\" rel=\"noopener\"'.")
+	flag.StringVar(&settings.XHandle, "x-handle", "", "The handle to use for sharing on X.com (formerly Twitter). If provided, a share button will be included.")
+	flag.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app (BlueSky). If provided, a share button will be included.")
+	flag.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net (Threads). If provided, a share button will be included.")
+	flag.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social (Mastodon). If provided, a share button will be included.")
+	flag.StringVar(&settings.Sort, "sort", "date-created", "How to sort articles on the index page. Options: date-created, reverse-date-created, date-updated, reverse-date-updated, title, reverse-title, path, reverse-path.")
+	styleString := flag.String("style", "default", "Predefined style to use: 'default', 'dark', or 'colorful'. Overrides default styling but is overridden by a custom CSS file ('-css-path').")
+	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page, inside the <head> tag (e.g., analytics scripts, custom meta tags).")
+	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page, before the closing </body> tag (e.g., additional scripts).")
+	showHelp := flag.Bool("help", false, "Show this help message and exit.")
+	watch := flag.Bool("watch", false, "Watch for changes in the input directory and rebuild the website automatically. Also starts a local HTTP server to serve the generated website.")
+	createTemplate := flag.Bool("template", false, "Create a basic Markdown template file with pre-filled frontmatter for a new blog post.")
 
 	flag.Parse()
 
@@ -83,7 +84,7 @@ func main() {
 
 	// Check if the input directory exists.
 	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
-		// Display help message and exit if no flags are provided.
+		// Display help message and exit if no flags are provided, indicating default usage without input directory.
 		if noFlagsPassed() {
 			flag.Usage()
 			return
@@ -107,7 +108,7 @@ func main() {
 	}
 	settings.Description = template.HTML(buf.String())
 
-	// Read content of files specified by flags and store them in settings.
+	// Read content of files specified by flags and store them in settings as HTML.
 	if *pathToAdditionalElementsTop != "" {
 		content, err := os.ReadFile(*pathToAdditionalElementsTop)
 		if err != nil {
@@ -124,10 +125,11 @@ func main() {
 		settings.AdditionalElemensBottom = template.HTML(content)
 	}
 
+	// Ensure base URL is correctly formatted and default to localhost if empty.
 	if settings.BaseUrl == "" {
 		settings.BaseUrl = "http://localhost:666"
 	} else {
-		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/")
+		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/") // Remove trailing slash if present.
 	}
 
 	// Create the output directory if it doesn't exist.
@@ -158,6 +160,7 @@ func main() {
 }
 
 // createMarkdownTemplate generates a Markdown template file with predefined frontmatter.
+// This template is helpful for quickly creating new blog posts with consistent metadata structure.
 func createMarkdownTemplate(settings parse.Settings) error {
 	tmpl, err := template.New("frontmatter").Parse(parse.FrontMatterTemplate)
 	if err != nil {
@@ -206,6 +209,8 @@ func createMarkdownTemplate(settings parse.Settings) error {
 }
 
 // startWatcher initializes and starts the file system watcher.
+// It monitors changes in the input directory and rebuilds the website automatically when changes are detected.
+// It also starts a local HTTP server to serve the generated website for previewing.
 func startWatcher(settings parse.Settings) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -213,11 +218,12 @@ func startWatcher(settings parse.Settings) {
 	}
 	defer watcher.Close()
 
-	// Add the input directory and custom asset paths to the watcher.
+	// Add the input directory and custom asset paths to the watcher for monitoring changes.
 	if err := watcher.Add(settings.InputDirectory); err != nil {
 		log.Fatal(err)
 	}
 
+	// Recursively add all subdirectories within the input directory to the watcher.
 	err = filepath.WalkDir(settings.InputDirectory, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -234,6 +240,7 @@ func startWatcher(settings parse.Settings) {
 		log.Fatal(err)
 	}
 
+	// Add custom asset paths to the watcher if they are specified.
 	if settings.PathToCustomCss != "" {
 		if err := watcher.Add(settings.PathToCustomCss); err != nil {
 			log.Fatal(err)
@@ -250,6 +257,7 @@ func startWatcher(settings parse.Settings) {
 		}
 	}
 
+	// Start the HTTP server in a goroutine to serve the website.
 	go serve(settings)
 	log.Printf("\n%s Watching for changes...\n", time.Now().Format(time.RFC850))
 	for {
@@ -258,7 +266,7 @@ func startWatcher(settings parse.Settings) {
 			if !ok {
 				return
 			}
-			// Rebuild the website on write events.
+			// Rebuild the website on write events, indicating file modifications.
 			if event.Has(fsnotify.Write) {
 				log.Println("Changes detected. Rebuilding...")
 				buildWebsite(settings)
@@ -273,9 +281,10 @@ func startWatcher(settings parse.Settings) {
 	}
 }
 
-// serve starts a simple HTTP server to serve the generated website.
+// serve starts a simple HTTP server to serve the generated website from the output directory.
+// It serves files on port 666 (or a configurable port, TODO: Allow the port to be specified).
 func serve(settings parse.Settings) {
-	addr := ":666" // TODO: Allow the port to be specified.
+	addr := ":666" // TODO: Allow the port to be specified as a flag.
 	fmt.Printf("Serving '%s' on http://localhost%s\n", settings.OutputDirectory, addr)
 	http.Handle("/", http.FileServer(http.Dir(settings.OutputDirectory)))
 	if err := http.ListenAndServe(addr, nil); err != nil {
@@ -284,29 +293,34 @@ func serve(settings parse.Settings) {
 }
 
 // cleanContent prepares text content for search indexing by removing or replacing specific characters.
+// This function aims to simplify the text for better search matching by removing punctuation and whitespace variations.
 func cleanContent(s string) []string {
 	replacements := map[string]string{
-		"’": "'",
-		"–": " ",
+		"’": "'", // Replace curly apostrophe with straight apostrophe.
+		"–": " ", // Replace en dash with space.
 	}
 
 	removals := []string{
 		"\n", "\r", "\t", "(", ")", "[", "]", "{", "}",
-		"\"", "\\", "/", "”", "#", "-", "*",
+		"\"", "\\", "/", "”", "#", "-", "*", // Remove various punctuation and formatting characters.
 	}
 
+	// Apply replacements.
 	for old, new := range replacements {
 		s = strings.ReplaceAll(s, old, new)
 	}
 
+	// Apply removals.
 	for _, char := range removals {
 		s = strings.ReplaceAll(s, char, " ")
 	}
 
+	// Split the string into words and return them as a slice.
 	return strings.Fields(s)
 }
 
-// applyCSSTemplate loads the css template, parses it, and executes it with the selected theme.
+// applyCSSTemplate loads the CSS template, parses it, and executes it with the selected theme data.
+// This function is used when no custom CSS is provided and a predefined theme is selected.
 func applyCSSTemplate(themeData parse.Theme, outputDirectory string) error {
 	tmpl, err := texttemplate.ParseFS(assets, "assets/style-template.css")
 	if err != nil {
@@ -314,19 +328,22 @@ func applyCSSTemplate(themeData parse.Theme, outputDirectory string) error {
 	}
 
 	var output strings.Builder
+	// Execute the template with the theme data to generate the CSS content.
 	err = tmpl.Execute(&output, themeData)
 	if err != nil {
 		return fmt.Errorf("error executing style template: %w", err)
 	}
 
 	pathToSave := filepath.Join(outputDirectory, "style.css")
+	// Write the generated CSS content to the output file.
 	if err := os.WriteFile(pathToSave, []byte(output.String()), 0644); err != nil {
 		return fmt.Errorf("error saving processed css file: %w", err)
 	}
 	return nil
 }
 
-// getThemeData creates a theme struct with the appropiate settings
+// getThemeData creates a theme struct with the appropriate settings based on the selected style.
+// This function defines the visual theme of the website (colors, fonts) based on predefined styles.
 func getThemeData(style parse.Style) parse.Theme {
 	switch style {
 	case parse.Dark:
@@ -350,7 +367,7 @@ func getThemeData(style parse.Style) parse.Theme {
 			Link:       "#15598a",
 			Shadow:     "rgba(98, 0, 0, 0.777)",
 		}
-	default: // Default
+	default: // Default style.
 		return parse.Theme{
 			HeaderFont: "\"Georgia\"",
 			BodyFont:   "\"Garamond\"",
@@ -364,8 +381,9 @@ func getThemeData(style parse.Style) parse.Theme {
 }
 
 // buildWebsite orchestrates the process of generating the website from the content files.
+// This is the main function that controls the website generation process, including parsing files, generating index, RSS, and copying assets.
 func buildWebsite(settings parse.Settings) {
-	// Clear the output directory.
+	// Clear the output directory to ensure a clean build.
 	if err := os.RemoveAll(settings.OutputDirectory); err != nil {
 		log.Fatalf("Error clearing output directory: %v", err)
 	}
@@ -379,8 +397,8 @@ func buildWebsite(settings parse.Settings) {
 		log.Fatalf("Error getting content files: %v", err)
 	}
 
-	var articles []parse.Article
-	var searchIndex []map[string]interface{}
+	var articles []parse.Article      // Slice to store processed articles.
+	var searchIndex []map[string]interface{} // Slice to store data for the search index.
 
 	// Process each content file.
 	for _, path := range files {
@@ -391,17 +409,17 @@ func buildWebsite(settings parse.Settings) {
 		}
 		articles = append(articles, article)
 
-		// Add article data to the search index.
+		// Add article data to the search index for client-side searching.
 		searchIndex = append(searchIndex, map[string]interface{}{
 			"title":       article.Title,
-			"content":     cleanContent(article.TextContent),
+			"content":     cleanContent(article.TextContent), // Clean content for better search results.
 			"description": article.Description,
 			"tags":        article.Tags,
 			"url":         article.LinkToSelf,
 		})
 	}
 
-	// Sort articles
+	// Sort articles based on the selected sorting method.
 	switch settings.Sort {
 	case "date-created":
 		sort.Slice(articles, func(i, j int) bool {
@@ -437,7 +455,7 @@ func buildWebsite(settings parse.Settings) {
 		})
 	}
 
-	// Generate and save the search index.
+	// Generate and save the search index in JSON format.
 	searchIndexJSON, err := json.Marshal(searchIndex)
 	if err != nil {
 		log.Fatalf("Error marshaling search index: %v", err)
@@ -447,45 +465,48 @@ func buildWebsite(settings parse.Settings) {
 		log.Fatalf("Error saving search index: %v", err)
 	}
 
-	// Generate the HTML index page.
+	// Generate the HTML index page listing all articles.
 	if err := parse.GenerateHtmlIndex(articles, settings); err != nil {
 		log.Fatalf("Error generating HTML index: %v", err)
 	}
 
-	// Generate the RSS feed.
+	// Generate the RSS feed for content syndication.
 	if err := parse.GenerateRSS(articles, settings); err != nil {
 		log.Fatalf("Error generating RSS feed: %v", err)
 	}
 
-	// Handle CSS (custom or default).
+	// Handle CSS: use custom CSS if provided, otherwise use predefined theme or default.
 	if settings.PathToCustomCss == "" {
-		theme := getThemeData(settings.Style)
-		applyCSSTemplate(theme, settings.OutputDirectory)
+		theme := getThemeData(settings.Style) // Get theme data based on selected style.
+		applyCSSTemplate(theme, settings.OutputDirectory) // Apply CSS template with theme data.
 	} else {
+		// Copy custom CSS file to the output directory.
 		if err := copyFile(settings.PathToCustomCss, filepath.Join(settings.OutputDirectory, "style.css")); err != nil {
 			log.Fatalf("Error handling custom CSS: %v", err)
 		}
 	}
 
-	// Handle JavaScript (custom or default).
+	// Handle JavaScript: use custom JS if provided, otherwise use default script.
 	if settings.PathToCustomJs == "" {
-		saveAsset("script.js", "script.js", settings.OutputDirectory)
+		saveAsset("script.js", "script.js", settings.OutputDirectory) // Save default script.
 	} else {
+		// Copy custom JavaScript file to the output directory.
 		if err := copyFile(settings.PathToCustomJs, filepath.Join(settings.OutputDirectory, "script.js")); err != nil {
 			log.Fatalf("Error handling custom JavaScript: %v", err)
 		}
 	}
 
-	// Handle favicon (custom or default).
+	// Handle favicon: use custom favicon if provided, otherwise use default favicon.
 	if settings.PathToCustomFavicon == "" {
-		saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory)
+		saveAsset("favicon.ico", "favicon.ico", settings.OutputDirectory) // Save default favicon.
 	} else {
+		// Copy custom favicon file to the output directory.
 		if err := copyFile(settings.PathToCustomFavicon, filepath.Join(settings.OutputDirectory, "favicon.ico")); err != nil {
 			log.Fatalf("Error handling custom favicon: %v", err)
 		}
 	}
 
-	// Save static assets.
+	// Save static assets (search script, social media icons).
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
 	saveAsset("bluesky.svg", "bluesky.svg", settings.OutputDirectory)
 	saveAsset("mastodon.svg", "mastodon.svg", settings.OutputDirectory)
@@ -496,35 +517,38 @@ func buildWebsite(settings parse.Settings) {
 }
 
 // processFile reads and parses a single content file (Markdown or HTML).
+// It determines the file type, parses it accordingly, and prepares it for website generation.
 func processFile(filePath string, settings parse.Settings) (parse.Article, error) {
 	var article parse.Article
 	var err error
 
-	filePathLower := strings.ToLower(filePath)
+	filePathLower := strings.ToLower(filePath) // Convert file path to lowercase for case-insensitive suffix check.
 
+	// Process Markdown files.
 	if strings.HasSuffix(filePathLower, ".md") {
-		article, err = parse.MarkdownFile(filePath)
+		article, err = parse.MarkdownFile(filePath) // Parse Markdown file.
 		if err != nil {
 			return parse.Article{}, fmt.Errorf("error parsing markdown file: %w", err)
 		}
-		if err := parse.CopyHtmlResources(settings, &article); err != nil {
+		if err := parse.CopyHtmlResources(settings, &article); err != nil { // Copy any HTML resources linked in Markdown.
 			return parse.Article{}, fmt.Errorf("error copying resources for markdown file: %w", err)
 		}
-		if err := parse.FormatMarkdown(&article, settings); err != nil {
+		if err := parse.FormatMarkdown(&article, settings); err != nil { // Format Markdown content (e.g., extract metadata, generate paths).
 			return parse.Article{}, fmt.Errorf("error formatting markdown: %w", err)
 		}
-	} else if strings.HasSuffix(filePath, ".html") {
-		article, err = parse.HTMLFile(filePath)
+	} else if strings.HasSuffix(filePath, ".html") { // Process HTML files.
+		article, err = parse.HTMLFile(filePath) // Parse HTML file.
 		if err != nil {
 			return parse.Article{}, fmt.Errorf("error parsing HTML file: %w", err)
 		}
-		if err := parse.CopyHtmlResources(settings, &article); err != nil {
+		if err := parse.CopyHtmlResources(settings, &article); err != nil { // Copy any HTML resources linked in HTML.
 			return parse.Article{}, fmt.Errorf("error copying resources for HTML file: %w", err)
 		}
 	} else {
 		return parse.Article{}, fmt.Errorf("unsupported file type: %s", filePath)
 	}
 
+	// Write the processed HTML content of the article to the output directory.
 	if err := os.WriteFile(article.LinkToSave, []byte(article.HtmlContent), 0644); err != nil {
 		return parse.Article{}, fmt.Errorf("error writing processed file: %w", err)
 	}
@@ -532,25 +556,28 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 }
 
 // saveAsset reads an asset file from the embedded filesystem and saves it to the output directory.
+// This function is used to deploy default assets like scripts, styles, and icons that are bundled within the application.
 func saveAsset(assetName string, saveName string, outputDirectory string) {
-	file, err := assets.ReadFile("assets/" + assetName)
+	file, err := assets.ReadFile("assets/" + assetName) // Read asset from embedded filesystem.
 	if err != nil {
 		log.Fatalf("Error reading asset '%s': %v", assetName, err)
 	}
 
 	pathToSave := filepath.Join(outputDirectory, saveName)
+	// Write the asset file to the output directory.
 	if err := os.WriteFile(pathToSave, file, 0644); err != nil {
 		log.Fatalf("Error saving asset '%s': %v", assetName, err)
 	}
 }
 
 // copyFile copies a file from a source path to a destination path.
+// This utility function is used for copying custom CSS, JavaScript, and favicon files to the output directory.
 func copyFile(srcPath string, destPath string) error {
-	input, err := os.ReadFile(srcPath)
+	input, err := os.ReadFile(srcPath) // Read the source file.
 	if err != nil {
 		return fmt.Errorf("error reading file '%s': %w", srcPath, err)
 	}
-	err = os.WriteFile(destPath, input, 0644)
+	err = os.WriteFile(destPath, input, 0644) // Write the content to the destination file.
 	if err != nil {
 		return fmt.Errorf("error writing file '%s': %w", destPath, err)
 	}
