@@ -35,6 +35,7 @@ type Settings struct {
 	BlueSkyHandle             string
 	ThreadsHandle             string
 	MastodonHandle            string
+	Sort                      string
 }
 
 type Article struct {

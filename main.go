@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/tesserato/dsbg/parse"
 	"html/template"
 	"io/fs"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	texttemplate "text/template"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/tesserato/dsbg/parse"
 )
 
 //go:embed assets
@@ -63,6 +65,7 @@ func main() {
 	flag.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app")
 	flag.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net")
 	flag.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social")
+	flag.StringVar(&settings.Sort, "sort", "date", "How to sort articles: date (default) or title")
 	styleString := flag.String("style", "default", "Predefined style to use (default, dark, colorful)")
 	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page (e.g., analytics scripts)")
 	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page")
@@ -395,6 +398,42 @@ func buildWebsite(settings parse.Settings) {
 			"description": article.Description,
 			"tags":        article.Tags,
 			"url":         article.LinkToSelf,
+		})
+	}
+
+	// Sort articles
+	switch settings.Sort {
+	case "date-created":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].Created.After(articles[j].Created)
+		})
+	case "reverse-date-created":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].Created.Before(articles[j].Created)
+		})
+	case "date-updated":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].Updated.After(articles[j].Updated)
+		})
+	case "reverse-date-updated":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].Updated.Before(articles[j].Updated)
+		})
+	case "title":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].Title < articles[j].Title
+		})
+	case "reverse-title":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].Title > articles[j].Title
+		})
+	case "path":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].OriginalPath < articles[j].OriginalPath
+		})
+	case "reverse-path":
+		sort.Slice(articles, func(i, j int) bool {
+			return articles[i].OriginalPath > articles[j].OriginalPath
 		})
 	}
 
