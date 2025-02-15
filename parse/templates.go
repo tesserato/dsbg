@@ -100,8 +100,52 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 
 <body>
     <header>
-		<a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}> ◁ {{.Settings.Title}} </a>
-        <h1>{{.Art.Title}}</h1>
+		<div class="articlelinks">
+			<a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}> ◁ {{.Settings.Title}} </a>
+			FOLLOW:
+			{{if .Settings.BlueSkyHandle}}
+				<a href="https://bsky.app/profile/{{.Settings.BlueSkyHandle}}.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky profile">
+					<img src="{{genRelativeLink .Art.LinkToSelf "bluesky.svg"}}" alt="Bluesky Logo">
+				</a>
+			{{end}}
+			{{if .Settings.MastodonHandle}}
+				<a href="https://mastodon.social/@{{.Settings.MastodonHandle}}" target="_blank" rel="noopener noreferrer" title="Mastodon profile">
+					<img src="{{genRelativeLink .Art.LinkToSelf "mastodon.svg"}}" alt="Mastodon Logo">
+				</a>
+			{{end}}
+			{{if .Settings.ThreadsHandle}}
+				<a href="https://www.threads.net/@{{.Settings.ThreadsHandle}}" target="_blank" rel="noopener noreferrer" title="Threads profile">
+					<img src="{{genRelativeLink .Art.LinkToSelf "threads.svg"}}" alt="Threads Logo">
+				</a>
+			{{end}}
+			{{if .Settings.XHandle}}
+				<a href="https://x.com/{{.Settings.XHandle}}" target="_blank" rel="noopener noreferrer" title="X profile">
+					<img src="{{genRelativeLink .Art.LinkToSelf "x.svg"}}" alt="X Logo">
+				</a>
+			{{end}}
+			SHARE:
+			{{if .Settings.BlueSkyHandle}}
+				<a href={{gen_share_url .Art .Settings "bluesky"}} target="_blank" rel="noopener noreferrer" title="Share this post on Bluesky">
+					<img src="{{genRelativeLink .Art.LinkToSelf "bluesky.svg"}}" alt="Bluesky Logo">
+				</a>
+			{{end}}
+			{{if .Settings.MastodonHandle}}
+				<a href={{gen_share_url .Art .Settings "mastodon"}} target="_blank" rel="noopener noreferrer" title="Share this post on Mastodon">
+					<img src="{{genRelativeLink .Art.LinkToSelf "mastodon.svg"}}" alt="Mastodon Logo">
+				</a>
+			{{end}}
+			{{if .Settings.ThreadsHandle}}
+				<a href={{gen_share_url .Art .Settings "threads"}} target="_blank" rel="noopener noreferrer" title="Share this post on Threads">
+					<img src="{{genRelativeLink .Art.LinkToSelf "threads.svg"}}" alt="Threads Logo">
+				</a>
+			{{end}}
+			{{if .Settings.XHandle}}
+				<a href={{gen_share_url .Art .Settings "x"}} target="_blank" rel="noopener noreferrer" title="Share this post on X">
+					<img src="{{genRelativeLink .Art.LinkToSelf "x.svg"}}" alt="X Logo">
+				</a>
+			{{end}}  	
+		</div>
+		<h1>{{.Art.Title}}</h1>
         <h2>{{.Art.Description}}</h2>
     </header>
 

@@ -124,6 +124,12 @@ nav a:hover {
     IMAGES
     -------------------------------------------
 */
+header img {
+    width: 1.3rem;
+    height: 1.3rem;
+    margin-left: 1rem;
+}
+
 img {
     max-width: 100%;
     height: auto;
@@ -162,6 +168,14 @@ img {
 details summary {
     cursor: pointer;
     padding-bottom: 1rem;
+}
+
+.articlelinks {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 0.5rem;
 }
 
 .headline {

@@ -341,7 +341,6 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		},
 		"stringsJoin":    strings.Join,
 		"slicesContains": slices.Contains[[]string],
-		// "replaceAll":     strings.ReplaceAll,
 		"gen_share_url": gen_share_url,
 	}
 	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
@@ -567,6 +566,7 @@ func FormatMarkdown(article *Article, settings Settings) error {
 		template.FuncMap{
 			"genRelativeLink": genRelativeLink,
 			"stringsJoin":     strings.Join,
+			"gen_share_url": gen_share_url,
 			"slicesContains":  slices.Contains[[]string]}).Parse(htmlArticleTemplate)
 	if err != nil {
 		return fmt.Errorf("error parsing markdown article template: %w", err)

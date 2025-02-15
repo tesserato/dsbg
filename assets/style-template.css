@@ -172,6 +172,14 @@ details summary {
     padding-bottom: 1rem;
 }
 
+.articlelinks {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 0.5rem;
+}
+
 .headline {
     display: flex;
     flex-direction: row;
