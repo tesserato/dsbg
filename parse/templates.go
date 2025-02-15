@@ -100,7 +100,7 @@ var htmlArticleTemplate = `<!DOCTYPE html>
 
 <body>
     <header>
-		<a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}> &#9665; {{.Settings.Title}} </a>
+		<a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank"{{end}}> ◁ {{.Settings.Title}} </a>
         <h1>{{.Art.Title}}</h1>
         <h2>{{.Art.Description}}</h2>
     </header>
@@ -137,8 +137,28 @@ var htmlIndexTemplate = `<!DOCTYPE html>
 		<h1>
 			{{.Settings.Title}}
 			<a href="rss.xml" target="_blank" title="RSS Feed">
-			RSS
+			<img src="rss.svg" alt="RSS Logo">
 			</a>
+			{{if .Settings.BlueSkyHandle}}
+				<a href="https://bsky.app/profile/{{.Settings.BlueSkyHandle}}.bsky.social" target="_blank" rel="noopener noreferrer" title="Bluesky profile">
+					<img src="bluesky.svg" alt="Bluesky Logo">
+				</a>
+			{{end}}
+			{{if .Settings.MastodonHandle}}
+				<a href="https://mastodon.social/@{{.Settings.MastodonHandle}}" target="_blank" rel="noopener noreferrer" title="Mastodon profile">
+					<img src="mastodon.svg" alt="Mastodon Logo">
+				</a>
+			{{end}}
+			{{if .Settings.ThreadsHandle}}
+				<a href="https://www.threads.net/@{{.Settings.ThreadsHandle}}" target="_blank" rel="noopener noreferrer" title="Threads profile">
+					<img src="threads.svg" alt="Threads Logo">
+				</a>
+			{{end}}
+			{{if .Settings.XHandle}}
+				<a href="https://x.com/{{.Settings.XHandle}}" target="_blank" rel="noopener noreferrer" title="X profile">
+					<img src="x.svg" alt="X Logo">
+				</a>
+			{{end}}
 		</h1>
 		<input type="text" id="search-input" placeholder="Search... (supports Unix-like search commands)">
     	<ul id="search-results"></ul>
@@ -166,7 +186,7 @@ var htmlIndexTemplate = `<!DOCTYPE html>
                             <button class="on">{{.}}</button>
                         {{end}}
                     </div>
-                    <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
+					<h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
                     <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>             
 				</div>
             </div>

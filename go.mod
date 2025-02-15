@@ -17,5 +17,5 @@ require (
 	github.com/k3a/html2text v1.2.1
 	github.com/yuin/goldmark v1.7.8
 	go.abhg.dev/goldmark/frontmatter v0.2.0
-	golang.org/x/net v0.34.0
+	golang.org/x/net v0.35.0
 )

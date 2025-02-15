@@ -508,6 +508,7 @@ func buildWebsite(settings parse.Settings) {
 
 	// Save static assets (search script, social media icons).
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
+	saveAsset("rss.svg", "rss.svg", settings.OutputDirectory)
 	saveAsset("bluesky.svg", "bluesky.svg", settings.OutputDirectory)
 	saveAsset("mastodon.svg", "mastodon.svg", settings.OutputDirectory)
 	saveAsset("threads.svg", "threads.svg", settings.OutputDirectory)
