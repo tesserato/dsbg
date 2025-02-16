@@ -85,7 +85,7 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 	<channel>
 		<title>{{ .Settings.Title }}</title>
 		<link>{{ .Settings.BaseUrl }}</link>
-		<description>{{ .Settings.DescriptionMarkdown }}</description>
+		<description>{{ htmlEscape .Settings.DescriptionMarkdown }}</description>
 		<generator>Go Simple Blog Generator</generator>
 		<lastBuildDate>{{ .BuildDate }}</lastBuildDate>
 		<atom:link href="{{ .Settings.BaseUrl }}/rss.xml" rel="self" type="application/rss+xml" />
