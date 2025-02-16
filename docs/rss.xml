@@ -39,8 +39,15 @@
 <p><a href="https://github.com/tesserato/dsbg/blob/main/LICENSE"><img src="https://img.shields.io/github/license/tesserato/dsbg" alt="License"></a></p>
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Sun, 16 Feb 2025 00:40:01 +0000</lastBuildDate>
+		<lastBuildDate>Sun, 16 Feb 2025 12:44:27 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
+		<item>
+			<title>My Awesome Post from template</title>
+			<link>https://tesserato.github.io/dsbg/2025-02-16-My-Awesome-Post-from-template/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/2025-02-16-My-Awesome-Post-from-template/index.html</guid>
+			<pubDate>Sun, 16 Feb 2025 00:00:00 +0000</pubDate>
+			<description>&lt;p&gt;A sample template with a very long text to test if it wraps correctly. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;</description>
+		</item>
 		<item>
 			<title>Version 0.0.6 - Sorting</title>
 			<link>https://tesserato.github.io/dsbg/06v006/index.html</link>
@@ -107,13 +114,6 @@
 				width="150"
 				height="150"
 			/>
-		</item>
-		<item>
-			<title>My Awesome Post</title>
-			<link>https://tesserato.github.io/dsbg/2025-01-04-My-Awesome-Post/index.html</link>
-			<guid>https://tesserato.github.io/dsbg/2025-01-04-My-Awesome-Post/index.html</guid>
-			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
-			<description>A sample template</description>
 		</item>
 		<item>
 			<title>Markdown page example</title>

@@ -75,7 +75,7 @@ html * {
 body {
     -webkit-font-smoothing: antialiased; /* Improve font rendering on webkit browsers */
     -moz-osx-font-smoothing: grayscale; /* Improve font rendering on macOS */
-    max-width: 90%;
+    max-width: 950px;
     padding: 1rem;
     margin: 0 auto; /* Center the body content and set margin */
     line-height: 1.5;
@@ -147,6 +147,19 @@ img {
     width: 1rem;
 }
 
+.description img {
+    width: auto;
+    height: auto;
+    align-self: center;
+}
+
+.actionicons {
+    width: 2.2rem;
+    height: 2.2rem;
+    margin-left: 3rem;
+    filter: invert(50%);
+}
+
 
 /*
     -------------------------------------------
@@ -213,6 +226,7 @@ details summary {
     align-items: center;
     justify-content: space-evenly;
     margin-left: auto;
+    padding-left: 1rem;
 }
 
 /*
