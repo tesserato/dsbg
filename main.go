@@ -25,9 +25,15 @@ var assets embed.FS
 
 // isFlagPassed checks if a specific command-line flag was provided when running the program.
 func isFlagPassed(name string) bool {
+	nameToTest := strings.ToLower(name)
+	nameToTest = strings.ReplaceAll(nameToTest, "-", "")
+	nameToTest = strings.ReplaceAll(nameToTest, "_", "")
 	found := false
 	flag.Visit(func(f *flag.Flag) {
-		if f.Name == name {
+		nameFlag := strings.ToLower(f.Name)
+		nameFlag = strings.ReplaceAll(nameFlag, "-", "")
+		nameFlag = strings.ReplaceAll(nameFlag, "_", "")
+		if nameFlag == nameToTest {
 			found = true
 		}
 	})
@@ -82,16 +88,13 @@ func main() {
 		return
 	}
 
-	// Check if the input directory exists.
-	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
-		// Display help message and exit if no flags are provided, indicating default usage without input directory.
-		if noFlagsPassed() {
-			flag.Usage()
-			return
-		} else {
-			log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
-		}
+	// Convert Markdown description to HTML and store it in settings.
+	// This must be done before calling createMarkdownTemplate, as the description is used to generate the Markdown template.
+	var buf strings.Builder
+	if err := parse.Markdown.Convert([]byte(description), &buf); err != nil {
+		log.Fatalf("failed to convert description to HTML: %v", err)
 	}
+	settings.Description = template.HTML(buf.String())
 
 	// Create a basic Markdown template and exit if the "template" flag is enabled.
 	if *createTemplate {
@@ -101,12 +104,15 @@ func main() {
 		return
 	}
 
-	// Convert Markdown description to HTML and store it in settings.
-	var buf strings.Builder
-	if err := parse.Markdown.Convert([]byte(description), &buf); err != nil {
-		log.Fatalf("failed to convert description to HTML: %v", err)
+	// Check if the input directory exists.
+	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
+		if noFlagsPassed() { // No flags AND no default "content" -> show help
+			flag.Usage()
+			return
+		}
+		// Flags were provided, but input dir is wrong -> fatal error
+		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
 	}
-	settings.Description = template.HTML(buf.String())
 
 	// Read content of files specified by flags and store them in settings as HTML.
 	if *pathToAdditionalElementsTop != "" {
@@ -397,7 +403,7 @@ func buildWebsite(settings parse.Settings) {
 		log.Fatalf("Error getting content files: %v", err)
 	}
 
-	var articles []parse.Article      // Slice to store processed articles.
+	var articles []parse.Article             // Slice to store processed articles.
 	var searchIndex []map[string]interface{} // Slice to store data for the search index.
 
 	// Process each content file.
@@ -477,7 +483,7 @@ func buildWebsite(settings parse.Settings) {
 
 	// Handle CSS: use custom CSS if provided, otherwise use predefined theme or default.
 	if settings.PathToCustomCss == "" {
-		theme := getThemeData(settings.Style) // Get theme data based on selected style.
+		theme := getThemeData(settings.Style)             // Get theme data based on selected style.
 		applyCSSTemplate(theme, settings.OutputDirectory) // Apply CSS template with theme data.
 	} else {
 		// Copy custom CSS file to the output directory.
