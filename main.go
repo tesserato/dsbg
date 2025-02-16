@@ -51,12 +51,11 @@ func noFlagsPassed() bool {
 
 func main() {
 	var settings parse.Settings
-	var description string
 
 	// Define command-line flags with descriptions.
 	flag.StringVar(&settings.Title, "title", "Blog", "The title of the blog, used in the header and page titles.")
 	flag.StringVar(&settings.BaseUrl, "base-url", "", "The base URL of the blog (e.g., https://example.com), used for generating absolute URLs in the RSS feed and sitemap.")
-	flag.StringVar(&description, "description", "This is my blog", "A short description of the blog, used in meta tags and the index page. Supports Markdown formatting.")
+	flag.StringVar(&settings.DescriptionMarkdown, "description", "This is my blog", "A short description of the blog, used in meta tags and the index page. Supports Markdown formatting.")
 	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory containing source content files (Markdown or HTML).")
 	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the generated website files will be saved.")
 	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
@@ -91,10 +90,10 @@ func main() {
 	// Convert Markdown description to HTML and store it in settings.
 	// This must be done before calling createMarkdownTemplate, as the description is used to generate the Markdown template.
 	var buf strings.Builder
-	if err := parse.Markdown.Convert([]byte(description), &buf); err != nil {
+	if err := parse.Markdown.Convert([]byte(settings.DescriptionMarkdown), &buf); err != nil {
 		log.Fatalf("failed to convert description to HTML: %v", err)
 	}
-	settings.Description = template.HTML(buf.String())
+	settings.DescriptionHTML = template.HTML(buf.String())
 
 	// Create a basic Markdown template and exit if the "template" flag is enabled.
 	if *createTemplate {
@@ -180,7 +179,7 @@ func createMarkdownTemplate(settings parse.Settings) error {
 		settings.Title = "" // Ensure title is empty if flag not passed
 	}
 
-	description := settings.Description
+	description := settings.DescriptionHTML
 	if !isFlagPassed("description") {
 		description = "" // Ensure description is empty if flag not passed
 	}
