@@ -77,7 +77,7 @@ html * {
 body {
     -webkit-font-smoothing: antialiased; /* Improve font rendering on webkit browsers */
     -moz-osx-font-smoothing: grayscale; /* Improve font rendering on macOS */
-    max-width: 90%;
+    max-width: 950px;
     padding: 1rem;
     margin: 0 auto; /* Center the body content and set margin */
     line-height: 1.5;
@@ -220,7 +220,8 @@ details summary {
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    margin-left: 1rem;
+    margin-left: auto;
+    padding-left: 1rem;
 }
 
 /*
