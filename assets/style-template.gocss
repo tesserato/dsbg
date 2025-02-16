@@ -155,6 +155,13 @@ img {
     align-self: center;
 }
 
+.actionicons {
+    width: 2.2rem;
+    height: 2.2rem;
+    margin-left: 3rem;
+    filter: invert(50%);
+}
+
 
 /*
     -------------------------------------------

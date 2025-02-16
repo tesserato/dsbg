@@ -519,6 +519,8 @@ func buildWebsite(settings parse.Settings) {
 	saveAsset("mastodon.svg", "mastodon.svg", settings.OutputDirectory)
 	saveAsset("threads.svg", "threads.svg", settings.OutputDirectory)
 	saveAsset("x.svg", "x.svg", settings.OutputDirectory)
+	saveAsset(("share.svg"), "share.svg", settings.OutputDirectory)
+	saveAsset("follow.svg", "follow.svg", settings.OutputDirectory)
 
 	log.Println("Blog generated successfully!")
 }
