@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{.Settings.AdditionalElementsTop}}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Dead Simple Blog Generator (dsbg)">
+    <meta name="keywords" content="{{ stringsJoin .Art.Tags " , "}}">
+    <link rel="stylesheet" href="{{ genRelativeLink .Art.LinkToSelf " style.css"}}">
+    <link rel="icon" type="image/x-icon" href="{{genRelativeLink .Art.LinkToSelf " favicon.ico"}}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <title>{{.Art.Title}}</title>
+</head>
+
+<body>
+    <header>
+        <div class="articlelinks">
+            <a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank" {{end}}> ◁ {{.Settings.Title}}
+            </a>
+            FOLLOW:
+            {{if .Settings.BlueSkyHandle}}
+            <a href="https://bsky.app/profile/{{.Settings.BlueSkyHandle}}.bsky.social" target="_blank"
+                rel="noopener noreferrer" title="Bluesky profile">
+                <img src="{{genRelativeLink .Art.LinkToSelf " bluesky.svg"}}" alt="Bluesky Logo">
+            </a>
+            {{end}}
+            {{if .Settings.MastodonHandle}}
+            <a href="https://mastodon.social/@{{.Settings.MastodonHandle}}" target="_blank" rel="noopener noreferrer"
+                title="Mastodon profile">
+                <img src="{{genRelativeLink .Art.LinkToSelf " mastodon.svg"}}" alt="Mastodon Logo">
+            </a>
+            {{end}}
+            {{if .Settings.ThreadsHandle}}
+            <a href="https://www.threads.net/@{{.Settings.ThreadsHandle}}" target="_blank" rel="noopener noreferrer"
+                title="Threads profile">
+                <img src="{{genRelativeLink .Art.LinkToSelf " threads.svg"}}" alt="Threads Logo">
+            </a>
+            {{end}}
+            {{if .Settings.XHandle}}
+            <a href="https://x.com/{{.Settings.XHandle}}" target="_blank" rel="noopener noreferrer" title="X profile">
+                <img src="{{genRelativeLink .Art.LinkToSelf " x.svg"}}" alt="X Logo">
+            </a>
+            {{end}}
+            SHARE:
+            {{if .Settings.BlueSkyHandle}}
+            <a href={{gen_share_url .Art .Settings "bluesky" }} target="_blank" rel="noopener noreferrer"
+                title="Share this post on Bluesky">
+                <img src="{{genRelativeLink .Art.LinkToSelf " bluesky.svg"}}" alt="Bluesky Logo">
+            </a>
+            {{end}}
+            {{if .Settings.MastodonHandle}}
+            <a href={{gen_share_url .Art .Settings "mastodon" }} target="_blank" rel="noopener noreferrer"
+                title="Share this post on Mastodon">
+                <img src="{{genRelativeLink .Art.LinkToSelf " mastodon.svg"}}" alt="Mastodon Logo">
+            </a>
+            {{end}}
+            {{if .Settings.ThreadsHandle}}
+            <a href={{gen_share_url .Art .Settings "threads" }} target="_blank" rel="noopener noreferrer"
+                title="Share this post on Threads">
+                <img src="{{genRelativeLink .Art.LinkToSelf " threads.svg"}}" alt="Threads Logo">
+            </a>
+            {{end}}
+            {{if .Settings.XHandle}}
+            <a href={{gen_share_url .Art .Settings "x" }} target="_blank" rel="noopener noreferrer"
+                title="Share this post on X">
+                <img src="{{genRelativeLink .Art.LinkToSelf " x.svg"}}" alt="X Logo">
+            </a>
+            {{end}}
+        </div>
+        <h1>{{.Art.Title}}</h1>
+        <h2>{{.Art.Description}}</h2>
+    </header>
+
+    <div class="detail">
+        {{.Ctt}}
+    </div>
+
+    <div class="giscus"></div>
+
+    {{.Settings.AdditionalElemensBottom}}
+
+    <footer>
+        <a href="https://tesserato.github.io/dsbg/" target="_blank">Created with Dead Simple Blog Generator</a>
+    </footer>
+</body>
+
+</html>

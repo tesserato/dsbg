@@ -3,7 +3,6 @@ package parse
 import (
 	"bytes"
 	"fmt"
-	// "hash"
 	"html/template"
 	"io/fs"
 	"net/url"
@@ -320,7 +319,7 @@ func CopyHtmlResources(settings Settings, article *Article) error {
 
 // GenerateHtmlIndex creates an HTML index page listing all processed articles.
 // Returns an error if template parsing or execution fails, or if writing the output file fails.
-func GenerateHtmlIndex(articles []Article, settings Settings) error {
+func GenerateHtmlIndex(articles []Article, settings Settings, assets fs.FS) error {
 	// Separate articles into pages and regular articles based on tags.
 	var allTags []string
 	var pageList []Article
@@ -341,16 +340,17 @@ func GenerateHtmlIndex(articles []Article, settings Settings) error {
 		},
 		"stringsJoin":    strings.Join,
 		"slicesContains": slices.Contains[[]string],
-		"gen_share_url": gen_share_url,
+		"gen_share_url":  gen_share_url,
 	}
-	tmpl, err := template.New("index.html").Funcs(funcMap).Parse(htmlIndexTemplate)
+	// Load the HTML template from assets
+	htmlIndexTemplate, err := texttemplate.New("html-index-template.gohtml").Funcs(funcMap).ParseFS(assets, "assets/html-index-template.gohtml")
 	if err != nil {
-		return fmt.Errorf("error parsing HTML index template: %w", err)
+		return fmt.Errorf("error parsing article index template: %w", err)
 	}
 
 	// Execute the template with article data.
 	var tp bytes.Buffer
-	err = tmpl.Execute(&tp, struct {
+	err = htmlIndexTemplate.Execute(&tp, struct {
 		AllTags     []string
 		PageList    []Article
 		ArticleList []Article
@@ -560,21 +560,22 @@ func genRelativeLink(linkToSelf string, name string) string {
 
 // FormatMarkdown applies an HTML template to the Markdown content of an article.
 // Returns an error if template parsing or execution fails.
-func FormatMarkdown(article *Article, settings Settings) error {
-	// Define template functions.
-	tmpl, err := template.New("markdown_template").Funcs(
-		template.FuncMap{
-			"genRelativeLink": genRelativeLink,
-			"stringsJoin":     strings.Join,
-			"gen_share_url": gen_share_url,
-			"slicesContains":  slices.Contains[[]string]}).Parse(htmlArticleTemplate)
+func FormatMarkdown(article *Article, settings Settings, assets fs.FS) error {
+	funcMap := template.FuncMap{
+		"genRelativeLink": genRelativeLink,
+		"stringsJoin":     strings.Join,
+		"gen_share_url":   gen_share_url,
+		"slicesContains":  slices.Contains[[]string],
+	}
+	
+	htmlArticleTemplate, err := texttemplate.New("html-article-template.gohtml").Funcs(funcMap).ParseFS(assets, "assets/html-article-template.gohtml")
 	if err != nil {
-		return fmt.Errorf("error parsing markdown article template: %w", err)
+		return fmt.Errorf("error parsing index template: %w", err)
 	}
 
 	// Execute the template with article data and settings.
 	var tp bytes.Buffer
-	err = tmpl.Execute(&tp, struct {
+	err = htmlArticleTemplate.Execute(&tp, struct {
 		Art      Article
 		Ctt      template.HTML
 		Settings Settings

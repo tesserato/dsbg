@@ -322,7 +322,7 @@ func cleanContent(s string) []string {
 // applyCSSTemplate loads the CSS template, parses it, and executes it with the selected theme data.
 // This function is used when no custom CSS is provided and a predefined theme is selected.
 func applyCSSTemplate(themeData parse.Theme, outputDirectory string) error {
-	tmpl, err := texttemplate.ParseFS(assets, "assets/style-template.css")
+	tmpl, err := texttemplate.ParseFS(assets, "assets/style-template.gocss")
 	if err != nil {
 		return fmt.Errorf("error parsing style template: %w", err)
 	}
@@ -466,7 +466,7 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	// Generate the HTML index page listing all articles.
-	if err := parse.GenerateHtmlIndex(articles, settings); err != nil {
+	if err := parse.GenerateHtmlIndex(articles, settings, assets); err != nil {
 		log.Fatalf("Error generating HTML index: %v", err)
 	}
 
@@ -534,7 +534,7 @@ func processFile(filePath string, settings parse.Settings) (parse.Article, error
 		if err := parse.CopyHtmlResources(settings, &article); err != nil { // Copy any HTML resources linked in Markdown.
 			return parse.Article{}, fmt.Errorf("error copying resources for markdown file: %w", err)
 		}
-		if err := parse.FormatMarkdown(&article, settings); err != nil { // Format Markdown content (e.g., extract metadata, generate paths).
+		if err := parse.FormatMarkdown(&article, settings, assets); err != nil { // Format Markdown content (e.g., extract metadata, generate paths).
 			return parse.Article{}, fmt.Errorf("error formatting markdown: %w", err)
 		}
 	} else if strings.HasSuffix(filePath, ".html") { // Process HTML files.
