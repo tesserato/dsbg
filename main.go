@@ -50,70 +50,103 @@ func noFlagsPassed() bool {
 }
 
 func main() {
+	// Create FlagSets for default flags and template flags
+	defaultFlagSet := flag.NewFlagSet("default", flag.ExitOnError)
+	templateFlagSet := flag.NewFlagSet("template", flag.ExitOnError)
+
 	var settings parse.Settings
 
-	// Define command-line flags with descriptions.
-	flag.StringVar(&settings.Title, "title", "Blog", "The title of the blog, used in the header and page titles.")
-	flag.StringVar(&settings.BaseUrl, "base-url", "", "The base URL of the blog (e.g., https://example.com), used for generating absolute URLs in the RSS feed and sitemap.")
-	flag.StringVar(&settings.DescriptionMarkdown, "description", "This is my blog", "A short description of the blog, used in meta tags and the index page. Supports Markdown formatting.")
-	flag.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory containing source content files (Markdown or HTML).")
-	flag.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the generated website files will be saved.")
-	flag.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
-	flag.StringVar(&settings.IndexName, "index-name", "index.html", "Filename for the main index page. Defaults to 'index.html'.")
-	flag.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a custom CSS file to override the default styles. If not provided, a default style or a predefined style (using '-style') will be used.")
-	flag.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a custom JavaScript file to include in the website. If not provided, default scripts will be used.")
-	flag.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a custom favicon file (e.g., .ico, .png) to use for the website. If not provided, a default favicon will be used.")
-	flag.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Disable extracting tags from directory names. By default, directory names are used as tags.")
-	flag.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns (YYYY-MM-DD) from generated file paths. By default, dates are removed from paths for cleaner URLs.")
-	flag.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns (YYYY-MM-DD) from article titles. By default, dates are removed from titles.")
-	flag.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open article links in a new browser tab using 'target=\"_blank\" rel=\"noopener\"'.")
-	flag.StringVar(&settings.XHandle, "x-handle", "", "The handle to use for sharing on X.com (formerly Twitter). If provided, a share button will be included.")
-	flag.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app (BlueSky). If provided, a share button will be included.")
-	flag.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net (Threads). If provided, a share button will be included.")
-	flag.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social (Mastodon). If provided, a share button will be included.")
-	flag.StringVar(&settings.Sort, "sort", "date-created", "How to sort articles on the index page. Options: date-created, reverse-date-created, date-updated, reverse-date-updated, title, reverse-title, path, reverse-path.")
-	styleString := flag.String("style", "default", "Predefined style to use: 'default', 'dark', or 'colorful'. Overrides default styling but is overridden by a custom CSS file ('-css-path').")
-	pathToAdditionalElementsTop := flag.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page, inside the <head> tag (e.g., analytics scripts, custom meta tags).")
-	pathToAdditionalElemensBottom := flag.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page, before the closing </body> tag (e.g., additional scripts).")
-	showHelp := flag.Bool("help", false, "Show this help message and exit.")
-	watch := flag.Bool("watch", false, "Watch for changes in the input directory and rebuild the website automatically. Also starts a local HTTP server to serve the generated website.")
-	createTemplate := flag.Bool("template", false, "Create a basic Markdown template file with pre-filled frontmatter for a new blog post.")
+	// --- Default FlagSet Flags ---
+	defaultFlagSet.StringVar(&settings.Title, "title", "Blog", "The title of the blog, used in the header and page titles.")
+	defaultFlagSet.StringVar(&settings.BaseUrl, "base-url", "", "The base URL of the blog (e.g., https://example.com), used for generating absolute URLs in the RSS feed and sitemap.")
+	defaultFlagSet.StringVar(&settings.DescriptionMarkdown, "description", "This is my blog", "A short description of the blog, used in meta tags and the index page. Supports Markdown formatting.")
+	defaultFlagSet.StringVar(&settings.InputDirectory, "input-path", "content", "Path to the directory containing source content files (Markdown or HTML).")
+	defaultFlagSet.StringVar(&settings.OutputDirectory, "output-path", "public", "Path to the directory where the generated website files will be saved.")
+	defaultFlagSet.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
+	defaultFlagSet.StringVar(&settings.IndexName, "index-name", "index.html", "Filename for the main index page. Defaults to 'index.html'.")
+	defaultFlagSet.StringVar(&settings.PathToCustomCss, "css-path", "", "Path to a custom CSS file to override the default styles. If not provided, a default style or a predefined style (using '-style') will be used.")
+	defaultFlagSet.StringVar(&settings.PathToCustomJs, "js-path", "", "Path to a custom JavaScript file to include in the website. If not provided, default scripts will be used.")
+	defaultFlagSet.StringVar(&settings.PathToCustomFavicon, "favicon-path", "", "Path to a custom favicon file (e.g., .ico, .png) to use for the website. If not provided, a default favicon will be used.")
+	defaultFlagSet.BoolVar(&settings.DoNotExtractTagsFromPaths, "ignore-tags-from-paths", false, "Disable extracting tags from directory names. By default, directory names are used as tags.")
+	defaultFlagSet.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns (YYYY-MM-DD) from generated file paths. By default, dates are removed from paths for cleaner URLs.")
+	defaultFlagSet.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns (YYYY-MM-DD) from article titles. By default, dates are removed from titles.")
+	defaultFlagSet.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open article links in a new browser tab using 'target=\"_blank\" rel=\"noopener\"'.")
+	defaultFlagSet.StringVar(&settings.XHandle, "x-handle", "", "The handle to use for sharing on X.com (formerly Twitter). If provided, a share button will be included.")
+	defaultFlagSet.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "The handle to use for sharing on bsky.app (BlueSky). If provided, a share button will be included.")
+	defaultFlagSet.StringVar(&settings.ThreadsHandle, "threads-handle", "", "The handle to use for sharing on threads.net (Threads). If provided, a share button will be included.")
+	defaultFlagSet.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "The handle to use for sharing on mastodon.social (Mastodon). If provided, a share button will be included.")
+	defaultFlagSet.StringVar(&settings.Sort, "sort", "date-created", "How to sort articles on the index page. Options: date-created, reverse-date-created, date-updated, reverse-date-updated, title, reverse-title, path, reverse-path.")
+	styleString := defaultFlagSet.String("style", "default", "Predefined style to use: 'default', 'dark', or 'colorful'. Overrides default styling but is overridden by a custom CSS file ('-css-path').")
+	pathToAdditionalElementsTop := defaultFlagSet.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page, inside the <head> tag (e.g., analytics scripts, custom meta tags).")
+	pathToAdditionalElemensBottom := defaultFlagSet.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page, before the closing </body> tag (e.g., additional scripts).")
+	showHelp := defaultFlagSet.Bool("help", false, "Show this help message and exit.")
+	watch := defaultFlagSet.Bool("watch", false, "Watch for changes in the input directory and rebuild the website automatically. Also starts a local HTTP server to serve the generated website.")
 
-	flag.Parse()
+	// --- Template FlagSet Flags ---
+	templateFlagSet.StringVar(&settings.Title, "title", "", "Title for the Markdown template file.") // Reusing settings.Title but with different usage
+	templateFlagSet.StringVar(&settings.DescriptionMarkdown, "description", "", "Description for the Markdown template file. Supports Markdown formatting.")
+	templateFlagSet.StringVar(&settings.OutputDirectory, "output-path", "sample_content", "(template mode) Path to the directory where the template will be saved (defaults to 'sample_content' in template mode).") //Override default output path for template
 
-	// Display help message and exit if the "help" flag is enabled.
+	// Determine which FlagSet to parse based on command-line arguments
+	var parsedFlagSet *flag.FlagSet
+	isTemplateMode := false
+	for _, arg := range os.Args[1:] { // Start from index 1 to skip program name
+		if arg == "-template" {
+			isTemplateMode = true
+			parsedFlagSet = templateFlagSet
+			break
+		}
+	}
+
+	if !isTemplateMode {
+		parsedFlagSet = defaultFlagSet
+	}
+
+	// Parse the selected FlagSet
+	err := parsedFlagSet.Parse(os.Args[1:])
+	if err != nil {
+		log.Fatalf("Error parsing flags: %v", err)
+	}
+
+	// Handle Help based on the FlagSet used
 	if *showHelp {
-		flag.Usage()
+		if isTemplateMode {
+			templateFlagSet.Usage()
+		} else {
+			defaultFlagSet.Usage()
+		}
 		return
 	}
 
-	// Convert Markdown description to HTML and store it in settings.
-	// This must be done before calling createMarkdownTemplate, as the description is used to generate the Markdown template.
+	// Convert Markdown description to HTML (Do this *after* parsing flags so description is populated)
 	var buf strings.Builder
 	if err := parse.Markdown.Convert([]byte(settings.DescriptionMarkdown), &buf); err != nil {
 		log.Fatalf("failed to convert description to HTML: %v", err)
 	}
 	settings.DescriptionHTML = template.HTML(buf.String())
 
-	// Create a basic Markdown template and exit if the "template" flag is enabled.
-	if *createTemplate {
+	// Handle Template Creation Mode
+	if settings.CreateTemplateFlag {
 		if err := createMarkdownTemplate(settings); err != nil {
 			log.Fatalf("Error creating markdown template: %v", err)
 		}
 		return
 	}
 
-	// Check if the input directory exists.
-	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
-		if noFlagsPassed() { // No flags AND no default "content" -> show help
-			flag.Usage()
-			return
+	// --- Rest of your main function logic (for default mode) ---
+
+	// Check if the input directory exists (only in default mode)
+	if !isTemplateMode {
+		if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
+			if noFlagsPassed(defaultFlagSet) { // Pass the defaultFlagSet here
+				defaultFlagSet.Usage()
+				return
+			}
+			log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
 		}
-		// Flags were provided, but input dir is wrong -> fatal error
-		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
 	}
 
-	// Read content of files specified by flags and store them in settings as HTML.
+	// Read content of files specified by flags
 	if *pathToAdditionalElementsTop != "" {
 		content, err := os.ReadFile(*pathToAdditionalElementsTop)
 		if err != nil {
@@ -130,19 +163,19 @@ func main() {
 		settings.AdditionalElemensBottom = template.HTML(content)
 	}
 
-	// Ensure base URL is correctly formatted and default to localhost if empty.
+	// Ensure base URL is correctly formatted
 	if settings.BaseUrl == "" {
 		settings.BaseUrl = "http://localhost:666"
 	} else {
-		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/") // Remove trailing slash if present.
+		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/")
 	}
 
-	// Create the output directory if it doesn't exist.
+	// Create the output directory
 	if err := os.MkdirAll(settings.OutputDirectory, 0755); err != nil {
 		log.Fatalf("Error creating output directory '%s': %v", settings.OutputDirectory, err)
 	}
 
-	// Set the website style based on the provided flag.
+	// Set the website style
 	switch *styleString {
 	case "default":
 		settings.Style = parse.Default
@@ -155,12 +188,15 @@ func main() {
 		log.Printf("Unknown style '%s', using default.\n", *styleString)
 	}
 
-	// Perform the initial website build.
-	buildWebsite(settings)
+	// Perform the initial website build (only in default mode)
+	if !isTemplateMode {
+		buildWebsite(settings)
 
-	// Start the watcher if the "watch" flag is enabled.
-	if *watch {
-		startWatcher(settings)
+		if *watch {
+			startWatcher(settings)
+		}
+	} else {
+		fmt.Println("Markdown template created at:", settings.OutputDirectory) // Info message for template mode
 	}
 }
 
@@ -179,14 +215,14 @@ func createMarkdownTemplate(settings parse.Settings) error {
 		settings.Title = "" // Ensure title is empty if flag not passed
 	}
 
-	description := settings.DescriptionHTML
+	description := settings.DescriptionMarkdown
 	if !isFlagPassed("description") {
 		description = "" // Ensure description is empty if flag not passed
 	}
 
 	data := struct {
 		Title       string
-		Description template.HTML
+		Description string
 		CurrentDate string
 	}{
 		Title:       settings.Title,

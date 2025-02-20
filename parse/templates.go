@@ -2,7 +2,7 @@ package parse
 
 var FrontMatterTemplate = `---
 title: {{.Title}}
-description: {{.DescriptionMarkdown}}
+description: {{.Description}}
 created: {{.CurrentDate}}
 updated: {{.CurrentDate}}
 coverImagePath:
