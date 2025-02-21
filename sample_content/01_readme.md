@@ -1,15 +1,25 @@
 ---
-title: 01 Getting Started with DSBG
+title: README - Getting Started with DSBG
 description: How to install and use Dead Simple Blog Generator.
-created: 2025 01 04
-updated: 2025 01 04
-tags: [guide, tutorial, example]
+created: 2025 01 03
 coverImagePath: 01_dsbg_logo.webp
 ---
 
-DSBG (Dead Simple Blog Generator) is a command-line tool that transforms a directory of Markdown and / or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a simple website with minimal configuration.
+DSBG (Dead Simple Blog Generator) is a free and open source command-line tool that transforms a directory of Markdown and / or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.
 
+The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:
 
+- Easy installation: Download a [pre-built binary](https://github.com/tesserato/dsbg/releases) or use `go install github.com/tesserato/dsbg@latest`,
+- Support for Markdown & HTML source files, 
+- Automatic Tag generation from paths and built in tag filtering, 
+- Client-side fuzzy search over all content,
+- Automatic RSS feed generation,
+- Watch mode with automatic re-build for continuous feedback,
+- 3 different themes, with the ability to add your own via custom CSS.
+- Automatic share buttons for major social networks
+- Easy to extend with analytics, comments, and more.
+
+**TOC**
 - [Installation](#installation)
 - [Usage](#usage)
   - [Creating a Markdown Template](#creating-a-markdown-template)
@@ -59,7 +69,7 @@ To create a new Markdown file with a pre-filled frontmatter template, run:
 dsbg -template -title "My Awesome Post" -description "A sample template"
 ```
 
-This command generates a Markdown file named with the current date (YYYYMMDD) in the current directory. You can use this as a starting point to fill with content. If no title is given, the file will be named with the date.
+This command generates a Markdown file named with the current date in the current directory. You can use this as a starting point to fill with content. If no title is given, the file will be named with the date.
 
 ## Building a Blog with a Theme and Watch Mode
 
@@ -124,33 +134,42 @@ Here's a breakdown of the core features of DSBG:
 *   **Watch Mode:** When enabled with the `-watch` flag, DSBG monitors your content directory for changes, automatically rebuilds the website, and starts a local server, allowing for a smooth writing experience.
 *   **"PAGE" Tag:** Use the `PAGE` tag in the frontmatter of a file or the `keywords` meta tag of an HTML file, to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.
 *   **Open Links in New Tabs:** When enabled with the `-open-in-new-tab` flag, external links from your articles will open in a new browser tab, providing a smoother user experience for your readers.
+*   **Social Media Share Buttons**: Easily add share buttons for Bluesky, Mastodon, Threads, and X (Twitter) to your articles, making it simple for readers to share your content.
+*   **Social Media Profile Links**: Include links to your profiles on Bluesky, Mastodon, Threads, and X (Twitter) in the header of your blog, enhancing your online presence and making it easier for readers to follow you.
+*   **Article Sorting**: Control the order in which articles are displayed on the index page. Sort by creation date, update date, title, or file path, in ascending or descending order.
 
 # Command-Line Arguments
 
 The following flags are available when using the `dsbg` command-line tool:
 
-| Flag                       | Description                                                                                                   | Default Value     |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------- |
-| `-title`                   | The title of your blog or website.                                                                             | `Blog`            |
-| `-base-url`                | The base URL for your website (e.g., `https://example.com`). Required for generating a correct RSS feed.       | none              |
-| `-description`             | A brief description of your blog or website. Can be in Markdown format.                                        | `This is my blog` |
-| `-input-path`              | The path to the directory containing your source content files (Markdown and HTML).                            | `content`         |
-| `-output-path`             | The path to the directory where the generated website files will be saved.                                     | `public`          |
-| `-date-format`             | The format for displaying dates on the website using Go's time formatting syntax (e.g., `2006-01-02`).         | `2006 01 02`      |
-| `-index-name`              | The filename for your main index page.                                                                         | `index.html`      |
-| `-css-path`                | The path to a custom CSS file to override default styles.                                                      | none              |
-| `-js-path`                 | The path to a custom JavaScript file to add functionality to your site.                                        | none              |
-| `-favicon-path`            | The path to a custom favicon file (e.g., `.ico`) for your site.                                                | none              |
-| `-ignore-tags-from-paths`  | Disable extracting tags from directory names.                                                                  | `false`           |
-| `-keep-date-in-paths`      | Do not remove date patterns from the generated file paths.                                                     | `false`           |
-| `-keep-date-in-titles`     | Do not remove date patterns from article titles.                                                               | `false`           |
-| `-open-in-new-tab`         | Open external links in new browser tabs.                                                                        | `false`           |
-| `-style`                   | Choose a pre-defined theme: `default`, `dark`, or `colorful`.                                                 | `default`         |
-| `-elements-top`            | The path to an HTML file with elements to include at the top of each generated page (e.g., analytics scripts). | none              |
-| `-elements-bottom`         | The path to an HTML file with elements to include at the bottom of each generated page.                        | none              |
-| `-help`                    | Display this help message and exit.                                                                            | `false`           |
-| `-watch`                   | Enable watch mode, automatically rebuild the site on changes, and start a local server.                        | `false`           |
-| `-template`                | Create a basic Markdown template file with frontmatter in the current directory.                               | `false`           |
+| Flag                      | Description                                                                                                                                                                                        | Default Value     |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| `-title`                  | The title of your blog or website.                                                                                                                                                                 | `Blog`            |
+| `-base-url`               | The base URL for your website (e.g., `https://example.com`). Required for generating a correct RSS feed.                                                                                           | none              |
+| `-description`            | A brief description of your blog or website. Can be in Markdown format.                                                                                                                            | `This is my blog` |
+| `-input-path`             | The path to the directory containing your source content files (Markdown and HTML).                                                                                                                | `content`         |
+| `-output-path`            | The path to the directory where the generated website files will be saved.                                                                                                                         | `public`          |
+| `-date-format`            | The format for displaying dates on the website using Go's time formatting syntax (e.g., `2006-01-02`).                                                                                             | `2006 01 02`      |
+| `-index-name`             | The filename for your main index page.                                                                                                                                                             | `index.html`      |
+| `-css-path`               | The path to a custom CSS file to override default styles.                                                                                                                                          | none              |
+| `-js-path`                | The path to a custom JavaScript file to add functionality to your site.                                                                                                                            | none              |
+| `-favicon-path`           | The path to a custom favicon file (e.g., `.ico`) for your site.                                                                                                                                    | none              |
+| `-ignore-tags-from-paths` | Disable extracting tags from directory names.                                                                                                                                                      | `false`           |
+| `-keep-date-in-paths`     | Do not remove date patterns from the generated file paths.                                                                                                                                         | `false`           |
+| `-keep-date-in-titles`    | Do not remove date patterns from article titles.                                                                                                                                                   | `false`           |
+| `-open-in-new-tab`        | Open external links in new browser tabs.                                                                                                                                                           | `false`           |
+| `-style`                  | Choose a pre-defined theme: `default`, `dark`, or `colorful`.                                                                                                                                      | `default`         |
+| `-elements-top`           | The path to an HTML file with elements to include at the top of each generated page (e.g., analytics scripts).                                                                                     | none              |
+| `-elements-bottom`        | The path to an HTML file with elements to include at the bottom of each generated page.                                                                                                            | none              |
+| `-help`                   | Display this help message and exit.                                                                                                                                                                | `false`           |
+| `-watch`                  | Enable watch mode, automatically rebuild the site on changes, and start a local server.                                                                                                            | `false`           |
+| `-template`               | Create a basic Markdown template file with frontmatter in the current directory.                                                                                                                   | `false`           |
+| `-sort`                   | Define the sorting order of articles on the index page. Options: `date-created`, `reverse-date-created`, `date-updated`, `reverse-date-updated`, `title`, `reverse-title`, `path`, `reverse-path`. | `date-created`    |
+| `-x-handle`               | X (formerly Twitter) handle for profile link and share buttons.                                                                                                                                    | none              |
+| `-bluesky-handle`         | Bluesky handle for profile link and share buttons.                                                                                                                                                 | none              |
+| `-threads-handle`         | Threads handle for profile link and share buttons.                                                                                                                                                 | none              |
+| `-mastodon-handle`        | Mastodon handle for profile link and share buttons.                                                                                                                                                | none              |
+
 
 # Caveats
 
@@ -170,3 +189,4 @@ If you come up with a nice theme for DSBG, please contact me so I can add it to 
 - [The Fortnightly Tambourine](https://tesserato.web.app/)
 
 My personal blog, and the motivation for DSBG. If you want to know more about why I made this, check out [Why I made yet another blog generator](https://tesserato.web.app/posts/2022-02-16-Why-I-made-yet-another-blog-generator/index.html).
+

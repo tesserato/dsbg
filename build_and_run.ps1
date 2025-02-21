@@ -1,10 +1,8 @@
 $exec_name = "dsbg.exe"
 $front_matter = "---
-title: 01 Getting Started with DSBG
+title: README - Getting Started with DSBG
 description: How to install and use Dead Simple Blog Generator.
-created: 2025 01 04
-updated: 2025 01 04
-tags: [guide, tutorial, example]
+created: 2025 01 03
 coverImagePath: 01_dsbg_logo.webp
 ---"
 
@@ -30,29 +28,17 @@ magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque bla
 # ./dsbg.exe -template -title "My Awesome Post from template" -description "A sample template with a very long text to test if it wraps correctly. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." -output-path "sample_content"
 
 $description = @'
-Welcome to the Dead Simple Blog Generator blog.
+Automate your virtual presence with DSBG, a free and open-source static site generator built with Go that's truly simple to use. 
 
-A new static site generator that's truly simple. Built with Go for speed & efficiency.
+# TLDR
 
-- Easy installation: Download a [pre-built binary](https://github.com/tesserato/dsbg/releases) or use `go install github.com/tesserato/dsbg@latest`,
+`go install github.com/tesserato/dsbg@latest` or download a [pre-built binary](https://github.com/tesserato/dsbg/releases)
 
-- Support for Markdown & HTML source files, 
+`dsbg -h` for usage instructions
 
-- Tag generation and filtering, 
+Check the Readme [here](https://tesserato.github.io/dsbg/01readme/index.html) or at the Github [repo](https://github.com/tesserato/dsbg) for more details
 
-- Client-side fuzzy search,
-
-- RSS feed generation,
-
-- Watch mode with automatic re-rendering,
-
-- 3 different themes, with the ability to add your own via custom CSS.
-
-- Share buttons
-
-- Easy analytics, comments, and more.
-
-This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg)
+This is a sample blog created with DSBG from the source at [github.com/tesserato/dsbg](https://github.com/tesserato/dsbg/tree/main/sample_content)
 
 [![Release Status](https://img.shields.io/github/release/tesserato/dsbg)](https://github.com/tesserato/dsbg/releases)
 
@@ -70,7 +56,6 @@ start chrome http://localhost:666/index.html
     -title "Dead Simple Blog Generator" `
     -description "$description" `
     -watch `
-    -open-in-new-tab `
     -input-path "sample_content" `
     -output-path "docs" `
     -base-url "https://tesserato.github.io/dsbg/" `
@@ -81,6 +66,6 @@ start chrome http://localhost:666/index.html
     -bluesky-handle "tesserato" `
     -threads-handle "tesserato" `
     -mastodon-handle "tesserato" `
-    -sort "date-updated"
+    -sort "reverse-date-created"
     
     
