@@ -39,6 +39,17 @@ type Settings struct {
 	Sort                      string
 }
 
+type TemplateSettings struct {
+	Title           string
+	Description     string
+	Created         string
+	Updated         string
+	CoverImagePath  string
+	Tags            string
+	OutputDirectory string
+	DateFormat      string
+}
+
 type Article struct {
 	Title          string
 	Description    string

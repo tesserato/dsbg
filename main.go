@@ -41,9 +41,9 @@ func isFlagPassed(name string) bool {
 }
 
 // noFlagsPassed checks if any command-line flags were provided when running the program.
-func noFlagsPassed() bool {
+func noFlagsPassed(fs *flag.FlagSet) bool {
 	found := false
-	flag.Visit(func(f *flag.Flag) {
+	fs.Visit(func(f *flag.Flag) {
 		found = true
 	})
 	return !found
@@ -79,44 +79,56 @@ func main() {
 	styleString := defaultFlagSet.String("style", "default", "Predefined style to use: 'default', 'dark', or 'colorful'. Overrides default styling but is overridden by a custom CSS file ('-css-path').")
 	pathToAdditionalElementsTop := defaultFlagSet.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page, inside the <head> tag (e.g., analytics scripts, custom meta tags).")
 	pathToAdditionalElemensBottom := defaultFlagSet.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page, before the closing </body> tag (e.g., additional scripts).")
-	showHelp := defaultFlagSet.Bool("help", false, "Show this help message and exit.")
+	// showHelp := defaultFlagSet.Bool("help", false, "Show this help message and exit.")
 	watch := defaultFlagSet.Bool("watch", false, "Watch for changes in the input directory and rebuild the website automatically. Also starts a local HTTP server to serve the generated website.")
 
 	// --- Template FlagSet Flags ---
-	templateFlagSet.StringVar(&settings.Title, "title", "", "Title for the Markdown template file.") // Reusing settings.Title but with different usage
-	templateFlagSet.StringVar(&settings.DescriptionMarkdown, "description", "", "Description for the Markdown template file. Supports Markdown formatting.")
-	templateFlagSet.StringVar(&settings.OutputDirectory, "output-path", "sample_content", "(template mode) Path to the directory where the template will be saved (defaults to 'sample_content' in template mode).") //Override default output path for template
+	var templateSettings parse.TemplateSettings
+	templateFlagSet.StringVar(&templateSettings.Title, "title", "", "Title for the Markdown template file.")
+	templateFlagSet.StringVar(&templateSettings.Description, "description", "", "Description for the Markdown template file. Supports Markdown formatting.")
+	templateFlagSet.StringVar(&templateSettings.Created, "created", "", "(template mode)")
+	templateFlagSet.StringVar(&templateSettings.Updated, "updated", "", "(template mode)")
+	templateFlagSet.StringVar(&templateSettings.CoverImagePath, "cover-image-path", "", "(template mode)")
+	templateFlagSet.StringVar(&templateSettings.Tags, "tags", "", "(template mode)")
+	templateFlagSet.StringVar(&templateSettings.OutputDirectory, "output-path", "sample_content", "(template mode) Path to the directory where the template will be saved (defaults to 'sample_content' in template mode).") //Override default output path for template
+	templateFlagSet.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
 
-	// Determine which FlagSet to parse based on command-line arguments
-	var parsedFlagSet *flag.FlagSet
-	isTemplateMode := false
-	for _, arg := range os.Args[1:] { // Start from index 1 to skip program name
-		if arg == "-template" {
-			isTemplateMode = true
-			parsedFlagSet = templateFlagSet
-			break
+	defaultFlagSet.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Custom help %s:\n", os.Args[0])
+
+		// defaultFlagSet.Usage()
+		// templateFlagSet.Usage()
+
+		templateFlagSet.VisitAll(func(f *flag.Flag) {
+			fmt.Fprintf(os.Stderr, "    %v\n", f.Usage) // f.Name, f.Value
+		})
+	}
+
+	switch os.Args[1] {
+	case "template":
+		log.Println("Creating Markdown template:")
+		err := templateFlagSet.Parse(os.Args[1:])
+		if err != nil {
+			log.Fatalf("Error parsing flags: %v", err)
 		}
+		if err := createMarkdownTemplate(templateSettings); err != nil {
+			log.Fatalf("Error creating markdown template: %v", err)
+		}
+		return
+
 	}
 
-	if !isTemplateMode {
-		parsedFlagSet = defaultFlagSet
-	}
-
-	// Parse the selected FlagSet
-	err := parsedFlagSet.Parse(os.Args[1:])
+	err := defaultFlagSet.Parse(os.Args[1:])
 	if err != nil {
 		log.Fatalf("Error parsing flags: %v", err)
 	}
 
-	// Handle Help based on the FlagSet used
-	if *showHelp {
-		if isTemplateMode {
-			templateFlagSet.Usage()
-		} else {
-			defaultFlagSet.Usage()
-		}
-		return
-	}
+	// if *showHelp {
+	// 	log.Println("Help for DSBG:")
+	// 	// defaultFlagSet.PrintDefaults()
+	// 	templateFlagSet.PrintDefaults()
+	// 	return
+	// }
 
 	// Convert Markdown description to HTML (Do this *after* parsing flags so description is populated)
 	var buf strings.Builder
@@ -125,25 +137,13 @@ func main() {
 	}
 	settings.DescriptionHTML = template.HTML(buf.String())
 
-	// Handle Template Creation Mode
-	if settings.CreateTemplateFlag {
-		if err := createMarkdownTemplate(settings); err != nil {
-			log.Fatalf("Error creating markdown template: %v", err)
+	// Check if the input directory exists
+	if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
+		if noFlagsPassed(defaultFlagSet) {
+			defaultFlagSet.Usage()
+			return
 		}
-		return
-	}
-
-	// --- Rest of your main function logic (for default mode) ---
-
-	// Check if the input directory exists (only in default mode)
-	if !isTemplateMode {
-		if _, err := os.Stat(settings.InputDirectory); os.IsNotExist(err) {
-			if noFlagsPassed(defaultFlagSet) { // Pass the defaultFlagSet here
-				defaultFlagSet.Usage()
-				return
-			}
-			log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
-		}
+		log.Fatalf("Input directory '%s' does not exist.", settings.InputDirectory)
 	}
 
 	// Read content of files specified by flags
@@ -188,51 +188,47 @@ func main() {
 		log.Printf("Unknown style '%s', using default.\n", *styleString)
 	}
 
-	// Perform the initial website build (only in default mode)
-	if !isTemplateMode {
-		buildWebsite(settings)
+	// Perform the initial website build
+	buildWebsite(settings)
 
-		if *watch {
-			startWatcher(settings)
-		}
-	} else {
-		fmt.Println("Markdown template created at:", settings.OutputDirectory) // Info message for template mode
+	if *watch {
+		startWatcher(settings)
 	}
+
 }
 
 // createMarkdownTemplate generates a Markdown template file with predefined frontmatter.
 // This template is helpful for quickly creating new blog posts with consistent metadata structure.
-func createMarkdownTemplate(settings parse.Settings) error {
+func createMarkdownTemplate(templateSettings parse.TemplateSettings) error {
 	tmpl, err := template.New("frontmatter").Parse(parse.FrontMatterTemplate)
 	if err != nil {
 		return fmt.Errorf("error parsing template: %w", err)
 	}
 
-	formattedDate := time.Now().Format(settings.DateFormat)
-	filename := formattedDate + " " + settings.Title + ".md"
-	if !isFlagPassed("title") {
-		filename = formattedDate + ".md"
-		settings.Title = "" // Ensure title is empty if flag not passed
+	if templateSettings.Created == "" {
+		templateSettings.Created = time.Now().Format(templateSettings.DateFormat)
+	} else {
+		parsed, err := time.Parse(templateSettings.DateFormat, templateSettings.Created)
+		if err != nil {
+			return fmt.Errorf("error parsing created date: %w", err)
+		}
+		templateSettings.Created = parsed.Format(templateSettings.DateFormat)
 	}
-
-	description := settings.DescriptionMarkdown
-	if !isFlagPassed("description") {
-		description = "" // Ensure description is empty if flag not passed
+	if templateSettings.Updated == "" {
+		templateSettings.Updated = time.Now().Format(templateSettings.DateFormat)
+	} else {
+		parsed, err := time.Parse(templateSettings.DateFormat, templateSettings.Updated)
+		if err != nil {
+			return fmt.Errorf("error parsing updated date: %w", err)
+		}
+		templateSettings.Updated = parsed.Format(templateSettings.DateFormat)
 	}
-
-	data := struct {
-		Title       string
-		Description string
-		CurrentDate string
-	}{
-		Title:       settings.Title,
-		Description: description,
-		CurrentDate: formattedDate,
-	}
+	formattedDate := time.Now().Format(templateSettings.DateFormat)
+	filename := formattedDate + " " + templateSettings.Title + ".md"
 
 	templatePath := filepath.Join(".", filename) // Default to current directory
 	if isFlagPassed("output-path") {
-		templatePath = filepath.Join(settings.OutputDirectory, filename)
+		templatePath = filepath.Join(templateSettings.OutputDirectory, filename)
 	}
 
 	file, err := os.Create(templatePath)
@@ -241,7 +237,7 @@ func createMarkdownTemplate(settings parse.Settings) error {
 	}
 	defer file.Close()
 
-	if err := tmpl.Execute(file, data); err != nil {
+	if err := tmpl.Execute(file, templateSettings); err != nil {
 		return fmt.Errorf("error executing template: %w", err)
 	}
 

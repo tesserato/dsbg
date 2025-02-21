@@ -3,10 +3,10 @@ package parse
 var FrontMatterTemplate = `---
 title: {{.Title}}
 description: {{.Description}}
-created: {{.CurrentDate}}
-updated: {{.CurrentDate}}
-coverImagePath:
-tags:
+created: {{.Created}}
+updated: {{.Updated}}
+coverImagePath: {{.CoverImagePath}}
+tags: {{.Tags}}
 ---
 
 # Markdown Content Examples
