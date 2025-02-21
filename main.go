@@ -101,11 +101,11 @@ func main() {
 	templateFlagSet.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
 
 	defaultFlagSet.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Custom help %s:\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\nDefault flags:\n")
 
 		defaultFlagSet.VisitAll(logFlag)
 
-		fmt.Fprintf(os.Stderr, "\nMarkdown template flags:\n")
+		fmt.Fprintf(os.Stderr, "\nTemplate mode flags:\n")
 
 		templateFlagSet.VisitAll(logFlag)
 	}
@@ -121,7 +121,6 @@ func main() {
 			log.Fatalf("Error creating markdown template: %v", err)
 		}
 		return
-
 	}
 
 	err := defaultFlagSet.Parse(os.Args[1:])
