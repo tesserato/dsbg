@@ -49,6 +49,14 @@ func noFlagsPassed(fs *flag.FlagSet) bool {
 	return !found
 }
 
+func logFlag(f *flag.Flag) {
+	defaultValue := f.DefValue
+	if defaultValue != "" {
+		defaultValue = fmt.Sprintf(" (default: %v)", defaultValue)
+	}
+	fmt.Fprintf(os.Stderr, "  -%v %v\n    %v \n", f.Name, defaultValue, f.Usage)
+}
+
 func main() {
 	// Create FlagSets for default flags and template flags
 	defaultFlagSet := flag.NewFlagSet("default", flag.ExitOnError)
@@ -79,29 +87,27 @@ func main() {
 	styleString := defaultFlagSet.String("style", "default", "Predefined style to use: 'default', 'dark', or 'colorful'. Overrides default styling but is overridden by a custom CSS file ('-css-path').")
 	pathToAdditionalElementsTop := defaultFlagSet.String("elements-top", "", "Path to an HTML file with elements to include at the top of each page, inside the <head> tag (e.g., analytics scripts, custom meta tags).")
 	pathToAdditionalElemensBottom := defaultFlagSet.String("elements-bottom", "", "Path to an HTML file with elements to include at the bottom of each page, before the closing </body> tag (e.g., additional scripts).")
-	// showHelp := defaultFlagSet.Bool("help", false, "Show this help message and exit.")
 	watch := defaultFlagSet.Bool("watch", false, "Watch for changes in the input directory and rebuild the website automatically. Also starts a local HTTP server to serve the generated website.")
 
 	// --- Template FlagSet Flags ---
 	var templateSettings parse.TemplateSettings
-	templateFlagSet.StringVar(&templateSettings.Title, "title", "", "Title for the Markdown template file.")
-	templateFlagSet.StringVar(&templateSettings.Description, "description", "", "Description for the Markdown template file. Supports Markdown formatting.")
-	templateFlagSet.StringVar(&templateSettings.Created, "created", "", "(template mode)")
-	templateFlagSet.StringVar(&templateSettings.Updated, "updated", "", "(template mode)")
-	templateFlagSet.StringVar(&templateSettings.CoverImagePath, "cover-image-path", "", "(template mode)")
-	templateFlagSet.StringVar(&templateSettings.Tags, "tags", "", "(template mode)")
-	templateFlagSet.StringVar(&templateSettings.OutputDirectory, "output-path", "sample_content", "(template mode) Path to the directory where the template will be saved (defaults to 'sample_content' in template mode).") //Override default output path for template
+	templateFlagSet.StringVar(&templateSettings.Title, "title", "", "Title to populate the 'title' field.")
+	templateFlagSet.StringVar(&templateSettings.Description, "description", "", "Description to populate the 'description' field.")
+	templateFlagSet.StringVar(&templateSettings.Created, "created", "", "Date to populate the 'created' field. Must be in the format specified by the 'date-format' flag.")
+	templateFlagSet.StringVar(&templateSettings.Updated, "updated", "", "Date to populate the 'updated' field. Must be in the format specified by the 'date-format' flag.")
+	templateFlagSet.StringVar(&templateSettings.CoverImagePath, "cover-image-path", "", "Path to a cover image for the Markdown template file relative to the 'output-path' specified.")
+	templateFlagSet.StringVar(&templateSettings.Tags, "tags", "", "A comma-separated list of tags for the Markdown template file.")
+	templateFlagSet.StringVar(&templateSettings.OutputDirectory, "output-path", ".", "Path to the directory where the template will be saved.")
 	templateFlagSet.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "Format for displaying dates on the website. Uses Go's time formatting (e.g., '2006-01-02' or 'January 2, 2006').")
 
 	defaultFlagSet.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Custom help %s:\n", os.Args[0])
 
-		// defaultFlagSet.Usage()
-		// templateFlagSet.Usage()
+		defaultFlagSet.VisitAll(logFlag)
 
-		templateFlagSet.VisitAll(func(f *flag.Flag) {
-			fmt.Fprintf(os.Stderr, "    %v\n", f.Usage) // f.Name, f.Value
-		})
+		fmt.Fprintf(os.Stderr, "\nMarkdown template flags:\n")
+
+		templateFlagSet.VisitAll(logFlag)
 	}
 
 	switch os.Args[1] {
@@ -122,13 +128,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error parsing flags: %v", err)
 	}
-
-	// if *showHelp {
-	// 	log.Println("Help for DSBG:")
-	// 	// defaultFlagSet.PrintDefaults()
-	// 	templateFlagSet.PrintDefaults()
-	// 	return
-	// }
 
 	// Convert Markdown description to HTML (Do this *after* parsing flags so description is populated)
 	var buf strings.Builder
