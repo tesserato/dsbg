@@ -104,15 +104,15 @@
     </header>
 
     <div class="detail">
-        <p>DSBG (Dead Simple Blog Generator) is a free and open source command-line tool that transforms a directory of Markdown and / or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.</p>
+        <p>DSBG (Dead Simple Blog Generator) is a free and open-source command-line tool that transforms a directory of Markdown and/or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.</p>
 <p>The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:</p>
 <ul>
 <li>Easy installation: Download a <a href="https://github.com/tesserato/dsbg/releases">pre-built binary</a> or use <code>go install github.com/tesserato/dsbg@latest</code>,</li>
 <li>Support for Markdown &amp; HTML source files,</li>
-<li>Automatic Tag generation from paths and built in tag filtering,</li>
+<li>Automatic tag generation from paths and built-in tag filtering,</li>
 <li>Client-side fuzzy search over all content,</li>
 <li>Automatic RSS feed generation,</li>
-<li>Watch mode with automatic re-build for continuous feedback,</li>
+<li>Watch mode with automatic rebuild for continuous feedback,</li>
 <li>3 different themes, with the ability to add your own via custom CSS.</li>
 <li>Automatic share buttons for major social networks</li>
 <li>Easy to extend with analytics, comments, and more.</li>
@@ -158,7 +158,7 @@
 <p>To build a blog using a predefined theme (<code>dark</code>) and enable watch mode (which automatically rebuilds the site on changes), use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -style dark
 </code></pre>
-<p>This command generates a blog with the &quot;dark&quot; theme and watches for changes in the <code>content</code> folder, rebuilding the website on each change. A local server will also start, to serve the blog in your browser.</p>
+<p>This command generates a blog with the &quot;dark&quot; theme and watches for changes in the <code>content</code> folder, rebuilding the website on each change. A local server will also start to serve the blog in your browser.</p>
 <h2 id="building-a-blog-with-custom-css">Building a Blog with Custom CSS</h2>
 <p>To use a custom CSS file to style your blog, use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -css-path path/to/custom-style.css
@@ -206,11 +206,11 @@
 </ul>
 </li>
 <li><strong>RSS Feed Generation:</strong> DSBG automatically generates an RSS feed (<code>rss.xml</code>) for your blog, allowing your readers to subscribe to your content updates.</li>
-<li><strong>Client-Side Search:</strong> A simple client-side search powered by Fuse.js is included, enabling users to easily search for content within your website. The search input is at the top of the main page, and supports some basic search commands (like the ones used by UNIX).</li>
+<li><strong>Client-Side Search:</strong> A simple client-side search powered by Fuse.js is included, enabling users to easily search for content within your website. The search input is at the top of the main page and supports some basic search commands (like the ones used by UNIX).</li>
 <li><strong>Resource Handling:</strong> DSBG automatically identifies and copies resources (images, scripts, etc.) linked in your Markdown or HTML content to the output directory.</li>
 <li><strong>Automatic Date Handling:</strong> DSBG extracts and displays date information from frontmatter fields, filenames, or file metadata, ensuring your content displays with accurate dates. If no date is provided, the file modification date is used.</li>
 <li><strong>Watch Mode:</strong> When enabled with the <code>-watch</code> flag, DSBG monitors your content directory for changes, automatically rebuilds the website, and starts a local server, allowing for a smooth writing experience.</li>
-<li><strong>&quot;PAGE&quot; Tag:</strong> Use the <code>PAGE</code> tag in the frontmatter of a file or the <code>keywords</code> meta tag of an HTML file, to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.</li>
+<li><strong>&quot;PAGE&quot; Tag:</strong> Use the <code>PAGE</code> tag in the frontmatter of a file or the <code>keywords</code> meta tag of an HTML file to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.</li>
 <li><strong>Open Links in New Tabs:</strong> When enabled with the <code>-open-in-new-tab</code> flag, external links from your articles will open in a new browser tab, providing a smoother user experience for your readers.</li>
 <li><strong>Social Media Share Buttons</strong>: Easily add share buttons for Bluesky, Mastodon, Threads, and X (Twitter) to your articles, making it simple for readers to share your content.</li>
 <li><strong>Social Media Profile Links</strong>: Include links to your profiles on Bluesky, Mastodon, Threads, and X (Twitter) in the header of your blog, enhancing your online presence and making it easier for readers to follow you.</li>
@@ -356,7 +356,7 @@
 </table>
 <h1 id="caveats">Caveats</h1>
 <ul>
-<li>The output directory (<code>public</code> by default) is completely reset (deleted and re-created) every time the program is run. Any files in this folder will be removed, so make sure not to store any important files there. This means that any custom JavaScript, CSS, or other files not in your input directory will be lost when you rebuild the blog. To include custom files, you must place them in the source directory or use the <code>-css-path</code>, <code>-js-path</code> or <code>-favicon-path</code> flags.</li>
+<li>The output directory (<code>public</code> by default) is completely reset (deleted and re-created) every time the program is run. Any files in this folder will be removed, so make sure not to store any important files there. This means that any custom JavaScript, CSS, or other files not in your input directory will be lost when you rebuild the blog. To include custom files, you must place them in the source directory or use the <code>-css-path</code>, <code>-js-path</code>, or <code>-favicon-path</code> flags.</li>
 <li>Links to images or other resources in your source files must not have any whitespace characters.</li>
 </ul>
 <h1 id="contributing">Contributing</h1>

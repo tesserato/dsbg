@@ -5,16 +5,16 @@ created: 2025 01 03
 coverImagePath: 01_dsbg_logo.webp
 ---
 
-DSBG (Dead Simple Blog Generator) is a free and open source command-line tool that transforms a directory of Markdown and / or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.
+DSBG (Dead Simple Blog Generator) is a free and open-source command-line tool that transforms a directory of Markdown and/or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.
 
 The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:
 
 - Easy installation: Download a [pre-built binary](https://github.com/tesserato/dsbg/releases) or use `go install github.com/tesserato/dsbg@latest`,
-- Support for Markdown & HTML source files, 
-- Automatic Tag generation from paths and built in tag filtering, 
+- Support for Markdown & HTML source files,
+- Automatic tag generation from paths and built-in tag filtering,
 - Client-side fuzzy search over all content,
 - Automatic RSS feed generation,
-- Watch mode with automatic re-build for continuous feedback,
+- Watch mode with automatic rebuild for continuous feedback,
 - 3 different themes, with the ability to add your own via custom CSS.
 - Automatic share buttons for major social networks
 - Easy to extend with analytics, comments, and more.
@@ -79,7 +79,7 @@ To build a blog using a predefined theme (`dark`) and enable watch mode (which a
 dsbg -title "My Awesome Blog" -description "My blog description" -watch -style dark
 ```
 
-This command generates a blog with the "dark" theme and watches for changes in the `content` folder, rebuilding the website on each change. A local server will also start, to serve the blog in your browser.
+This command generates a blog with the "dark" theme and watches for changes in the `content` folder, rebuilding the website on each change. A local server will also start to serve the blog in your browser.
 
 ## Building a Blog with Custom CSS
 
@@ -128,11 +128,11 @@ Here's a breakdown of the core features of DSBG:
     *   Choose between pre-defined themes: `default`, `dark`, or `colorful`.
     *   Use your own custom CSS file with the `-css-path` flag to style your website.
 *   **RSS Feed Generation:** DSBG automatically generates an RSS feed (`rss.xml`) for your blog, allowing your readers to subscribe to your content updates.
-*   **Client-Side Search:** A simple client-side search powered by Fuse.js is included, enabling users to easily search for content within your website. The search input is at the top of the main page, and supports some basic search commands (like the ones used by UNIX).
+*   **Client-Side Search:** A simple client-side search powered by Fuse.js is included, enabling users to easily search for content within your website. The search input is at the top of the main page and supports some basic search commands (like the ones used by UNIX).
 *   **Resource Handling:** DSBG automatically identifies and copies resources (images, scripts, etc.) linked in your Markdown or HTML content to the output directory.
 *   **Automatic Date Handling:** DSBG extracts and displays date information from frontmatter fields, filenames, or file metadata, ensuring your content displays with accurate dates. If no date is provided, the file modification date is used.
 *   **Watch Mode:** When enabled with the `-watch` flag, DSBG monitors your content directory for changes, automatically rebuilds the website, and starts a local server, allowing for a smooth writing experience.
-*   **"PAGE" Tag:** Use the `PAGE` tag in the frontmatter of a file or the `keywords` meta tag of an HTML file, to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.
+*   **"PAGE" Tag:** Use the `PAGE` tag in the frontmatter of a file or the `keywords` meta tag of an HTML file to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.
 *   **Open Links in New Tabs:** When enabled with the `-open-in-new-tab` flag, external links from your articles will open in a new browser tab, providing a smoother user experience for your readers.
 *   **Social Media Share Buttons**: Easily add share buttons for Bluesky, Mastodon, Threads, and X (Twitter) to your articles, making it simple for readers to share your content.
 *   **Social Media Profile Links**: Include links to your profiles on Bluesky, Mastodon, Threads, and X (Twitter) in the header of your blog, enhancing your online presence and making it easier for readers to follow you.
@@ -173,7 +173,7 @@ The following flags are available when using the `dsbg` command-line tool:
 
 # Caveats
 
-*   The output directory (`public` by default) is completely reset (deleted and re-created) every time the program is run. Any files in this folder will be removed, so make sure not to store any important files there. This means that any custom JavaScript, CSS, or other files not in your input directory will be lost when you rebuild the blog. To include custom files, you must place them in the source directory or use the `-css-path`, `-js-path` or `-favicon-path` flags.
+*   The output directory (`public` by default) is completely reset (deleted and re-created) every time the program is run. Any files in this folder will be removed, so make sure not to store any important files there. This means that any custom JavaScript, CSS, or other files not in your input directory will be lost when you rebuild the blog. To include custom files, you must place them in the source directory or use the `-css-path`, `-js-path`, or `-favicon-path` flags.
 *   Links to images or other resources in your source files must not have any whitespace characters.
 
 # Contributing

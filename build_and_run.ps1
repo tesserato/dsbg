@@ -28,7 +28,7 @@ magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque bla
 # ./dsbg.exe -template -title "My Awesome Post from template" -description "A sample template with a very long text to test if it wraps correctly. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." -output-path "sample_content"
 
 $description = @'
-Automate your virtual presence with DSBG, a free and open-source static site generator built with Go that's truly simple to use. 
+A Simple, Open-Source Tool to Create Your Static Blog and Broadcast Your Content.
 
 # TLDR
 
