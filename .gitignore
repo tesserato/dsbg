@@ -1,10 +1,5 @@
 codebase.md
-codemerge.exe
-public
-codeweaver.exe
-DRAFT.md
 dsbg.exe
-# Added by goreleaser init:
 dist/
 gen_codebase.ps1
 dsbg_logo.png
