@@ -20,7 +20,7 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Fri, 21 Feb 2025 18:14:52 +0000</lastBuildDate>
+		<lastBuildDate>Mon, 24 Feb 2025 18:54:05 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>Using Dates from Paths</title>
@@ -81,7 +81,7 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 			<description>Screenshots of the available themes</description>
 			<media:content
 				xmlns:media="http://search.yahoo.com/mrss/"
-				url="https://tesserato.github.io/dsbg/04_colorful.png"
+				url="https://tesserato.github.io/dsbg/04_themes.png"
 				medium="image"
 				type="image/jpeg"
 				width="150"
