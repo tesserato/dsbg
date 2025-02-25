@@ -24,6 +24,7 @@ Set-Content sample_content/01_readme.md $content
 
 magick -density 376 -background none "logo.svg" "sample_content/01_dsbg_logo.webp"
 magick -background none "sample_content/01_dsbg_logo.webp" -fill red -opaque black -blur 0x1  -crop 167x167+0+0  "assets/favicon.ico"
+magick -background none "sample_content/01_dsbg_logo.webp"  -crop 167x167+0+0  "thumb.webp"
 
 # ./dsbg.exe -template -title "My Awesome Post from template" -description "A sample template with a very long text to test if it wraps correctly. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." -output-path "sample_content"
 
