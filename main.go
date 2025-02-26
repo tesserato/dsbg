@@ -120,7 +120,10 @@ func main() {
 	}
 
 	// Determine the mode of operation based on the first command-line argument.
-	switch os.Args[1] {
+	mode := strings.TrimPrefix(os.Args[1], "-")
+	mode = strings.TrimPrefix(mode, "--")
+	mode = strings.ToLower(mode)
+	switch mode {
 	case "template":
 		log.Println("Running in template creation mode...") 
 		err := templateFlagSet.Parse(os.Args[2:])
@@ -235,8 +238,10 @@ func createMarkdownTemplate(templateSettings parse.TemplateSettings) error {
 	}
 
 	// Generate filename based on current date and title
-	formattedDate := time.Now().Format(templateSettings.DateFormat)
-	filename := formattedDate + " " + templateSettings.Title + ".md"
+	filename := "new_template.md"
+	if templateSettings.Title != "" || templateSettings.Created != "" {
+		filename = templateSettings.Created + " " + templateSettings.Title + ".md"
+	}
 
 	templatePath := filepath.Join(templateSettings.OutputDirectory, filename)
 
