@@ -211,7 +211,7 @@ func main() {
 
 // createMarkdownTemplate generates a Markdown template file with predefined frontmatter.
 // It uses the provided TemplateSettings to pre-fill fields in the frontmatter and saves the template to a file.
-func createMarkdownTemplate(templateSettings parse.TemplateSettings) error {
+func createMarkdownTemplate(templateSettings parse.TemplateSettings) error { // TODO improve default behaviour
 	tmpl, err := template.New("frontmatter").Parse(parse.FrontMatterTemplate)
 	if err != nil {
 		return fmt.Errorf("error parsing template: %w", err)
