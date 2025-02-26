@@ -190,3 +190,7 @@ If you come up with a nice theme for DSBG, please contact me so I can add it to 
 
 My personal blog, and the motivation for DSBG. If you want to know more about why I made this, check out [Why I made yet another blog generator](https://tesserato.web.app/posts/2022-02-16-Why-I-made-yet-another-blog-generator/index.html).
 
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=tesserato/dsbg&type=Date)](https://star-history.com/#tesserato/dsbg&Date)
+

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Dead Simple Blog Generator (dsbg)">
     <meta name="keywords" content="{{ stringsJoin .Art.Tags " , "}}">
+    <meta name="description" content="{{ .Art.Description }}">
     <link rel="stylesheet" href="{{ genRelativeLink .Art.LinkToSelf "style.css"}}">
     <link rel="icon" type="image/x-icon" href="{{genRelativeLink .Art.LinkToSelf "favicon.ico"}}">
 

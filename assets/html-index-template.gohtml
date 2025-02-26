@@ -5,6 +5,7 @@
     {{.Settings.AdditionalElementsTop}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ .Settings.DescriptionMarkdown }}">
     <title>{{.Settings.Title}}</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -69,8 +70,8 @@
                     <button class="on">{{.}}</button>
                     {{end}}
                 </div>
-                <h4 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h4>
-                <h4 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h4>
+                <h3 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h3>
+                <h3 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h3>
             </div>
         </div>
         <div class="content">
