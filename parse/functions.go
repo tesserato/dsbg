@@ -39,12 +39,11 @@ var Markdown = goldmark.New(
 	),
 	goldmark.WithExtensions(
 		&frontmatter.Extender{},
-	),
-	goldmark.WithExtensions(
 		extension.Table,
 		extension.Strikethrough,
 		extension.Linkify,
 		extension.TaskList,
+		extension.Footnote,
 	),
 )
 
