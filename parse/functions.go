@@ -16,6 +16,7 @@ import (
 	texttemplate "text/template"
 	"time"
 
+	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/k3a/html2text"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -39,6 +40,7 @@ var Markdown = goldmark.New(
 	),
 	goldmark.WithExtensions(
 		&frontmatter.Extender{},
+		mathjax.MathJax,
 		extension.Table,
 		extension.Strikethrough,
 		extension.Linkify,

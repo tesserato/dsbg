@@ -15,6 +15,7 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/k3a/html2text v1.2.1
+	github.com/litao91/goldmark-mathjax v0.0.0-20210217064022-a43cf739a50f
 	github.com/yuin/goldmark v1.7.8
 	go.abhg.dev/goldmark/frontmatter v0.2.0
 	golang.org/x/net v0.35.0
