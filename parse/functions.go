@@ -763,6 +763,8 @@ func gen_share_url(article Article, settings Settings, service string) string {
 	case "mastodon":
 		text := fmt.Sprintf("%s\n%s\n%s/%s", article.Description, strings.Join(blueskyHashTags, " "), settings.BaseUrl, article.LinkToSelf)
 		return fmt.Sprintf("https://mastodon.social/?text=%s", url.QueryEscape(text))
+	case "telegram":
+		return fmt.Sprintf("https://t.me/share/url?url=%s/%s&text=%s", settings.BaseUrl, article.LinkToSelf, url.QueryEscape(article.Description))
 
 	// case "facebook":
 	// 	return fmt.Sprintf("https://www.facebook.com/sharer/sharer.php?u=%s", url.QueryEscape(article.LinkToSelf))

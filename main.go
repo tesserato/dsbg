@@ -84,6 +84,7 @@ func main() {
 	defaultFlagSet.BoolVar(&settings.DoNotRemoveDateFromPaths, "keep-date-in-paths", false, "Do not remove date patterns (YYYY-MM-DD) from generated file paths.")
 	defaultFlagSet.BoolVar(&settings.DoNotRemoveDateFromTitles, "keep-date-in-titles", false, "Do not remove date patterns (YYYY-MM-DD) from article titles.")
 	defaultFlagSet.BoolVar(&settings.OpenInNewTab, "open-in-new-tab", false, "Open external links in new browser tabs.")
+	defaultFlagSet.StringVar(&settings.TelegramHandle, "telegram-handle", "", "Telegram handle for share buttons and message link.")
 	defaultFlagSet.StringVar(&settings.XHandle, "x-handle", "", "X (formerly Twitter) handle for share buttons and profile link.")
 	defaultFlagSet.StringVar(&settings.BlueSkyHandle, "bluesky-handle", "", "Bluesky handle for share buttons and profile link.")
 	defaultFlagSet.StringVar(&settings.ThreadsHandle, "threads-handle", "", "Threads handle for share buttons and profile link.")
@@ -563,11 +564,12 @@ func buildWebsite(settings parse.Settings) {
 	// Copy static assets to the output directory (search script, social media icons, etc.).
 	saveAsset("search.js", "search.js", settings.OutputDirectory)
 	saveAsset("rss.svg", "rss.svg", settings.OutputDirectory)
+	saveAsset("telegram.svg", "telegram.svg", settings.OutputDirectory)
 	saveAsset("bluesky.svg", "bluesky.svg", settings.OutputDirectory)
 	saveAsset("mastodon.svg", "mastodon.svg", settings.OutputDirectory)
 	saveAsset("threads.svg", "threads.svg", settings.OutputDirectory)
 	saveAsset("x.svg", "x.svg", settings.OutputDirectory)
-	saveAsset(("share.svg"), "share.svg", settings.OutputDirectory)
+	saveAsset("share.svg", "share.svg", settings.OutputDirectory)
 	saveAsset("follow.svg", "follow.svg", settings.OutputDirectory)
 
 	log.Println("Website generated successfully in:", settings.OutputDirectory) // Success log message

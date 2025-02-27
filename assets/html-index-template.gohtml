@@ -22,12 +22,18 @@
             <a href="rss.xml" target="_blank" title="RSS Feed">
                 <img src="rss.svg" alt="RSS Logo">
             </a>
+            {{if .Settings.TelegramHandle}}
+            <a href="https://t.me/{{.Settings.TelegramHandle}}" target="_blank" rel="noopener noreferrer"
+                title="Telegram profile">
+                <img src="telegram.svg" alt="Telegram Logo">
+            </a>
+            {{end}}  
             {{if .Settings.BlueSkyHandle}}
             <a href="https://bsky.app/profile/{{.Settings.BlueSkyHandle}}.bsky.social" target="_blank"
                 rel="noopener noreferrer" title="Bluesky profile">
                 <img src="bluesky.svg" alt="Bluesky Logo">
             </a>
-            {{end}}
+            {{end}}    
             {{if .Settings.MastodonHandle}}
             <a href="https://mastodon.social/@{{.Settings.MastodonHandle}}" target="_blank" rel="noopener noreferrer"
                 title="Mastodon profile">
@@ -84,6 +90,12 @@
                 <p class="description">{{.Description}}</p>
             </div>
             <div class="sharebuttons">
+                {{if $Settings.TelegramHandle}}
+                <a href={{gen_share_url . $Settings "telegram" }} target="_blank" rel="noopener noreferrer" class="share"
+                    title="Share this post on Telegram">
+                    <img src="telegram.svg" alt="Telegram Logo">
+                </a>
+                {{end}}
                 {{if $Settings.BlueSkyHandle}}
                 <a href={{gen_share_url . $Settings "bluesky" }} target="_blank" rel="noopener noreferrer" class="share"
                     title="Share this post on Bluesky">

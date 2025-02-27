@@ -67,6 +67,7 @@ start chrome http://localhost:666/index.html
     -bluesky-handle "tesserato" `
     -threads-handle "tesserato" `
     -mastodon-handle "tesserato" `
+    -telegram-handle "tesserato" `
     -sort "reverse-date-created"
     
     

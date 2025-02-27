@@ -36,6 +36,7 @@ type Settings struct {
 	BlueSkyHandle             string
 	ThreadsHandle             string
 	MastodonHandle            string
+	TelegramHandle            string
 	Sort                      string
 }
 
