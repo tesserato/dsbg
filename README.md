@@ -3,13 +3,14 @@ DSBG (Dead Simple Blog Generator) is a free and open-source command-line tool th
 The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:
 
 - Easy installation: Download a [pre-built binary](https://github.com/tesserato/dsbg/releases) or use `go install github.com/tesserato/dsbg@latest`,
-- Support for Markdown & HTML source files,
+- Support for Markdown & HTML source files as inputs,
 - Automatic tag generation from paths and built-in tag filtering,
 - Client-side fuzzy search over all content,
 - Automatic RSS feed generation,
 - Watch mode with automatic rebuild for continuous feedback,
 - 3 different themes, with the ability to add your own via custom CSS.
 - Automatic share buttons for major social networks
+- Responsive websites out of the box, with MathJax, footnotes and syntax highlighting,
 - Easy to extend with analytics, comments, and more.
 
 **TOC**
@@ -25,6 +26,7 @@ The ethos behind it is to automate your virtual presence as much as possible, wh
 - [Caveats](#caveats)
 - [Contributing](#contributing)
 - [Blogs using DSBG](#blogs-using-dsbg)
+- [Star History](#star-history)
 
 # Installation
 

@@ -31,7 +31,7 @@
     <meta name="description" content="How to install and use Dead Simple Blog Generator.">
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
-
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
@@ -109,13 +109,14 @@
 <p>The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:</p>
 <ul>
 <li>Easy installation: Download a <a href="https://github.com/tesserato/dsbg/releases">pre-built binary</a> or use <code>go install github.com/tesserato/dsbg@latest</code>,</li>
-<li>Support for Markdown &amp; HTML source files,</li>
+<li>Support for Markdown &amp; HTML source files as inputs,</li>
 <li>Automatic tag generation from paths and built-in tag filtering,</li>
 <li>Client-side fuzzy search over all content,</li>
 <li>Automatic RSS feed generation,</li>
 <li>Watch mode with automatic rebuild for continuous feedback,</li>
 <li>3 different themes, with the ability to add your own via custom CSS.</li>
 <li>Automatic share buttons for major social networks</li>
+<li>Responsive websites out of the box, with MathJax, footnotes and syntax highlighting,</li>
 <li>Easy to extend with analytics, comments, and more.</li>
 </ul>
 <p><strong>TOC</strong></p>
@@ -135,6 +136,7 @@
 <li><a href="#caveats">Caveats</a></li>
 <li><a href="#contributing">Contributing</a></li>
 <li><a href="#blogs-using-dsbg">Blogs using DSBG</a></li>
+<li><a href="#star-history">Star History</a></li>
 </ul>
 <h1 id="installation">Installation</h1>
 <p>To get started with DSBG, you'll first need to install it on your system. If you have Go installed, you can use the following command in your terminal:</p>
