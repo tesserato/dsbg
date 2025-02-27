@@ -23,8 +23,14 @@
         <div class="articlelinks">
             <a href="{{.Settings.BaseUrl}}" {{if $.Settings.OpenInNewTab}}target="_blank" {{end}}> ◁ {{.Settings.Title}}
             </a>
-            {{if or .Settings.BlueSkyHandle .Settings.MastodonHandle .Settings.ThreadsHandle .Settings.XHandle}}
+            {{if or .Settings.BlueSkyHandle .Settings.MastodonHandle .Settings.ThreadsHandle .Settings.XHandle .Settings.TelegramHandle}}
                 <img src='{{genRelativeLink .Art.LinkToSelf "follow.svg"}}' class="actionicons" alt="Follow">
+            {{end}}
+            {{if .Settings.TelegramHandle}}
+            <a href="https://t.me/{{.Settings.TelegramHandle}}" target="_blank" rel="noopener noreferrer"
+                title="Telegram profile">
+                <img src='{{genRelativeLink .Art.LinkToSelf "telegram.svg"}}' alt="Telegram Logo">
+            </a>
             {{end}}
             {{if .Settings.BlueSkyHandle}}
             <a href="https://bsky.app/profile/{{.Settings.BlueSkyHandle}}.bsky.social" target="_blank"
@@ -50,8 +56,15 @@
             </a>
             {{end}}
 
-            {{if or .Settings.BlueSkyHandle .Settings.MastodonHandle .Settings.ThreadsHandle .Settings.XHandle}}
+            {{if or .Settings.BlueSkyHandle .Settings.MastodonHandle .Settings.ThreadsHandle .Settings.XHandle  .Settings.TelegramHandle}}
                  <img src='{{genRelativeLink .Art.LinkToSelf "share.svg"}}' class="actionicons" alt="Share">
+            {{end}}
+
+            {{if .Settings.TelegramHandle}}
+            <a href={{gen_share_url .Art .Settings "telegram" }} target="_blank" rel="noopener noreferrer"
+                title="Share this post on Telegram">
+                <img src='{{genRelativeLink .Art.LinkToSelf "telegram.svg"}}' alt="Telegram Logo">
+            </a>
             {{end}}
             
             {{if .Settings.BlueSkyHandle}}
@@ -83,9 +96,7 @@
         <h2>{{.Art.Description}}</h2>
     </header>
 
-    <div class="detail">
-        {{.Ctt}}
-    </div>
+    {{.Ctt}}
 
     {{.Settings.AdditionalElemensBottom}}
 
