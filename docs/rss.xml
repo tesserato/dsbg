@@ -20,7 +20,7 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
 </description>
 		<generator>Go Simple Blog Generator</generator>
-		<lastBuildDate>Thu, 27 Feb 2025 20:14:51 +0000</lastBuildDate>
+		<lastBuildDate>Fri, 28 Feb 2025 00:03:54 +0000</lastBuildDate>
 		<atom:link href="https://tesserato.github.io/dsbg/rss.xml" rel="self" type="application/rss+xml" />
 		<item>
 			<title>Using Dates from Paths</title>
@@ -28,6 +28,28 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 			<guid>https://tesserato.github.io/dsbg/0320250710pathdates/index.html</guid>
 			<pubDate>Thu, 10 Jul 2025 00:00:00 +0000</pubDate>
 			<description>Demonstrating how DSBG gets dates from the path.</description>
+		</item>
+		<item>
+			<title>HTML page with custom CSS example</title>
+			<link>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</guid>
+			<pubDate>Thu, 27 Feb 2025 17:20:51 +0000</pubDate>
+			<description>An example html page with custom CSS</description>
+		</item>
+		<item>
+			<title>HTML post with custom CSS example</title>
+			<link>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</guid>
+			<pubDate>Thu, 27 Feb 2025 17:20:51 +0000</pubDate>
+			<description>An example html page with custom CSS</description>
+			<media:content
+				xmlns:media="http://search.yahoo.com/mrss/"
+				url="https://tesserato.github.io/dsbg/02_cover_image.jpg"
+				medium="image"
+				type="image/jpeg"
+				width="150"
+				height="150"
+			/>
 		</item>
 		<item>
 			<title>My Awesome Post from template</title>
@@ -52,21 +74,6 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 			<media:content
 				xmlns:media="http://search.yahoo.com/mrss/"
 				url="https://tesserato.github.io/dsbg/05_share_buttons.png"
-				medium="image"
-				type="image/jpeg"
-				width="150"
-				height="150"
-			/>
-		</item>
-		<item>
-			<title>HTML post with custom CSS example</title>
-			<link>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</link>
-			<guid>https://tesserato.github.io/dsbg/02htmlpostexample/index.html</guid>
-			<pubDate>Mon, 06 Jan 2025 02:17:44 +0000</pubDate>
-			<description>An example html page with custom CSS</description>
-			<media:content
-				xmlns:media="http://search.yahoo.com/mrss/"
-				url="https://tesserato.github.io/dsbg/02_cover_image.jpg"
 				medium="image"
 				type="image/jpeg"
 				width="150"
@@ -101,13 +108,6 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 			<guid>https://tesserato.github.io/dsbg/markdown-page-example/index.html</guid>
 			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
 			<description>This is a markdown page example</description>
-		</item>
-		<item>
-			<title>HTML page with custom CSS example</title>
-			<link>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</link>
-			<guid>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</guid>
-			<pubDate>Fri, 03 Jan 2025 18:18:04 +0000</pubDate>
-			<description>An example html page with custom CSS</description>
 		</item>
 		<item>
 			<title>README - Getting Started with DSBG</title>
