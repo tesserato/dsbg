@@ -1,0 +1,24 @@
+services:
+  dsbg:
+    build: .
+    ports:
+      - "8080:666"
+    command: ["./dsbg", "-input-path", "/app/sample_content", "-output-path", "/app/docs", "-base-url", "http://localhost:8080"]
+    develop:
+      watch:
+        - action: rebuild # Rebuild the Docker image
+          path: .        # Watch the entire project directory
+          target: /app   # In the container, changes in /app trigger rebuild
+          ignore:
+            - /app/docs # Ignore changes in the output directory
+            - .git        # Ignore .git directory
+            - "**/*.exe"  # Ignore executable files
+            - "**/*.png"  # Ignore image files (adjust as needed)
+            - "**/*.jpg"
+            - "**/*.jpeg"
+            - "**/*.webp"
+            - "**/*.ico"
+            - "Dockerfile"
+            - "docker-compose.yml"
+            - "go.sum"
+            - "go.mod"
