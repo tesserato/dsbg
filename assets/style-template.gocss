@@ -275,12 +275,12 @@ details summary {
 
 .sharebuttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    gap: 0.5rem;
+    gap: 2rem;
     margin-left: auto;
-    padding-left: 1rem;
+    padding: 0;
 }
 
 /*
@@ -611,8 +611,7 @@ aside img:hover {
     TAGS CONTAINER & FILTER
     -------------------------------------------
 */
-/* #buttons,
-.tags {
+#buttons {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -621,7 +620,7 @@ aside img:hover {
     margin: 0;
     padding: 0;
     flex-wrap: wrap;
-} */
+}
 
 
 /*
