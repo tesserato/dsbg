@@ -1,2 +1,2 @@
 docker compose down
-docker compose up --watch
+docker compose up --build --watch

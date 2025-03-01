@@ -3,6 +3,8 @@ services:
     build: .
     ports:
       - "8080:666"
+    volumes:
+      - ./docs:/app/docs
     command: [
       "./dsbg",
       "-title", "Dead Simple Blog Generator",
@@ -21,10 +23,11 @@ services:
       "-telegram-handle", "tesserato",
       "-sort", "reverse-date-created"
     ]
+
     develop:
       watch:
         - action: rebuild # Rebuild the Docker image
-          path: .        # Watch the entire project directory
+          path: ./assets        # Watch the entire project directory
           target: /app   # In the container, changes in /app trigger rebuild
           ignore:
             - /app/docs # Ignore changes in the output directory

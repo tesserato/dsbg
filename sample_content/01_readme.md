@@ -197,4 +197,3 @@ My personal blog, and the motivation for DSBG. If you want to know more about wh
 # Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=tesserato/dsbg&type=Date)](https://star-history.com/#tesserato/dsbg&Date)
-

@@ -231,7 +231,7 @@ details summary {
     flex-wrap: wrap;
     padding: 0 0 2rem;
     margin: 0%;
-    gap: 90rem;
+    gap: .5rem;
 }
 
 .headline {

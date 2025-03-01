@@ -183,11 +183,6 @@ func main() {
 		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/")
 	}
 
-	// Create the output directory
-	if err := os.MkdirAll(settings.OutputDirectory, 0755); err != nil {
-		log.Fatalf("Error creating output directory '%s': %v", settings.OutputDirectory, err)
-	}
-
 	// Set the website style
 	switch *styleString {
 	case "default":
@@ -442,9 +437,11 @@ func getThemeData(style parse.Style) parse.Theme {
 // generating index and RSS feeds, handling CSS and JavaScript, copying assets, and logging completion.
 func buildWebsite(settings parse.Settings) {
 	// Clear the output directory to ensure a clean website build.
-	if err := os.RemoveAll(settings.OutputDirectory); err != nil {
-		log.Fatalf("Error clearing output directory: %v", err)
+	err := os.RemoveAll(settings.OutputDirectory)
+	if err != nil && !os.IsNotExist(err) {
+		log.Printf("Error clearing output directory: %v", err)
 	}
+	
 	if err := os.MkdirAll(settings.OutputDirectory, 0755); err != nil {
 		log.Fatalf("Error creating output directory: %v", err)
 	}
