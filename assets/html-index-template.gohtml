@@ -84,47 +84,42 @@
                 <h3 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h3>
             </div>
         </div>
-        <div class="imagendescription">
+        {{if .CoverImagePath}}
+        <img src="{{.CoverImagePath}}" alt="{{.Title}}">
+        {{end}}
+        <p class="description">{{.Description}}</p>
 
-            <div class="imagendescription">
-                {{if .CoverImagePath}}
-                <img src="{{.CoverImagePath}}" alt="{{.Title}}">
-                {{end}}
-                <p class="description">{{.Description}}</p>
-
-            </div>
-            <div class="sharebuttons">
-                {{if $Settings.TelegramHandle}}
-                <a href={{gen_share_url . $Settings "telegram" }} target="_blank" rel="noopener noreferrer" class="share"
-                    title="Share this post on Telegram">
-                    <img src="telegram.svg" alt="Telegram Logo">
-                </a>
-                {{end}}
-                {{if $Settings.BlueSkyHandle}}
-                <a href={{gen_share_url . $Settings "bluesky" }} target="_blank" rel="noopener noreferrer" class="share"
-                    title="Share this post on Bluesky">
-                    <img src="bluesky.svg" alt="Bluesky Logo">
-                </a>
-                {{end}}
-                {{if $Settings.MastodonHandle}}
-                <a href={{gen_share_url . $Settings "mastodon" }} target="_blank" rel="noopener noreferrer"
-                    class="share" title="Share this post on Mastodon">
-                    <img src="mastodon.svg" alt="Mastodon Logo">
-                </a>
-                {{end}}
-                {{if $Settings.ThreadsHandle}}
-                <a href={{gen_share_url . $Settings "threads" }} target="_blank" rel="noopener noreferrer" class="share"
-                    title="Share this post on Threads">
-                    <img src="threads.svg" alt="Threads Logo">
-                </a>
-                {{end}}
-                {{if $Settings.XHandle}}
-                <a href={{gen_share_url . $Settings "x" }} target="_blank" rel="noopener noreferrer" class="share"
-                    title="Share this post on X">
-                    <img src="x.svg" alt="X Logo">
-                </a>
-                {{end}}
-            </div>
+        <div class="sharebuttons">
+            {{if $Settings.TelegramHandle}}
+            <a href={{gen_share_url . $Settings "telegram" }} target="_blank" rel="noopener noreferrer" class="share"
+                title="Share this post on Telegram">
+                <img src="telegram.svg" alt="Telegram Logo">
+            </a>
+            {{end}}
+            {{if $Settings.BlueSkyHandle}}
+            <a href={{gen_share_url . $Settings "bluesky" }} target="_blank" rel="noopener noreferrer" class="share"
+                title="Share this post on Bluesky">
+                <img src="bluesky.svg" alt="Bluesky Logo">
+            </a>
+            {{end}}
+            {{if $Settings.MastodonHandle}}
+            <a href={{gen_share_url . $Settings "mastodon" }} target="_blank" rel="noopener noreferrer"
+                class="share" title="Share this post on Mastodon">
+                <img src="mastodon.svg" alt="Mastodon Logo">
+            </a>
+            {{end}}
+            {{if $Settings.ThreadsHandle}}
+            <a href={{gen_share_url . $Settings "threads" }} target="_blank" rel="noopener noreferrer" class="share"
+                title="Share this post on Threads">
+                <img src="threads.svg" alt="Threads Logo">
+            </a>
+            {{end}}
+            {{if $Settings.XHandle}}
+            <a href={{gen_share_url . $Settings "x" }} target="_blank" rel="noopener noreferrer" class="share"
+                title="Share this post on X">
+                <img src="x.svg" alt="X Logo">
+            </a>
+            {{end}}
         </div>
     </div>
     {{end}}
