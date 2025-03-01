@@ -60,22 +60,15 @@
 */
 html {
     padding: 0;
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* align-items: center; */
-    /* Center content horizontally */
     font-family: var(--body-font);
+    font-size: 1rem;
     background-color: var(--background);
     color: var(--text);
-    max-width: 950px;
-    min-width: 300px;
-    width: 100%;
     margin: 0 auto;
 }
 
 html * {
     transition: all 0.1s ease-in-out;
-    /* Smooth transition for all elements */
 }
 
 body {
@@ -83,23 +76,27 @@ body {
     /* Improve font rendering on webkit browsers */
     -moz-osx-font-smoothing: grayscale;
     /* Improve font rendering on macOS */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1.6rem;
+    max-width: 950px;
+    min-width: 300px;
+    width: 100%;
     padding: 1rem;
     margin: 0 auto;
-    /* Center the body content and set margin */
     line-height: 1.5;
 }
 
 pre {
-    /* display: none; */
-    /* padding: 0%; */
-    /* margin: 0%; */
+
     height: auto;
-    /* Changed from fit-content to auto to allow vertical expansion */
+    margin: 0;
+    padding: 0;
     max-width: 100%;
     width: fit-content;
-    /* Ensure pre doesn't exceed parent width */
     border-radius: 0.4em;
-    /* Added border-radius to match surrounding */
     background-color: var(--card);
     box-shadow:
         0.3rem 0.3rem .3rem 0 var(--shadow) inset,
@@ -211,8 +208,8 @@ img {
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
-    padding: 1.0rem;
-    margin: 0 0 1rem;
+    padding: 0.1rem 1rem;
+    margin: 0;
     border: none;
     box-shadow:
         .5rem .5rem 1.2rem 0 var(--shadow),
@@ -234,7 +231,7 @@ details summary {
     flex-wrap: wrap;
     padding: 0 0 2rem;
     margin: 0%;
-    /* gap: 0.5rem; */
+    gap: .5rem;
 }
 
 .headline {
@@ -256,8 +253,15 @@ details summary {
 }
 
 .description {
-    margin: 0 0 1rem;
-    word-break: break-all;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 1rem;
+    word-wrap: break-word;
 }
 
 .content {
@@ -271,6 +275,7 @@ details summary {
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    gap: 0.5rem;
     margin-left: auto;
     padding-left: 1rem;
 }
@@ -375,11 +380,14 @@ button:hover {
     -------------------------------------------
 */
 header {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
     padding: 0;
-    margin: 0 0 1rem;
+    margin: 0;
 }
 
 header h1 {
@@ -391,18 +399,16 @@ header h1 {
     font-family: var(--header-font);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    /* margin-bottom: 0.5rem; */
     text-align: center;
 }
 
 header h2 {
-    margin: 0 0 1rem;
+    margin: 0;
     padding: 0;
     font-size: 1rem;
     font-weight: 400;
     font-family: var(--header-font);
     opacity: 70%;
-    margin-bottom: 1.5rem;
     text-align: center;
 }
 
@@ -425,22 +431,20 @@ p,
 a {
     text-align: justify;
     text-justify: inter-word;
-    margin: 0.5rem 0;
+    margin: 0;
+    padding: 0;
 }
 
 h1,
 h2,
 h3 {
     letter-spacing: 0.05em;
-    margin-bottom: 1.2em;
 }
 
 p {
     font-size: 1.2rem;
-    /* text-indent: 1.5rem; */
     line-height: 120%;
     font-family: var(--body-font);
-    margin-bottom: 1rem;
 }
 
 a {
@@ -527,13 +531,9 @@ h5 {
 */
 /* Unordered list styles */
 ul {
-    margin-left: 1.5rem;
-    /* Initial indentation */
-    padding-left: 0;
-    /* Remove default padding */
-    list-style-type: disc;
-    /* Use bullets for all levels, but sublists will have smaller size.*/
-    margin-bottom: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 }
 
 ul ul {
@@ -623,7 +623,7 @@ aside img:hover {
     align-items: center;
     justify-content: space-evenly;
     gap: .8rem;
-    margin: 0 0 0.1rem;
+    margin: 0;
     padding: 0;
     flex-wrap: wrap;
 }

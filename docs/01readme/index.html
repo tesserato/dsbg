@@ -117,8 +117,7 @@
         <h2>How to install and use Dead Simple Blog Generator.</h2>
     </header>
 
-    <p><!-- raw HTML omitted --><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<p>DSBG (Dead Simple Blog Generator) is a free and open-source command-line tool that transforms a directory of Markdown and/or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.</p>
+    <p>DSBG (Dead Simple Blog Generator) is a free and open-source command-line tool that transforms a directory of Markdown and/or HTML files into a static website. It&rsquo;s designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.</p>
 <p>The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:</p>
 <ul>
 <li>Easy installation: Download a <a href="https://github.com/tesserato/dsbg/releases">pre-built binary</a> or use <code>go install github.com/tesserato/dsbg@latest</code>,</li>
@@ -141,7 +140,7 @@
 <li><a href="#building-a-blog-with-a-theme-and-watch-mode">Building a Blog with a Theme and Watch Mode</a></li>
 <li><a href="#building-a-blog-with-custom-css">Building a Blog with Custom CSS</a></li>
 <li><a href="#including-custom-html-elements">Including Custom HTML Elements</a></li>
-<li><a href="#special-page-tag-usage">Special &quot;PAGE&quot; Tag Usage</a></li>
+<li><a href="#special-page-tag-usage">Special &ldquo;PAGE&rdquo; Tag Usage</a></li>
 </ul>
 </li>
 <li><a href="#features">Features</a></li>
@@ -152,17 +151,17 @@
 <li><a href="#star-history">Star History</a></li>
 </ul>
 <h1 id="installation">Installation</h1>
-<p>To get started with DSBG, you'll first need to install it on your system. If you have Go installed, you can use the following command in your terminal:</p>
+<p>To get started with DSBG, you&rsquo;ll first need to install it on your system. If you have Go installed, you can use the following command in your terminal:</p>
 <pre><code class="language-bash">go install github.com/tesserato/dsbg@latest
 </code></pre>
 <p>This command will download and install the latest version of DSBG.</p>
-<p>Alternatively, you can download a pre-built binary for your operating system from the <a href="https://github.com/tesserato/dsbg/releases">releases page</a> and add it to your system's <code>PATH</code> environment variable or place it in the same directory where your source files are located.</p>
+<p>Alternatively, you can download a pre-built binary for your operating system from the <a href="https://github.com/tesserato/dsbg/releases">releases page</a> and add it to your system&rsquo;s <code>PATH</code> environment variable or place it in the same directory where your source files are located.</p>
 <p>After installation, verify that DSBG is working correctly by running the help command:</p>
 <pre><code class="language-bash">dsbg -h
 </code></pre>
 <p>This command will print the help message, displaying all available options and flags.</p>
 <h1 id="usage">Usage</h1>
-<p>Assuming you are running <code>dsbg</code> from a directory containing a <code>content</code> folder with your Markdown or HTML files, just running <code>dsbg</code> without any flags will generate a website in a folder named <code>public</code>. You'll probably want to change the name and description of the blog, in which case you can use the <code>-title</code> and <code>-description</code> flags:</p>
+<p>Assuming you are running <code>dsbg</code> from a directory containing a <code>content</code> folder with your Markdown or HTML files, just running <code>dsbg</code> without any flags will generate a website in a folder named <code>public</code>. You&rsquo;ll probably want to change the name and description of the blog, in which case you can use the <code>-title</code> and <code>-description</code> flags:</p>
 <pre><code class="language-bash">dsbg -title &quot;My First Blog&quot; -description &quot;A simple test blog&quot;
 </code></pre>
 <h2 id="creating-a-markdown-template">Creating a Markdown Template</h2>
@@ -174,7 +173,7 @@
 <p>To build a blog using a predefined theme (<code>dark</code>) and enable watch mode (which automatically rebuilds the site on changes), use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -style dark
 </code></pre>
-<p>This command generates a blog with the &quot;dark&quot; theme and watches for changes in the <code>content</code> folder, rebuilding the website on each change. A local server will also start to serve the blog in your browser.</p>
+<p>This command generates a blog with the &ldquo;dark&rdquo; theme and watches for changes in the <code>content</code> folder, rebuilding the website on each change. A local server will also start to serve the blog in your browser.</p>
 <h2 id="building-a-blog-with-custom-css">Building a Blog with Custom CSS</h2>
 <p>To use a custom CSS file to style your blog, use:</p>
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -css-path path/to/custom-style.css
@@ -185,14 +184,14 @@
 <pre><code class="language-bash">dsbg -title &quot;My Awesome Blog&quot; -description &quot;My blog description&quot; -watch -elements-top elements-top.html -elements-bottom elements-bottom.html
 </code></pre>
 <p>This command adds the contents of <code>elements-top.html</code> at the top of each generated page, and the content of <code>elements-bottom.html</code> at the bottom of each generated page. The files given to these flags must be basic HTML files.</p>
-<h2 id="special-page-tag-usage">Special &quot;PAGE&quot; Tag Usage</h2>
+<h2 id="special-page-tag-usage">Special &ldquo;PAGE&rdquo; Tag Usage</h2>
 <p>If your source files are in HTML and have obscure dependencies (beyond the usual links to images, CSS, and JavaScript), you can add the tag <code>PAGE</code> to your Markdown or HTML file. This tag tells DSBG to copy the entire directory containing that file and all its contents to the output folder.</p>
 <ul>
 <li><strong>HTML:</strong> Add <code>&lt;meta name=&quot;keywords&quot; content=&quot;PAGE&quot;&gt;</code> in the <code>&lt;head&gt;</code> section of your HTML file.</li>
 <li><strong>Markdown:</strong> Add <code>tags: [PAGE]</code> in the frontmatter of your Markdown file.</li>
 </ul>
 <h1 id="features">Features</h1>
-<p>Here's a breakdown of the core features of DSBG:</p>
+<p>Here&rsquo;s a breakdown of the core features of DSBG:</p>
 <ul>
 <li><strong>Markdown &amp; HTML Support:</strong> Write your content using Markdown for ease of use, or use HTML for more complex layouts. You can mix and match these formats freely within the same site.</li>
 <li><strong>Frontmatter:</strong>
@@ -226,7 +225,7 @@
 <li><strong>Resource Handling:</strong> DSBG automatically identifies and copies resources (images, scripts, etc.) linked in your Markdown or HTML content to the output directory.</li>
 <li><strong>Automatic Date Handling:</strong> DSBG extracts and displays date information from frontmatter fields, filenames, or file metadata, ensuring your content displays with accurate dates. If no date is provided, the file modification date is used.</li>
 <li><strong>Watch Mode:</strong> When enabled with the <code>-watch</code> flag, DSBG monitors your content directory for changes, automatically rebuilds the website, and starts a local server, allowing for a smooth writing experience.</li>
-<li><strong>&quot;PAGE&quot; Tag:</strong> Use the <code>PAGE</code> tag in the frontmatter of a file or the <code>keywords</code> meta tag of an HTML file to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.</li>
+<li><strong>&ldquo;PAGE&rdquo; Tag:</strong> Use the <code>PAGE</code> tag in the frontmatter of a file or the <code>keywords</code> meta tag of an HTML file to tell DSBG to copy the entire directory (with all its contents) to the output folder. This is useful when creating custom pages or adding resources.</li>
 <li><strong>Open Links in New Tabs:</strong> When enabled with the <code>-open-in-new-tab</code> flag, external links from your articles will open in a new browser tab, providing a smoother user experience for your readers.</li>
 <li><strong>Social Media Share Buttons</strong>: Easily add share buttons for Bluesky, Mastodon, Threads, and X (Twitter) to your articles, making it simple for readers to share your content.</li>
 <li><strong>Social Media Profile Links</strong>: Include links to your profiles on Bluesky, Mastodon, Threads, and X (Twitter) in the header of your blog, enhancing your online presence and making it easier for readers to follow you.</li>
@@ -270,7 +269,7 @@
 </tr>
 <tr>
 <td><code>-date-format</code></td>
-<td>The format for displaying dates on the website using Go's time formatting syntax (e.g., <code>2006-01-02</code>).</td>
+<td>The format for displaying dates on the website using Go&rsquo;s time formatting syntax (e.g., <code>2006-01-02</code>).</td>
 <td><code>2006 01 02</code></td>
 </tr>
 <tr>
@@ -386,6 +385,7 @@
 <p>My personal blog, and the motivation for DSBG. If you want to know more about why I made this, check out <a href="https://tesserato.web.app/posts/2022-02-16-Why-I-made-yet-another-blog-generator/index.html">Why I made yet another blog generator</a>.</p>
 <h1 id="star-history">Star History</h1>
 <p><a href="https://star-history.com/#tesserato/dsbg&amp;Date"><img src="https://api.star-history.com/svg?repos=tesserato/dsbg&amp;type=Date" alt="Star History Chart"></a></p>
+<p><a href="https://www.producthunt.com/posts/dead-simple-blog-generator?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dead&#0045;simple&#0045;blog&#0045;generator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=912370&theme=light&t=1740653394729" alt="Dead&#0032;Simple&#0032;Blog&#0032;Generator - Static&#0032;Site&#0032;Generator&#0032;That&#0032;Fast&#0045;Tracks&#0032;Your&#0032;Digital&#0032;Presence | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a></p>
 
 
     <div class="giscus"></div>
