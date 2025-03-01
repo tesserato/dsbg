@@ -63,11 +63,9 @@
 html {
     padding: 0;
     font-family: var(--body-font);
+    font-size: 1rem;
     background-color: var(--background);
     color: var(--text);
-    max-width: 950px;
-    min-width: 300px;
-    width: 100%;
     margin: 0 auto;
 }
 
@@ -80,16 +78,21 @@ body {
     /* Improve font rendering on webkit browsers */
     -moz-osx-font-smoothing: grayscale;
     /* Improve font rendering on macOS */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1.6rem;
+    max-width: 950px;
+    min-width: 300px;
+    width: 100%;
     padding: 1rem;
     margin: 0 auto;
-    /* Center the body content and set margin */
     line-height: 1.5;
 }
 
 pre {
-    /* display: none; */
-    /* padding: 0%; */
-    /* margin: 0%; */
+
     height: auto;
     /* Changed from fit-content to auto to allow vertical expansion */
     max-width: 100%;
@@ -208,8 +211,8 @@ img {
 .detail {
     border-radius: 0.4em;
     background-color: var(--card);
-    padding: 1.0rem;
-    margin: 0 0 1rem;
+    padding: 0.1rem 1rem;
+    margin: 0;
     border: none;
     box-shadow:
         .5rem .5rem 1.2rem 0 var(--shadow),
@@ -372,11 +375,12 @@ button:hover {
     -------------------------------------------
 */
 header {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0;
-    margin: 0 0 1rem;
+    margin: 0;
 }
 
 header h1 {
@@ -388,18 +392,16 @@ header h1 {
     font-family: var(--header-font);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    /* margin-bottom: 0.5rem; */
     text-align: center;
 }
 
 header h2 {
-    margin: 0 0 1rem;
+    margin: 0;
     padding: 0;
     font-size: 1rem;
     font-weight: 400;
     font-family: var(--header-font);
     opacity: 70%;
-    margin-bottom: 1.5rem;
     text-align: center;
 }
 
@@ -620,7 +622,7 @@ aside img:hover {
     align-items: center;
     justify-content: space-evenly;
     gap: .8rem;
-    margin: 0 0 0.1rem;
+    margin: 0;
     padding: 0;
     flex-wrap: wrap;
 }
