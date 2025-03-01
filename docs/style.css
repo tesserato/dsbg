@@ -19,39 +19,7 @@
 
 * {
     box-sizing: border-box;
-    /* Use border-box for easier sizing */
 }
-
-
-/*
-    -------------------------------------------
-    TAG FILTER BUTTONS (Show All / Hide All)
-    -------------------------------------------
-*/
-#hide_all_btn,
-#show_all_btn.off {
-    border-radius: 50%;
-    color: transparent;
-    box-shadow:
-        0.2rem 0.2rem .3rem 0 var(--shadow) inset,
-        -.0rem -.0rem .1rem 0 var(--card);
-}
-
-#show_all_btn,
-#hide_all_btn.off {
-    border-radius: 50%;
-    color: transparent;
-    box-shadow:
-        0.3rem 0.3rem .3rem 0 var(--shadow),
-        -.0rem -.0rem .1rem 0 var(--card);
-}
-
-#hide_all_btn:hover,
-#show_all_btn:hover {
-    color: var(--text);
-    text-shadow: 0 0 0.4rem var(--text);
-}
-
 
 /*
     -------------------------------------------
@@ -72,10 +40,8 @@ html * {
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    /* Improve font rendering on webkit browsers */
-    -moz-osx-font-smoothing: grayscale;
-    /* Improve font rendering on macOS */
+    -webkit-font-smoothing: antialiased; /* Improve font rendering on webkit browsers */
+    -moz-osx-font-smoothing: grayscale; /* Improve font rendering on macOS */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -90,7 +56,6 @@ body {
 }
 
 pre {
-
     height: auto;
     margin: 0;
     padding: 0;
@@ -101,18 +66,11 @@ pre {
     box-shadow:
         0.3rem 0.3rem .3rem 0 var(--shadow) inset,
         -.0rem -.0rem .3rem 0 var(--card) inset;
-    /* Added inset box-shadow to match buttons */
 }
 
 code {
     font-size: 1rem;
     word-break: break-all;
-    /* padding: 0%; */
-    /* margin: 0%; */
-    /* color: rgba(255, 255, 255, 0); */
-    /* Added background color to match surrounding */
-    /* width: auto; */
-    /* Changed from fit-content to auto to allow content to dictate width */
 }
 
 code.hljs {
@@ -134,7 +92,6 @@ nav {
     gap: 0.7rem;
     margin-bottom: .7rem;
     flex-wrap: wrap;
-    /* Allow nav items to wrap on smaller screens */
 }
 
 nav a {
@@ -176,7 +133,8 @@ img {
 
 .detail img {
     max-height: 20rem;
-    padding-bottom: 2rem;
+    margin: 0;
+    padding: 0;
     align-self: center;
 }
 
@@ -207,9 +165,14 @@ img {
 */
 .detail {
     align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1rem;
     border-radius: 0.4em;
     background-color: var(--card);
-    padding: 0.1rem 1rem;
+    padding: 1rem;
     margin: 0;
     border: none;
     box-shadow:
@@ -236,25 +199,18 @@ details summary {
 }
 
 .headline {
+    width: 100%;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    column-gap: 1rem;
-    margin: 0 0 .5rem;
-}
-
-.imagendescription {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    column-gap: 1rem;
-    margin: 0 0 .5rem;
+    justify-content: flex-end;
+    gap: 0.6rem 0.7rem;
+    margin: 0;
 }
 
 .description {
-    width: 100%;
+    align-self: center;
     margin: 0;
     padding: 0;
     display: flex;
@@ -290,44 +246,39 @@ details summary {
     -------------------------------------------
 */
 table {
-    width: 100%; /* Make tables responsive and full-width within their container */
-    border-collapse: collapse; /*  Single border for the whole table */
-    margin-bottom: 1rem; /* Spacing below tables */
-    background-color: var(--card); /* Table background color to match cards */
-    border-radius: 0.4em; /* Rounded corners to match cards */
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 1rem; 
+    background-color: var(--card); 
+    border-radius: 0.4em; 
     box-shadow:
-        .3rem .3rem .5rem 0 var(--shadow), /* Shadow to match cards */
+        .3rem .3rem .5rem 0 var(--shadow), 
         -.0rem -.0rem .1rem 0 var(--card);
-    overflow-x: auto; /* Enable horizontal scrolling for tables if content is wider than container */
-    display: block; /* Required for overflow-x to work correctly in some layouts */
+    overflow-x: auto; 
+    display: block;
 }
 
 th,
 td {
-    padding: 0.4rem; /* Comfortable padding within cells */
-    text-align: left; /* Left-align text in cells by default */
+    padding: 0.4rem;
+    text-align: left;
 }
 
 thead th {
-    font-weight: bold; /* Make header cells bold */
-    /* filter: invert(80%); */
-    /* background-color: var(--background);  */
-    color: var(--text); /* Header text color */
-    border-bottom: 2px solid var(--text); /* Stronger bottom border for header */
+    font-weight: bold;
+    color: var(--text);
+    border-bottom: 2px solid var(--text);
 }
 
-/* Optional: Zebra striping for tbody rows for better readability */
 tbody tr:nth-child(odd) {
     background-color: var(--background);
 }
 
-/* Optional: Style for table footer if you use tfoot */
 tfoot td {
-    font-weight: bold; /* Example: Make footer cells bold */
-    background-color: var(--background); /* Example: Footer background color */
+    font-weight: bold;
+    background-color: var(--background);
 }
 
-/* Optional: Style for table caption if you use caption */
 caption {
     padding: 0.5rem;
     text-align: center;
@@ -335,9 +286,37 @@ caption {
     color: var(--text);
 }
 
-/* Ensure table doesn't get too wide on very small screens and introduce horizontal scroll on body if needed */
 body {
-    overflow-x: auto; /* Or scroll if preferred */
+    overflow-x: auto; 
+}
+
+/*
+    -------------------------------------------
+    TAG FILTER BUTTONS (Show All / Hide All)
+    -------------------------------------------
+*/
+#hide_all_btn,
+#show_all_btn.off {
+    border-radius: 50%;
+    color: transparent;
+    box-shadow:
+        0.2rem 0.2rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .1rem 0 var(--card);
+}
+
+#show_all_btn,
+#hide_all_btn.off {
+    border-radius: 50%;
+    color: transparent;
+    box-shadow:
+        0.3rem 0.3rem .3rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--card);
+}
+
+#hide_all_btn:hover,
+#show_all_btn:hover {
+    color: var(--text);
+    text-shadow: 0 0 0.4rem var(--text);
 }
 
 /*
@@ -346,6 +325,7 @@ body {
     -------------------------------------------
 */
 button {
+    align-self: flex-end;
     width: fit-content;
     border: none;
     padding: 0.3rem 0.5rem;
@@ -400,6 +380,7 @@ header h1 {
     padding: 0;
     font-size: 1.2rem;
     font-weight: 700;
+    align-self: flex-start;
     font-family: var(--header-font);
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -437,6 +418,7 @@ a {
     text-justify: inter-word;
     margin: 0;
     padding: 0;
+    margin-right: auto;
 }
 
 h1,
@@ -491,10 +473,11 @@ h5 {
 
 /*
     -------------------------------------------
-    ARTICLE INFO / METADATA
+    ARTICLE INFO
     -------------------------------------------
 */
 .info {
+    align-self: flex-end;
     display: flex;
     flex-direction: column;
     row-gap: 0.2rem;
@@ -504,9 +487,7 @@ h5 {
     color: var(--text);
     opacity: 0.8;
     width: min-content;
-    flex-grow: 10;
 }
-
 
 .date {
     padding: 0;
@@ -515,17 +496,6 @@ h5 {
     color: var(--text);
     filter: brightness(80%);
     width: max-content;
-}
-
-.titleandlinks {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    column-gap: 0.2rem;
-    align-items: center;
-    justify-content: space-evenly;
-
 }
 
 /*
