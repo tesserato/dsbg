@@ -2,6 +2,7 @@
 title: My Awesome Post from template
 description: A sample template with a very long text to test if it wraps correctly. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 created: 2025 02 16
+tags: [test tag 01, test tag 02, test tag 03, test tag 04, test tag 05, test tag 06, test tag 07, test tag 08, test tag 09, test tag 10]
 ---
 
 # Markdown Content Examples
