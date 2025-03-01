@@ -23,7 +23,7 @@ magick -background none "sample_content/01_dsbg_logo.webp"  -crop 167x167+0+0  "
 $description = @'
 A Simple, Open-Source Tool to Create Your Static Blog and Broadcast Your Content.
 
-# TLDR
+# TLDR:
 
 `go install github.com/tesserato/dsbg@latest` or download a [pre-built binary](https://github.com/tesserato/dsbg/releases)
 

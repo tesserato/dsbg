@@ -16,11 +16,12 @@ import (
 	texttemplate "text/template"
 	"time"
 
-	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/k3a/html2text"
+	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	rendererhtml "github.com/yuin/goldmark/renderer/html"
 	"go.abhg.dev/goldmark/frontmatter"
 	"golang.org/x/net/html"
 )
@@ -34,6 +35,9 @@ var regexPatterns = []*regexp.Regexp{
 
 // Configure Goldmark Markdown parser with frontmatter support.
 var Markdown = goldmark.New(
+	goldmark.WithRendererOptions(
+		rendererhtml.WithUnsafe(),
+	),
 	goldmark.WithParserOptions(
 		parser.WithAttribute(),
 		parser.WithAutoHeadingID(),
@@ -46,6 +50,7 @@ var Markdown = goldmark.New(
 		extension.Linkify,
 		extension.TaskList,
 		extension.Footnote,
+		extension.Typographer,
 	),
 )
 
@@ -568,7 +573,7 @@ func FormatMarkdown(article *Article, settings Settings, assets fs.FS) error {
 		"gen_share_url":   gen_share_url,
 		"slicesContains":  slices.Contains[[]string],
 	}
-	
+
 	htmlArticleTemplate, err := texttemplate.New("html-article-template.gohtml").Funcs(funcMap).ParseFS(assets, "assets/html-article-template.gohtml")
 	if err != nil {
 		return fmt.Errorf("error parsing index template: %w", err)

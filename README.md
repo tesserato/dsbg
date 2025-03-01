@@ -5,8 +5,6 @@ created: 2025 01 03
 coverImagePath: 01_dsbg_logo.webp
 ---
 
-<a href="https://www.producthunt.com/posts/dead-simple-blog-generator?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dead&#0045;simple&#0045;blog&#0045;generator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=912370&theme=light&t=1740653394729" alt="Dead&#0032;Simple&#0032;Blog&#0032;Generator - Static&#0032;Site&#0032;Generator&#0032;That&#0032;Fast&#0045;Tracks&#0032;Your&#0032;Digital&#0032;Presence | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
 DSBG (Dead Simple Blog Generator) is a free and open-source command-line tool that transforms a directory of Markdown and/or HTML files into a static website. It's designed for ease of use, allowing you to quickly create and deploy a personal blog, documentation site, or a website with minimal configuration.
 
 The ethos behind it is to automate your virtual presence as much as possible, while retaining control over the created content. To that end, the following features are available:
@@ -197,3 +195,5 @@ My personal blog, and the motivation for DSBG. If you want to know more about wh
 # Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=tesserato/dsbg&type=Date)](https://star-history.com/#tesserato/dsbg&Date)
+
+<a href="https://www.producthunt.com/posts/dead-simple-blog-generator?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dead&#0045;simple&#0045;blog&#0045;generator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=912370&theme=light&t=1740653394729" alt="Dead&#0032;Simple&#0032;Blog&#0032;Generator - Static&#0032;Site&#0032;Generator&#0032;That&#0032;Fast&#0045;Tracks&#0032;Your&#0032;Digital&#0032;Presence | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>

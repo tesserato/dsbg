@@ -94,12 +94,11 @@ body {
 pre {
 
     height: auto;
-    /* Changed from fit-content to auto to allow vertical expansion */
+    margin: 0;
+    padding: 0;
     max-width: 100%;
     width: fit-content;
-    /* Ensure pre doesn't exceed parent width */
     border-radius: 0.4em;
-    /* Added border-radius to match surrounding */
     background-color: var(--card);
     box-shadow:
         0.3rem 0.3rem .3rem 0 var(--shadow) inset,
@@ -256,8 +255,15 @@ details summary {
 }
 
 .description {
-    margin: 0 0 1rem;
-    word-break: break-all;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 1rem;
+    word-wrap: break-word;
 }
 
 .content {
@@ -271,6 +277,7 @@ details summary {
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    gap: 0.5rem;
     margin-left: auto;
     padding-left: 1rem;
 }
@@ -379,6 +386,8 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
     padding: 0;
     margin: 0;
 }
@@ -424,22 +433,20 @@ p,
 a {
     text-align: justify;
     text-justify: inter-word;
-    margin: 0.5rem 0;
+    margin: 0;
+    padding: 0;
 }
 
 h1,
 h2,
 h3 {
     letter-spacing: 0.05em;
-    margin-bottom: 1.2em;
 }
 
 p {
     font-size: 1.2rem;
-    /* text-indent: 1.5rem; */
     line-height: 120%;
     font-family: var(--body-font);
-    margin-bottom: 1rem;
 }
 
 a {
@@ -526,13 +533,9 @@ h5 {
 */
 /* Unordered list styles */
 ul {
-    margin-left: 1.5rem;
-    /* Initial indentation */
-    padding-left: 0;
-    /* Remove default padding */
-    list-style-type: disc;
-    /* Use bullets for all levels, but sublists will have smaller size.*/
-    margin-bottom: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 }
 
 ul ul {
