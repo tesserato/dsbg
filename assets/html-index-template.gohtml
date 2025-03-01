@@ -75,22 +75,22 @@
             <a href="{{.LinkToSelf}}" {{if $Settings.OpenInNewTab}}target="_blank" {{end}}>
                 <h2>{{.Title}}</h2>
             </a>
+            {{range .Tags}}
+            <button class="on">{{.}}</button>
+            {{end}}
             <div class="info">
-                <div class="tags">
-                    {{range .Tags}}
-                    <button class="on">{{.}}</button>
-                    {{end}}
-                </div>
                 <h3 class="date">⋆ {{.Created.Format $Settings.DateFormat}}</h3>
                 <h3 class="date">♰ {{.Updated.Format $Settings.DateFormat}}</h3>
             </div>
         </div>
-        <div class="content">
+        <div class="imagendescription">
+
             <div class="imagendescription">
                 {{if .CoverImagePath}}
                 <img src="{{.CoverImagePath}}" alt="{{.Title}}">
                 {{end}}
                 <p class="description">{{.Description}}</p>
+
             </div>
             <div class="sharebuttons">
                 {{if $Settings.TelegramHandle}}
