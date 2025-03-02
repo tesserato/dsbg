@@ -149,7 +149,11 @@ Let's see if emojis render correctly: 🎉 👍 🚀 🤔
 
 Basic HTML should be ignored or rendered as raw HTML depending on the Markdown processor. Let's try a simple `<br>` and `<span>`.
 
+- `This is line 1.<br>This is line 2.`
+
 This is line 1.<br>This is line 2.
+
+- `This is <span style="color:red;">red text</span>.`
 
 This is <span style="color:red;">red text</span>.
 
@@ -177,19 +181,6 @@ Characters that have special meaning in Markdown can be escaped with a backslash
 > >
 > > > And this is even more nested.
 
-## Definition Lists
-
-Definition lists are useful for glossaries or terms and their definitions.
-
-Term 1
-: Definition 1
-
-Term 2
-: Definition 2 with *italic* and **bold** text.
-
-Long Term Name that might wrap
-: A very long definition that also might wrap to test how wrapping is handled in definition lists.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
 ## Tables
 
 ### Short Table
@@ -205,24 +196,22 @@ This table is designed to be wide and tall to test scrolling and wrapping behavi
 
 | Very Long Header Column 1 | Very Long Header Column 2 | Very Long Header Column 3 | Very Long Header Column 4 | Very Long Header Column 5 | Very Long Header Column 6 | Very Long Header Column 7 | Very Long Header Column 8 | Very Long Header Column 9 | Very Long Header Column 10 |
 | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | ------------------------- | -------------------------- |
-| Very Long Content Cell 1  | Very Long Content Cell 2  | Very Long Content Cell 3  | Very Long Content Cell 4  | Very Long Content Cell 5  | Very Long Content Cell 6  | Very Long Content Cell 7  | Very Long Content Cell 8  | Very Long Content Cell 9  | Very Long Content Cell 10 |
-| Another Long Cell 1      | Another Long Cell 2      | Another Long Cell 3      | Another Long Cell 4      | Another Long Cell 5      | Another Long Cell 6      | Another Long Cell 7      | Another Long Cell 8      | Another Long Cell 9      | Another Long Cell 10      |
+| Very Long Content Cell 1  | Very Long Content Cell 2  | Very Long Content Cell 3  | Very Long Content Cell 4  | Very Long Content Cell 5  | Very Long Content Cell 6  | Very Long Content Cell 7  | Very Long Content Cell 8  | Very Long Content Cell 9  | Very Long Content Cell 10  |
+| Another Long Cell 1       | Another Long Cell 2       | Another Long Cell 3       | Another Long Cell 4       | Another Long Cell 5       | Another Long Cell 6       | Another Long Cell 7       | Another Long Cell 8       | Another Long Cell 9       | Another Long Cell 10       |
 | More Content Cell 1       | More Content Cell 2       | More Content Cell 3       | More Content Cell 4       | More Content Cell 5       | More Content Cell 6       | More Content Cell 7       | More Content Cell 8       | More Content Cell 9       | More Content Cell 10       |
-| And Even More Content 1  | And Even More Content 2  | And Even More Content 3  | And Even More Content 4  | And Even More Content 5  | And Even More Content 6  | And Even More Content 7  | And Even More Content 8  | And Even More Content 9  | And Even More Content 10  |
-| Last Row Long Cell 1     | Last Row Long Cell 2     | Last Row Long Cell 3     | Last Row Long Cell 4     | Last Row Long Cell 5     | Last Row Long Cell 6     | Last Row Long Cell 7     | Last Row Long Cell 8     | Last Row Long Cell 9     | Last Row Long Cell 10     |
-| One More Row Cell 1      | One More Row Cell 2      | One More Row Cell 3      | One More Row Cell 4      | One More Row Cell 5      | One More Row Cell 6      | One More Row Cell 7      | One More Row Cell 8      | One More Row Cell 9      | One More Row Cell 10      |
+| And Even More Content 1   | And Even More Content 2   | And Even More Content 3   | And Even More Content 4   | And Even More Content 5   | And Even More Content 6   | And Even More Content 7   | And Even More Content 8   | And Even More Content 9   | And Even More Content 10   |
+| Last Row Long Cell 1      | Last Row Long Cell 2      | Last Row Long Cell 3      | Last Row Long Cell 4      | Last Row Long Cell 5      | Last Row Long Cell 6      | Last Row Long Cell 7      | Last Row Long Cell 8      | Last Row Long Cell 9      | Last Row Long Cell 10      |
+| One More Row Cell 1       | One More Row Cell 2       | One More Row Cell 3       | One More Row Cell 4       | One More Row Cell 5       | One More Row Cell 6       | One More Row Cell 7       | One More Row Cell 8       | One More Row Cell 9       | One More Row Cell 10       |
 
 
 ### Table with Mixed Content
 
-| Type      | Description                                          | Example                               |
-| --------- | ---------------------------------------------------- | ------------------------------------- |
-| **Bold**  | Text with strong emphasis                          | `**bold text**`                       |
-| *Italic*  | Text with emphasis                                   | `*italic text*`                       |
-| `Code`    | Inline code                                        | `` `inline code` ``                    |
-| [Link](url) | Hyperlink                                            | `[example link](https://example.com)` |
-| > Quote   | Block quotation                                      | `> block quote`                       |
-| List      | Unordered list                                       | `- list item`                         |
+| Type        | Description               | Example                               |
+| ----------- | ------------------------- | ------------------------------------- |
+| **Bold**    | Text with strong emphasis | `**bold text**`                       |
+| *Italic*    | Text with emphasis        | `*italic text*`                       |
+| `Code`      | Inline code               | `` `inline code` ``                   |
+| [Link](url) | Hyperlink                 | `[example link](https://example.com)` |
 
 ## Citations and Footnotes
 
@@ -250,10 +239,10 @@ Let's combine some features for fun:
 2.  > A blockquote containing `inline code` and a [link](https://example.com) and *italic text*.
 3.  A table cell with **bold text**, *italic text*, `inline code`, and [a link](https://example.com).
 
-| Combination Type | Example Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| List Item        | 1. A list item with **bold text**, *italic text*, and [a link](https://example.com).                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Blockquote       | > A blockquote containing `inline code` and a [link](https://example.com) and *italic text*.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Table Cell       | A table cell with **bold text**, *italic text*, `inline code`, and [a link](https://example.com).                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Combination Type | Example Content                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| List Item        | 1. A list item with **bold text**, *italic text*, and [a link](https://example.com).              |
+| Blockquote       | > A blockquote containing `inline code` and a [link](https://example.com) and *italic text*.      |
+| Table Cell       | A table cell with **bold text**, *italic text*, `inline code`, and [a link](https://example.com). |
 
 This extended test post should cover a wider range of Markdown features and edge cases, providing a more thorough test of rendering and formatting.
