@@ -473,6 +473,35 @@ h5 {
     font-family: var(--header-font);
 }
 
+blockquote {
+    /* border-radius: 0.5rem; */
+    /* background-color: var(--card); */
+    /* border-left: 0.5rem solid var(--link); */
+    padding: 1rem;
+    margin: 0;
+}
+
+/* q { quotes: '“' '”'} */
+
+blockquote p:before {
+    /* color: #ccc; */
+    content: "“ ";
+    font-size: 3rem;
+    vertical-align: -0.9rem;
+    /* line-height: 0.1rem;
+    margin-right: 0.25rem;
+    vertical-align: -0.4rem; */
+}
+
+blockquote p:after {
+    /* color: #ccc; */
+    content: " „";
+    font-size: 3rem;
+    /* line-height: 0.1rem;
+    margin-right: 0.25rem;
+    vertical-align: 0.4rem; */
+}
+
 
 /*
     -------------------------------------------
