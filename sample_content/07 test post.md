@@ -118,8 +118,16 @@ Let's push the boundaries with more features and edge cases.
 
 Here are different ways to create horizontal rules:
 
+\-\-\-
+
 ---
+
+\*\*\*
+
 ***
+
+\_\_\_
+
 ___
 
 ## Strikethrough
