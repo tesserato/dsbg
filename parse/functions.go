@@ -428,6 +428,46 @@ func GenerateRSS(articles []Article, settings Settings) error {
 	return nil
 }
 
+func wrapTables(htmlContent string) (string, error) {
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse HTML content: %w", err)
+	}
+
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "table" {
+			// Create a div element
+			div := &html.Node{
+				Type: html.ElementNode,
+				Data: "div",
+			}
+
+			// Add class "table-wrapper" to the div for potential CSS styling
+			div.Attr = []html.Attribute{{Key: "class", Val: "table-wrapper"}}
+
+			// Replace the table node with the div node in the parent's children list
+			if n.Parent != nil {
+				// Insert div after table
+				nextSibling := n.NextSibling
+				n.Parent.InsertBefore(div, n)
+				n.Parent.RemoveChild(n)
+				div.AppendChild(n) // Move the table inside the div
+
+				// Reset the NextSibling of the div to what the table's NextSibling was
+				div.NextSibling = nextSibling
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+	var buf bytes.Buffer
+	html.Render(&buf, doc)
+	return buf.String(), nil
+}
+
 // MarkdownFile parses a Markdown file, extracts frontmatter, and populates an Article struct.
 // Returns the parsed Article and an error if reading, parsing, or decoding fails.
 func MarkdownFile(path string) (Article, error) {
@@ -445,10 +485,18 @@ func MarkdownFile(path string) (Article, error) {
 	if err := Markdown.Convert(data, &buf, parser.WithContext(context)); err != nil {
 		return Article{}, fmt.Errorf("failed to convert Markdown to HTML for '%s': %w", path, err)
 	}
-	// content := buf.String()
+	rawHtmlContent := buf.String()
+
+	// Wrap tables in divs for potential CSS styling.
+	wrappedHtmlContent, err := wrapTables(rawHtmlContent)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to wrap tables for '%s': %w", path, err)
+	}
+
+	// Create an Article struct with basic information.
 
 	// Retrieve frontmatter from the context.
-	var article = Article{OriginalPath: path, TextContent: string(data), HtmlContent: buf.String()}
+	var article = Article{OriginalPath: path, TextContent: string(data), HtmlContent: wrappedHtmlContent}
 	fm := frontmatter.Get(context)
 	if fm != nil {
 		var d map[string]any
