@@ -8,6 +8,7 @@
     <meta name="generator" content="Dead Simple Blog Generator (dsbg)">
     <meta name="keywords" content="{{ stringsJoin .Art.Tags " , "}}">
     <meta name="description" content="{{ .Art.Description }}">
+    <link rel="canonical" href="{{ .Settings.BaseUrl }}/{{ .Art.LinkToSelf }}">
     <link rel="stylesheet" href="{{ genRelativeLink .Art.LinkToSelf "style.css"}}">
     <link rel="icon" type="image/x-icon" href="{{genRelativeLink .Art.LinkToSelf "favicon.ico"}}">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
