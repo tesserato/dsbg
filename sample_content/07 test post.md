@@ -242,7 +242,6 @@ Let's combine some features for fun:
 | Combination Type | Example Content                                                                                   |
 | ---------------- | ------------------------------------------------------------------------------------------------- |
 | List Item        | 1. A list item with **bold text**, *italic text*, and [a link](https://example.com).              |
-| Blockquote       | > A blockquote containing `inline code` and a [link](https://example.com) and *italic text*.      |
 | Table Cell       | A table cell with **bold text**, *italic text*, `inline code`, and [a link](https://example.com). |
 
 This extended test post should cover a wider range of Markdown features and edge cases, providing a more thorough test of rendering and formatting.
