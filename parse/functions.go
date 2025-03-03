@@ -428,41 +428,47 @@ func GenerateRSS(articles []Article, settings Settings) error {
 	return nil
 }
 
+func wrapNodeIfTable(n *html.Node) {
+	fmt.Println(">>",n.Type, n.Data)
+	if n.Type == html.ElementNode && n.Data == "table" {
+		// Create a div element
+		div := &html.Node{
+			Type: html.ElementNode,
+			Data: "div",
+		}
+		// Add class "table-wrapper" to the div for potential CSS styling
+		div.Attr = []html.Attribute{{Key: "class", Val: "table-wrapper"}}
+
+		n.Parent.InsertBefore(div, n)
+		n.Parent.RemoveChild(n)
+		div.AppendChild(n)
+
+
+		// copy n
+		// var buf bytes.Buffer
+		// html.Render(&buf, n)
+		// nCopy, err := html.Parse(strings.NewReader(buf.String()))
+		// if err != nil {
+		// 	panic(err)
+		// }
+	
+		// div.AppendChild(nCopy)
+
+		// *n = *div
+		
+	}
+}
+
 func wrapTables(htmlContent string) (string, error) {
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
 		return "", fmt.Errorf("failed to parse HTML content: %w", err)
 	}
-
-	var f func(*html.Node)
-	f = func(n *html.Node) {
-		if n.Type == html.ElementNode && n.Data == "table" {
-			// Create a div element
-			div := &html.Node{
-				Type: html.ElementNode,
-				Data: "div",
-			}
-
-			// Add class "table-wrapper" to the div for potential CSS styling
-			div.Attr = []html.Attribute{{Key: "class", Val: "table-wrapper"}}
-
-			// Replace the table node with the div node in the parent's children list
-			if n.Parent != nil {
-				// Insert div after table
-				nextSibling := n.NextSibling
-				n.Parent.InsertBefore(div, n)
-				n.Parent.RemoveChild(n)
-				div.AppendChild(n) // Move the table inside the div
-
-				// Reset the NextSibling of the div to what the table's NextSibling was
-				div.NextSibling = nextSibling
-			}
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c)
-		}
+	tables := findAllElements(doc, "table")	
+	for _, table := range tables {
+		wrapNodeIfTable(table)
+		fmt.Println("<<",table.Type, table.Data)
 	}
-	f(doc)
 	var buf bytes.Buffer
 	html.Render(&buf, doc)
 	return buf.String(), nil
