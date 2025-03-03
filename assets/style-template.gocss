@@ -254,6 +254,16 @@ details summary {
     TABLE STYLES
     -------------------------------------------
 */
+
+.table-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+    border-radius: 0.4em;
+    box-shadow:
+        .3rem .3rem .5rem 0 var(--shadow),
+        -.0rem -.0rem .1rem 0 var(--card);
+    /* white-space: nowrap; */}
+
 table {
     /* display: block;
     max-width: -moz-fit-content;*/
@@ -261,11 +271,7 @@ table {
     border-collapse: collapse;
     margin: 0 auto;
     background-color: var(--card);
-    border-radius: 0.4em;
-    box-shadow:
-        .3rem .3rem .5rem 0 var(--shadow),
-        -.0rem -.0rem .1rem 0 var(--card);
-    /* white-space: nowrap; */
+
 }
 
 th,
