@@ -255,16 +255,17 @@ details summary {
     -------------------------------------------
 */
 table {
-    width: 100%;
+    /* display: block;
+    max-width: -moz-fit-content;*/
+    width: fit-content; 
     border-collapse: collapse;
-    margin-bottom: 1rem;
+    margin: 0 auto;
     background-color: var(--card);
     border-radius: 0.4em;
     box-shadow:
         .3rem .3rem .5rem 0 var(--shadow),
         -.0rem -.0rem .1rem 0 var(--card);
-    overflow-x: auto;
-    display: block;
+    /* white-space: nowrap; */
 }
 
 th,
