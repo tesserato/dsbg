@@ -99,13 +99,11 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 			<guid>{{ buildArticleURL . $.Settings  }}</guid>
 			<pubDate>{{ .Created | formatPubDate }}</pubDate>
 			<description>{{ .Description | htmlEscape }}</description>
-            <content:encoded><![CDATA[{{ .HtmlContent }}]]></content:encoded>
 			{{- if .CoverImagePath }}
 			<media:content
 				url="{{ $.Settings.BaseUrl}}/{{ .CoverImagePath }}"
 				medium="image"
 				type="image/jpeg"
-				
 			/>
 			{{- end }}
             {{- range .Tags }}
