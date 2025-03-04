@@ -81,14 +81,17 @@ Check out this [example link](https://example.com).
 `
 
 const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:media="http://search.yahoo.com/mrss/">
 	<channel>
 		<title>{{ .Settings.Title }}</title>
 		<link>{{ .Settings.BaseUrl }}</link>
+        <atom:link href="{{ .Settings.BaseUrl }}/rss.xml" rel="self" type="application/rss+xml" />
 		<description>{{ htmlEscape .Settings.DescriptionMarkdown }}</description>
-		<generator>Go Simple Blog Generator</generator>
+		<generator>Dead Simple Blog Generator</generator>
 		<lastBuildDate>{{ .BuildDate }}</lastBuildDate>
-		<atom:link href="{{ .Settings.BaseUrl }}/rss.xml" rel="self" type="application/rss+xml" />
 		{{- range .Articles }}
 		<item>
 			<title>{{ .Title | htmlEscape }}</title>
@@ -96,16 +99,18 @@ const rssTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 			<guid>{{ buildArticleURL . $.Settings  }}</guid>
 			<pubDate>{{ .Created | formatPubDate }}</pubDate>
 			<description>{{ .Description | htmlEscape }}</description>
+            <content:encoded><![CDATA[{{ .HtmlContent }}]]></content:encoded>
 			{{- if .CoverImagePath }}
 			<media:content
-				xmlns:media="http://search.yahoo.com/mrss/"
 				url="{{ $.Settings.BaseUrl}}/{{ .CoverImagePath }}"
 				medium="image"
 				type="image/jpeg"
-				width="150"
-				height="150"
+				
 			/>
 			{{- end }}
+            {{- range .Tags }}
+            <category>{{ . | htmlEscape }}</category>
+            {{- end }}
 		</item>
 		{{- end }}
 	</channel>
