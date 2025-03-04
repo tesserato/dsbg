@@ -429,7 +429,6 @@ func GenerateRSS(articles []Article, settings Settings) error {
 }
 
 func wrapNodeIfTable(n *html.Node) {
-	fmt.Println(">>",n.Type, n.Data)
 	if n.Type == html.ElementNode && n.Data == "table" {
 		// Create a div element
 		div := &html.Node{
@@ -442,20 +441,6 @@ func wrapNodeIfTable(n *html.Node) {
 		n.Parent.InsertBefore(div, n)
 		n.Parent.RemoveChild(n)
 		div.AppendChild(n)
-
-
-		// copy n
-		// var buf bytes.Buffer
-		// html.Render(&buf, n)
-		// nCopy, err := html.Parse(strings.NewReader(buf.String()))
-		// if err != nil {
-		// 	panic(err)
-		// }
-	
-		// div.AppendChild(nCopy)
-
-		// *n = *div
-		
 	}
 }
 
@@ -467,7 +452,6 @@ func wrapTables(htmlContent string) (string, error) {
 	tables := findAllElements(doc, "table")	
 	for _, table := range tables {
 		wrapNodeIfTable(table)
-		fmt.Println("<<",table.Type, table.Data)
 	}
 	var buf bytes.Buffer
 	html.Render(&buf, doc)

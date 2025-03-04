@@ -120,6 +120,12 @@ func main() {
 		templateFlagSet.VisitAll(logFlag)
 	}
 
+	if len(os.Args) <= 1 {
+		defaultFlagSet.Usage()
+		return
+	}
+
+
 	// Determine the mode of operation based on the first command-line argument.
 	mode := strings.TrimPrefix(os.Args[1], "-")
 	mode = strings.TrimPrefix(mode, "--")
