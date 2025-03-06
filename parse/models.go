@@ -10,6 +10,7 @@ type Style int64
 const (
 	Default Style = iota
 	Dark
+	Clean
 	Colorful
 )
 
@@ -21,7 +22,7 @@ type Settings struct {
 	OutputDirectory           string
 	DateFormat                string
 	IndexName                 string
-	Style                     Style
+	Theme                     Style
 	PathToCustomCss           string
 	PathToCustomJs            string
 	PathToCustomFavicon       string
@@ -38,6 +39,7 @@ type Settings struct {
 	MastodonHandle            string
 	TelegramHandle            string
 	Sort                      string
+	HighlightTheme            string
 }
 
 type TemplateSettings struct {
@@ -66,12 +68,16 @@ type Article struct {
 }
 
 type Theme struct {
-	HeaderFont string
-	BodyFont   string
-	Background string
-	Text       string
-	Card       string
-	Link       string
-	Shadow     string
-	Button     string
+	Dark           bool
+	HeaderFont     string
+	BodyFont       string
+	Background     string
+	Text           string
+	Card           string
+	Link           string
+	Shadow         string
+	Button         string
+	FontSize       float64
+	HeaderFontSize float64
+	BodyFontSize   float64
 }

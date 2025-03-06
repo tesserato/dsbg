@@ -8,6 +8,11 @@
     --header-font: {{.HeaderFont}};
     --body-font: {{.BodyFont}};
 
+    /* Font sizes */
+    --base-font-size: {{.FontSize}}rem;
+    --header-font-size: {{.HeaderFontSize}}rem;
+    --body-font-size: {{.BodyFontSize}}rem;
+
     /* Colors */
     --background: {{.Background}};
     --text: {{.Text}};
@@ -31,7 +36,7 @@
 html {
     padding: 0;
     font-family: var(--body-font);
-    font-size: 1rem;
+    font-size: var(--base-font-size);
     background-color: var(--background);
     color: var(--text);
     margin: 0 auto;
@@ -57,18 +62,6 @@ body {
     line-height: 1.5;
 }
 
-pre {
-    height: auto;
-    margin: 0;
-    padding: 0;
-    max-width: 100%;
-    width: fit-content;
-    border-radius: 0.4em;
-    background-color: var(--card);
-    box-shadow:
-        0.3rem 0.3rem .3rem 0 var(--shadow) inset,
-        -.0rem -.0rem .3rem 0 var(--card) inset;
-}
 
 hr {
     height: 1px;
@@ -77,14 +70,29 @@ hr {
     background-color: var(--link);
 }
 
+pre {
+    height: auto;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    width: fit-content;
+}
+
+.hljs {
+    box-shadow:
+        0.3rem 0.3rem .3rem 0 var(--shadow) inset,
+        -.0rem -.0rem .3rem 0 var(--card) inset;
+}
+
 code {
     font-size: 1rem;
     word-break: break-all;
+    padding: 0.2rem;
+    border-radius: 0.4em;
+    background: rgba(0, 0, 0, 0);
 }
 
-code.hljs {
-    background-color: rgba(255, 255, 255, 0);
-}
+
 
 /*
     -------------------------------------------
@@ -128,16 +136,20 @@ nav a:hover {
     IMAGES
     -------------------------------------------
 */
-header img {
-    width: 1.3rem;
-    height: 1.3rem;
-    margin-left: 0;
-}
 
 img {
     max-width: 100%;
     height: auto;
+    height: auto;
     align-self: center;
+}
+
+header img {
+    height: 1.3rem;
+    margin-left: 0;
+    {{if .Dark}}
+    filter: invert(80%);
+    {{end}}
 }
 
 .detail img {
@@ -147,8 +159,12 @@ img {
     align-self: center;
 }
 
+header a img:hover,
+.detail a img:hover {
+    filter: invert(70%);
+}
+
 .share {
-    height: 1rem;
     width: 1rem;
 }
 
@@ -163,7 +179,7 @@ img {
     height: 2.2rem;
     margin: 0;
     padding: 0;
-    filter: invert(80%);
+    filter: invert(50%);
 }
 
 
@@ -331,8 +347,8 @@ body {
 
 #hide_all_btn:hover,
 #show_all_btn:hover {
-    color: var(--text);
-    text-shadow: 0 0 0.4rem var(--text);
+    filter: brightness(90%);
+    text-shadow: 0 0 0.8rem var(--shadow);
 }
 
 /*
@@ -357,6 +373,9 @@ button {
 }
 
 button:hover {
+    {{if .Dark}}
+    filter: brightness(80%);
+    {{end}}
     box-shadow: none;
 }
 
@@ -391,24 +410,24 @@ header {
 }
 
 header h1 {
+    font-family: var(--header-font);
+    font-size: calc(var(--header-font-size) * 1.2);
     width: fit-content;
     margin: 0;
     padding: 0;
-    font-size: 1.2rem;
     font-weight: 700;
     align-self: flex-start;
-    font-family: var(--header-font);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.1rem;
     text-align: center;
 }
 
 header h2 {
+    font-family: var(--header-font);
+    font-size: calc(var(--header-font-size) * 1.0);
     margin: 0;
     padding: 0;
-    font-size: 1rem;
     font-weight: 400;
-    font-family: var(--header-font);
     opacity: 70%;
     text-align: center;
 }
@@ -441,13 +460,14 @@ a {
 h1,
 h2,
 h3 {
-    letter-spacing: 0.05em;
+    letter-spacing: 0.05rem;
 }
 
 p {
-    font-size: 1.2rem;
-    line-height: 120%;
     font-family: var(--body-font);
+    font-size: calc(var(--body-font-size) * 1.2);
+    line-height: 120%;
+    
 }
 
 a {
@@ -458,32 +478,31 @@ a {
 }
 
 a:hover {
-    color: var(--card);
-    text-shadow: 0.07rem 0.07rem 0.13rem var(--shadow);
+    filter: brightness(60%);
 }
 
 h1 {
-    font-size: 1.4rem;
+    font-size: calc(var(--header-font-size) * 1.4);
     font-family: var(--header-font);
 }
 
 h2 {
-    font-size: 1.3rem;
+    font-size: calc(var(--header-font-size) * 1.3);
     font-family: var(--header-font);
 }
 
 h3 {
-    font-size: 1.2rem;
+    font-size: calc(var(--header-font-size) * 1.2);
     font-family: var(--header-font);
 }
 
 h4 {
-    font-size: 1.1rem;
+    font-size: calc(var(--header-font-size) * 1.1);
     font-family: var(--header-font);
 }
 
 h5 {
-    font-size: 1.0rem;
+    font-size: calc(var(--header-font-size) * 1.0);
     font-family: var(--header-font);
 }
 
@@ -516,7 +535,7 @@ blockquote p:after {
     row-gap: 0.2rem;
     align-items: end;
     justify-content: space-between;
-    font-size: 1rem;
+    font-size: calc(var(--body-font-size) * 1.0);
     color: var(--text);
     opacity: 0.8;
     width: min-content;
@@ -525,7 +544,7 @@ blockquote p:after {
 .date {
     padding: 0;
     margin: 0;
-    font-size: 0.6rem;
+    font-size: calc(var(--body-font-size) * 0.6);
     color: var(--text);
     filter: brightness(80%);
     width: max-content;
@@ -540,7 +559,7 @@ blockquote p:after {
 li {
     margin: 0;
     padding: 0;
-    font-size: 1.2rem;
+    font-size: calc(var(--body-font-size) * 1.2);
 }
 
 /* Unordered list styles */
@@ -572,6 +591,11 @@ ul ul ul ul {
 }
 
 /* Ordered list styles */
+
+ol li::marker {
+    color: var(--link);
+}
+
 ol {
     margin: 0;
     padding: 0;
@@ -669,7 +693,7 @@ footer {
     outline: none;
     border: none;
     border-radius: 0.7rem;
-    font-size: 1rem;
+    font-size: calc(var(--body-font-size) * 1.0);
     color: var(--text-color);
     background-color: var(--card-background-color);
     box-shadow:
@@ -705,7 +729,7 @@ footer {
 #search-results li a {
     color: var(--link);
     text-decoration: none;
-    font-size: 1rem;
+    font-size: calc(var(--body-font-size) * 1.0);
 }
 
 #search-results li a:hover {

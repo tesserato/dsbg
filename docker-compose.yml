@@ -15,7 +15,7 @@ services:
       "-base-url", "http://localhost:8080", 
       "-elements-top", "/app/analytics.html", 
       "-elements-bottom", "/app/giscus.html", 
-      "-style", "default",
+      "-theme", "default",
       "-x-handle", "tesserato",
       "-bluesky-handle", "tesserato",
       "-threads-handle", "tesserato",

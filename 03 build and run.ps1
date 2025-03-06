@@ -54,7 +54,7 @@ start chrome http://localhost:666/index.html
     -base-url "https://tesserato.github.io/dsbg/" `
     -elements-top "analytics.html" `
     -elements-bottom "giscus.html" `
-    -style "default" `
+    -theme "dark" `
     -x-handle "tesserato" `
     -bluesky-handle "tesserato" `
     -threads-handle "tesserato" `

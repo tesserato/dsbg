@@ -21,6 +21,14 @@ If you are seeing this post through the blog, you can find the source code for t
 
 Here's a mix of common Markdown elements to show you how they look:
 
+## Math
+
+Inline math (\$ ... \$): $ E = mc^2 $
+
+Paragraph math (\\\$\\\$ ... \\\$\\\$):
+
+\$\$ \hat{f} (\xi)=\int_{-\infty}^{\infty}f(x)e^{-2\pi ix\xi}dx \$\$
+
 ## Lists
 
 - Unordered list item
@@ -173,13 +181,13 @@ Characters that have special meaning in Markdown can be escaped with a backslash
 \(parentheses\(
 \)parentheses\)
 
-## Nested Blockquotes
+<!-- ## Nested Blockquotes
 
 > This is an outer blockquote.
 >
 > > This is a nested blockquote.
 > >
-> > > And this is even more nested.
+> > > And this is even more nested. -->
 
 ## Tables
 

@@ -90,7 +90,7 @@ func main() {
 	defaultFlagSet.StringVar(&settings.ThreadsHandle, "threads-handle", "", "Threads handle for share buttons and profile link.")
 	defaultFlagSet.StringVar(&settings.MastodonHandle, "mastodon-handle", "", "Mastodon handle for share buttons and profile link.")
 	defaultFlagSet.StringVar(&settings.Sort, "sort", "date-created", "Sort order for articles on the index page. Possible values: date-created, reverse-date-created, date-updated, reverse-date-updated, title, reverse-title, path, reverse-path.")
-	styleString := defaultFlagSet.String("style", "default", "Predefined website style theme. Possible values: default, dark, colorful.")
+	themeString := defaultFlagSet.String("theme", "default", "Predefined website style theme. Possible values: default, dark, clean, colorful.")
 	pathToAdditionalElementsTop := defaultFlagSet.String("elements-top", "", "Path to HTML file to include at the top of each page's <head> (e.g., analytics).")
 	pathToAdditionalElemensBottom := defaultFlagSet.String("elements-bottom", "", "Path to HTML file to include at the bottom of each page's <body> (e.g., scripts).")
 	watch := defaultFlagSet.Bool("watch", false, "Enable watch mode: rebuild on changes and start local server.")
@@ -105,7 +105,7 @@ func main() {
 	templateFlagSet.StringVar(&templateSettings.CoverImagePath, "cover-image-path", "", "Path to a cover image (relative to 'output-path') to pre-fill in the template.")
 	templateFlagSet.StringVar(&templateSettings.Tags, "tags", "", "Comma-separated tags to pre-fill in the template's 'tags' field.")
 	templateFlagSet.StringVar(&templateSettings.OutputDirectory, "output-path", ".", "Directory to save the template file (defaults to current directory).")
-	templateFlagSet.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "(template mode) Date format used for pre-filling date fields in template."); // Date format flag also available in template mode, for consistency
+	templateFlagSet.StringVar(&settings.DateFormat, "date-format", "2006 01 02", "(template mode) Date format used for pre-filling date fields in template.") // Date format flag also available in template mode, for consistency
 
 	// Custom Usage function to display help for both default and template modes.
 	defaultFlagSet.Usage = func() {
@@ -125,14 +125,13 @@ func main() {
 		return
 	}
 
-
 	// Determine the mode of operation based on the first command-line argument.
 	mode := strings.TrimPrefix(os.Args[1], "-")
 	mode = strings.TrimPrefix(mode, "--")
 	mode = strings.ToLower(mode)
 	switch mode {
 	case "template":
-		log.Println("Running in template creation mode...") 
+		log.Println("Running in template creation mode...")
 		err := templateFlagSet.Parse(os.Args[2:])
 		if err != nil {
 			log.Fatalf("Error parsing template flags: %v", err)
@@ -146,7 +145,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error parsing flags: %v", err)
 		}
-		log.Println("Running in blog generation mode...") 
+		log.Println("Running in blog generation mode...")
 	}
 
 	// Convert Markdown description to HTML (Do this *after* parsing flags so description is populated)
@@ -189,17 +188,24 @@ func main() {
 		settings.BaseUrl = strings.TrimSuffix(settings.BaseUrl, "/")
 	}
 
-	// Set the website style
-	switch *styleString {
+	// Set the website style: https://cdnjs.com/libraries/highlight.js
+	switch *themeString {
 	case "default":
-		settings.Style = parse.Default
+		settings.Theme = parse.Default
+		settings.HighlightTheme = "stackoverflow-light"
 	case "dark":
-		settings.Style = parse.Dark
+		settings.Theme = parse.Dark
+		settings.HighlightTheme = "github-dark-dimmed"
+	case "clean":
+		settings.Theme = parse.Clean
+		settings.HighlightTheme = "github-dark-dimmed"
 	case "colorful":
-		settings.Style = parse.Colorful
+		settings.Theme = parse.Colorful
+		settings.HighlightTheme = "github-dark-dimmed"
 	default:
-		settings.Style = parse.Default
-		log.Printf("Unknown style '%s', using default.\n", *styleString)
+		settings.Theme = parse.Default
+		settings.HighlightTheme = "stackoverflow-light"
+		log.Printf("Unknown style '%s', using default.\n", *themeString)
 	}
 
 	// Perform the initial website build
@@ -213,8 +219,9 @@ func main() {
 
 // createMarkdownTemplate generates a Markdown template file with predefined frontmatter.
 // It uses the provided TemplateSettings to pre-fill fields in the frontmatter and saves the template to a file.
-func createMarkdownTemplate(templateSettings parse.TemplateSettings) error { // TODO improve default behaviour
-	tmpl, err := template.New("frontmatter").Parse(parse.FrontMatterTemplate)
+func createMarkdownTemplate(templateSettings parse.TemplateSettings) error {
+
+	tmpl, err := template.New("md-article.gomd").ParseFS(assets, "assets/templates/md-article.gomd")
 	if err != nil {
 		return fmt.Errorf("error parsing template: %w", err)
 	}
@@ -331,7 +338,7 @@ func startWatcher(settings parse.Settings) {
 			if !ok {
 				return
 			}
-			log.Println("Watcher error:", err) 
+			log.Println("Watcher error:", err)
 		}
 	}
 }
@@ -379,7 +386,7 @@ func cleanContent(s string) []string {
 // If no custom CSS path is provided, this function generates the 'style.css' file
 // in the output directory based on the chosen predefined theme.
 func applyCSSTemplate(themeData parse.Theme, outputDirectory string) error {
-	tmpl, err := texttemplate.ParseFS(assets, "assets/style-template.gocss")
+	tmpl, err := texttemplate.ParseFS(assets, "assets/templates/style.gocss")
 	if err != nil {
 		return fmt.Errorf("error parsing style template: %w", err)
 	}
@@ -399,44 +406,6 @@ func applyCSSTemplate(themeData parse.Theme, outputDirectory string) error {
 	return nil
 }
 
-// getThemeData returns a parse.Theme struct populated with style settings for the given theme.
-// This function defines the visual appearance of the website based on predefined theme options
-// (default, dark, colorful), setting colors, fonts, and other style-related variables.
-func getThemeData(style parse.Style) parse.Theme {
-	switch style {
-	case parse.Dark:
-		return parse.Theme{
-			HeaderFont: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-			BodyFont:   "'Helvetica Neue', Helvetica, Arial, sans-serif",
-			Background: "#303030",
-			Text:       "#bfbfbf",
-			Card:       "#3c3c3e",
-			Link:       "#ff4b4b",
-			Shadow:     "rgba(0, 0, 0, 0.777)",
-		}
-	case parse.Colorful:
-		return parse.Theme{
-			HeaderFont: "'Georgia', 'Times New Roman', Times, serif",
-			BodyFont:   "'Raleway', sans-serif",
-			Background: "#ffffff",
-			Text:       "#000000",
-			Card:       "#50d459a7",
-			Button:     "#e65b5b",
-			Link:       "#15598a",
-			Shadow:     "rgba(98, 0, 0, 0.777)",
-		}
-	default: // Default style.
-		return parse.Theme{
-			HeaderFont: "\"Georgia\"",
-			BodyFont:   "\"Garamond\"",
-			Background: "#eaeaea",
-			Text:       "#555555",
-			Card:       "#ededed",
-			Link:       "#c92626",
-			Shadow:     "rgba(0, 0, 0, 0.25)",
-		}
-	}
-}
 
 // buildWebsite is the main function for generating the static website.
 // It orchestrates the entire build process: clearing output directory, parsing content files,
@@ -447,7 +416,7 @@ func buildWebsite(settings parse.Settings) {
 	if err != nil && !os.IsNotExist(err) {
 		log.Printf("Error clearing output directory: %v", err)
 	}
-	
+
 	if err := os.MkdirAll(settings.OutputDirectory, 0755); err != nil {
 		log.Fatalf("Error creating output directory: %v", err)
 	}
@@ -532,13 +501,13 @@ func buildWebsite(settings parse.Settings) {
 	}
 
 	// Generate the RSS feed XML file for content syndication.
-	if err := parse.GenerateRSS(articles, settings); err != nil {
+	if err := parse.GenerateRSS(articles, settings, assets); err != nil {
 		log.Fatalf("Error generating RSS feed: %v", err)
 	}
 
 	// Handle CSS: use custom CSS if provided, otherwise apply the selected theme template.
 	if settings.PathToCustomCss == "" {
-		theme := getThemeData(settings.Style)
+		theme := parse.GetThemeData(settings.Theme)
 		applyCSSTemplate(theme, settings.OutputDirectory)
 	} else {
 		if err := copyFile(settings.PathToCustomCss, filepath.Join(settings.OutputDirectory, "style.css")); err != nil {

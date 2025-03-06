@@ -24,7 +24,7 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
 </description>
 		<generator>Dead Simple Blog Generator</generator>
-		<lastBuildDate>Tue, 04 Mar 2025 14:08:56 +0000</lastBuildDate>
+		<lastBuildDate>Fri, 07 Mar 2025 08:21:54 +0000</lastBuildDate>
 		<item>
 			<title>HTML page with custom CSS example</title>
 			<link>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</link>
@@ -112,14 +112,6 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 				type="image/jpeg"
 			/>
             <category>themes</category>
-		</item>
-		<item>
-			<title>Footnote Example</title>
-			<link>https://tesserato.github.io/dsbg/footnote-example/index.html</link>
-			<guid>https://tesserato.github.io/dsbg/footnote-example/index.html</guid>
-			<pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
-			<description>A page with a footnote example</description>
-            <category>example</category>
 		</item>
 		<item>
 			<title>Markdown page example</title>

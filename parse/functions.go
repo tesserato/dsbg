@@ -349,7 +349,7 @@ func GenerateHtmlIndex(articles []Article, settings Settings, assets fs.FS) erro
 		"gen_share_url":  gen_share_url,
 	}
 	// Load the HTML template from assets
-	htmlIndexTemplate, err := texttemplate.New("html-index-template.gohtml").Funcs(funcMap).ParseFS(assets, "assets/html-index-template.gohtml")
+	htmlIndexTemplate, err := texttemplate.New("html-index.gohtml").Funcs(funcMap).ParseFS(assets, "assets/templates/html-index.gohtml")
 	if err != nil {
 		return fmt.Errorf("error parsing article index template: %w", err)
 	}
@@ -378,7 +378,7 @@ func GenerateHtmlIndex(articles []Article, settings Settings, assets fs.FS) erro
 // GenerateRSS creates an RSS feed XML file from the processed articles.
 // It ensures proper formatting for RSS elements like title, link, description, and pubDate.
 // Returns an error if template parsing or execution fails, or if writing the output file fails.
-func GenerateRSS(articles []Article, settings Settings) error {
+func GenerateRSS(articles []Article, settings Settings, assets fs.FS) error {
 	// Sort articles by creation date in descending order for the RSS feed.
 	slices.SortFunc(articles, func(a, b Article) int {
 		return b.Created.Compare(a.Created)
@@ -403,7 +403,8 @@ func GenerateRSS(articles []Article, settings Settings) error {
 	}
 
 	// Parse the RSS template with the custom function map.
-	tmpl, err := texttemplate.New("rss.xml").Funcs(funcMap).Parse(rssTemplate)
+
+	tmpl, err := texttemplate.New("rss.goxml").Funcs(funcMap).ParseFS(assets, "assets/templates/rss.goxml")
 	if err != nil {
 		return fmt.Errorf("error parsing RSS template: %w", err)
 	}
@@ -449,7 +450,7 @@ func wrapTables(htmlContent string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to parse HTML content: %w", err)
 	}
-	tables := findAllElements(doc, "table")	
+	tables := findAllElements(doc, "table")
 	for _, table := range tables {
 		wrapNodeIfTable(table)
 	}
@@ -612,7 +613,7 @@ func FormatMarkdown(article *Article, settings Settings, assets fs.FS) error {
 		"slicesContains":  slices.Contains[[]string],
 	}
 
-	htmlArticleTemplate, err := texttemplate.New("html-article-template.gohtml").Funcs(funcMap).ParseFS(assets, "assets/html-article-template.gohtml")
+	htmlArticleTemplate, err := texttemplate.New("html-article.gohtml").Funcs(funcMap).ParseFS(assets, "assets/templates/html-article.gohtml")
 	if err != nil {
 		return fmt.Errorf("error parsing index template: %w", err)
 	}
@@ -815,5 +816,70 @@ func gen_share_url(article Article, settings Settings, service string) string {
 	// 	return fmt.Sprintf("https://www.linkedin.com/shareArticle?url=%s", url.QueryEscape(article.LinkToSelf))
 	default:
 		return ""
+	}
+}
+
+// getThemeData returns a parse.Theme struct populated with style settings for the given theme.
+// This function defines the visual appearance of the website based on predefined theme options
+// (default, dark, colorful), setting colors, fonts, and other style-related variables.
+func GetThemeData(style Style) Theme {
+	switch style {
+	case Dark:
+		return Theme{
+			Dark:           true,
+			HeaderFont:     "\"Georgia\"",
+			BodyFont:       "\"Garamond\"",
+			Background:     "rgb(69, 69, 69)",
+			Text:           "rgb(216, 216, 216)",
+			Card:           "rgb(85, 85, 91)",
+			Link:           "rgb(255, 75, 75)",
+			Shadow:         "rgba(0, 0, 0, 0.777)",
+			FontSize:       1.0,
+			HeaderFontSize: 1.0,
+			BodyFontSize:   1.0,
+		}
+	case Clean:
+		return Theme{
+			Dark:           true,
+			HeaderFont:     "Times New Roman, serif",
+			BodyFont:       "Verdana , sans-serif",
+			Background:     "rgb(20, 20, 20)",
+			Text:           "rgb(216, 216, 216)",
+			Card:           "rgb(50, 50, 56)",
+			Link:           "rgb(255, 75, 75)",
+			Shadow:         "rgba(0, 0, 0, 0.777)",
+			FontSize:       1.0,
+			HeaderFontSize: 1.0,
+			BodyFontSize:   0.8,
+		}
+	case Colorful:
+		return Theme{
+			Dark:           false,
+			HeaderFont:     "'Georgia', 'Times New Roman', Times, serif",
+			BodyFont:       "'Raleway', sans-serif",
+			Background:     "rgb(100, 100, 100)",
+			Text:           "rgb(0, 0, 0)",
+			Card:           "rgba(80, 212, 89, 0.65)",
+			Button:         "rgb(230, 91, 91)",
+			Link:           "rgb(21, 89, 138)",
+			Shadow:         "rgba(98, 0, 0, 0.777)",
+			FontSize:       1.0,
+			HeaderFontSize: 1.0,
+			BodyFontSize:   1.0,
+		}
+	default: // Default style.
+		return Theme{
+			Dark:           false,
+			HeaderFont:     "\"Georgia\"",
+			BodyFont:       "\"Garamond\"",
+			Background:     "rgb(234, 234, 234)",
+			Text:           "rgb(85, 85, 85)",
+			Card:           "rgb(237, 237, 237)",
+			Link:           "rgb(201, 38, 38)",
+			Shadow:         "rgba(0, 0, 0, 0.25)",
+			FontSize:       1.0,
+			HeaderFontSize: 1.0,
+			BodyFontSize:   1.0,
+		}
 	}
 }
