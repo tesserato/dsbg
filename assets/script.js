@@ -76,7 +76,7 @@ function initializeTagFilters() {
             for (const btn of post.getElementsByTagName("button")) {
                 // If any tag button within the post is in the 'on' state, show the post.
                 if (btn.className === "on") {
-                    post.style.display = "block";
+                    post.style.display = "";
                     break; // No need to check further tags for this post.
                 }
                 // If all tag buttons within the post are in the 'off' state, hide the post.

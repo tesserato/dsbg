@@ -379,16 +379,65 @@ button:hover {
 }
 
 .off {
+    opacity: 0.3;
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--shadow) inset,
-        -.0rem -.0rem .1rem 0 var(--card) inset;
+        0rem 0rem .1rem 0 var(--card) inset;
+    /* Preserve button appearance */
+    color: var(--text);
+    background-color: var(--card);
+    border-radius: 0.15rem;
+    font-size: .9rem;
+    font-family: var(--body-font);
+    border: none;
+    padding: 0.3rem 0.5rem;
+    width: fit-content;
+    cursor: pointer;
 }
 
 .off:hover {
-    opacity: 30%;
+    opacity: 0.3;
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--shadow) inset,
-        -.0rem -.0rem .1rem 0 var(--card) inset;
+        0rem 0rem .1rem 0 var(--card) inset;
+}
+
+/* Ensure images always stay centered, even if parent has .off */
+.off img,
+.off a img,
+.off .description img,
+.off .detail img,
+.off header img {
+    align-self: center !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Strongest possible selector for images inside .off or button.off, covering all cases */
+.off img,
+.off a img,
+.off .description img,
+.off .detail img,
+.off header img,
+button.off img,
+button.off a img,
+button.off .description img,
+button.off .detail img,
+button.off header img {
+    align-self: center !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-self: center !important;
+    float: none !important;
+}
+
+/* Also, ensure parent flex containers do not override alignment for images inside .off */
+.off,
+button.off {
+    align-items: initial !important;
+    justify-content: initial !important;
 }
 
 
