@@ -79,12 +79,12 @@ pre {
 .hljs {
     box-shadow:
         0.3rem 0.3rem .3rem 0 var(--shadow) inset,
-        -.0rem -.0rem .3rem 0 var(--card) inset;
+        0rem 0rem .3rem 0 var(--card) inset;
 }
 
 code {
     font-size: 1rem;
-    word-break: break-all;
+    word-break: normal;
     padding: 0.2rem;
     border-radius: 0.4em;
     background: rgba(0, 0, 0, 0);
@@ -137,7 +137,6 @@ nav a:hover {
 
 img {
     max-width: 100%;
-    height: auto;
     height: auto;
     align-self: center;
 }
@@ -241,7 +240,7 @@ details summary {
     align-items: flex-start;
     justify-content: space-around;
     gap: 1rem;
-    word-wrap: break-word;
+    word-wrap: normal;
 }
 
 .content {
@@ -452,7 +451,7 @@ a {
     margin: 0;
     padding: 0;
     margin-right: auto;
-    word-break: break-all;
+    word-break: normal;
 }
 
 h1,
@@ -692,18 +691,18 @@ footer {
     border: none;
     border-radius: 0.7rem;
     font-size: calc(var(--body-font-size) * 1.0);
-    color: var(--text-color);
-    background-color: var(--card-background-color);
+    color: var(--text);
+    background-color: var(--card);
     box-shadow:
         0.1rem 0.1rem .3rem 0 var(--shadow) inset,
-        -.0rem -.0rem .1rem 0 var(--background) inset;
+        0rem 0rem .1rem 0 var(--background) inset;
 }
 
 #search-input:focus {
     border-radius: 0.15rem;
     box-shadow:
         0.1rem 0.1rem .5rem 0 var(--shadow),
-        -.0rem -.0rem .2rem 0 var(--background);
+        0rem 0rem .2rem 0 var(--background);
 }
 
 #search-results {
@@ -714,10 +713,10 @@ footer {
     margin-bottom: 1rem;
     border: none;
     border-radius: 0.25rem;
-    background-color: var(--card-background-color);
+    background-color: var(--card);
     box-shadow:
         0.1rem 0.1rem .5rem 0 var(--shadow),
-        -.0rem -.0rem .2rem 0 var(--background);
+        0rem 0rem .2rem 0 var(--background);
 }
 
 #search-results li {

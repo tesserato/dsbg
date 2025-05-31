@@ -24,7 +24,23 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
 </description>
 		<generator>Dead Simple Blog Generator</generator>
-		<lastBuildDate>Fri, 07 Mar 2025 08:21:54 +0000</lastBuildDate>
+		<lastBuildDate>Sat, 31 May 2025 19:59:48 +0100</lastBuildDate>
+		<item>
+			<title>ideal_bar</title>
+			<link>https://tesserato.github.io/dsbg/strings/idealbar/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/strings/idealbar/index.html</guid>
+			<pubDate>Wed, 02 Apr 2025 11:15:18 +0100</pubDate>
+			<description></description>
+            <category>strings</category>
+		</item>
+		<item>
+			<title>ideal_string</title>
+			<link>https://tesserato.github.io/dsbg/strings/idealstring/index.html</link>
+			<guid>https://tesserato.github.io/dsbg/strings/idealstring/index.html</guid>
+			<pubDate>Tue, 01 Apr 2025 23:57:31 +0100</pubDate>
+			<description></description>
+            <category>strings</category>
+		</item>
 		<item>
 			<title>HTML page with custom CSS example</title>
 			<link>https://tesserato.github.io/dsbg/htmlpageexample/customcss/index.html</link>
