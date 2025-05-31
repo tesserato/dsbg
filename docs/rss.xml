@@ -24,7 +24,7 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 [![License](https://img.shields.io/github/license/tesserato/dsbg)](https://github.com/tesserato/dsbg/blob/main/LICENSE)
 </description>
 		<generator>Dead Simple Blog Generator</generator>
-		<lastBuildDate>Sat, 31 May 2025 19:59:48 +0100</lastBuildDate>
+		<lastBuildDate>Sat, 31 May 2025 22:37:32 +0100</lastBuildDate>
 		<item>
 			<title>ideal_bar</title>
 			<link>https://tesserato.github.io/dsbg/strings/idealbar/index.html</link>
@@ -69,6 +69,11 @@ This is a sample blog created with DSBG from the source at [github.com/tesserato
 			<guid>https://tesserato.github.io/dsbg/07-test-post/index.html</guid>
 			<pubDate>Sun, 16 Feb 2025 00:00:00 +0000</pubDate>
 			<description>An extended test post to explore more edge cases and Markdown features, including citations, tables (long and short), and more. This post aims to thoroughly test formatting and rendering capabilities. Lets extend this description, for example: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</description>
+			<media:content
+				url="https://tesserato.github.io/dsbg/potato.webp"
+				medium="image"
+				type="image/jpeg"
+			/>
             <category>test tag 01</category>
             <category>test tag 02</category>
             <category>test tag 03</category>
