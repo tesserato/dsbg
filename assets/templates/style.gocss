@@ -86,7 +86,7 @@ pre {
 
 code {
     font-size: 1rem;
-    word-break: break-all;
+    word-break: normal;
     padding: 0.2rem;
     border-radius: 0.4em;
     background: rgba(0, 0, 0, 0);
@@ -243,7 +243,7 @@ details summary {
     align-items: flex-start;
     justify-content: space-around;
     gap: 1rem;
-    word-wrap: break-word;
+    word-wrap: normal;
 }
 
 .content {
@@ -454,7 +454,7 @@ a {
     margin: 0;
     padding: 0;
     margin-right: auto;
-    word-break: break-all;
+    word-break: normal;
 }
 
 h1,

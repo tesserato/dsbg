@@ -37,6 +37,8 @@ var regexPatterns = []*regexp.Regexp{
 var Markdown = goldmark.New(
 	goldmark.WithRendererOptions(
 		rendererhtml.WithUnsafe(),
+		rendererhtml.WithHardWraps(),
+		rendererhtml.WithXHTML(),
 	),
 	goldmark.WithParserOptions(
 		parser.WithAttribute(),
