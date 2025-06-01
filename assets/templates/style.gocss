@@ -570,6 +570,9 @@ blockquote p:after {
     font-size: 3rem;
 }
 
+sup:not(:last-child){
+    margin-right: 0.6rem;
+}
 
 /*
     -------------------------------------------
