@@ -501,6 +501,7 @@ a {
     padding: 0;
     margin-right: auto;
     word-break: normal;
+    line-height: 1.4rem;
 }
 
 h1,
@@ -568,6 +569,12 @@ blockquote p:after {
     font-size: 3rem;
 }
 
+sup {
+    vertical-align: top;
+    font-size: 0.6em;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+}
 
 /*
     -------------------------------------------
